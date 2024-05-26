@@ -63,7 +63,7 @@ public class ChocolateDAO {
     private void loadProducts(String contextPath) {
 		BufferedReader in = null;
 		try {
-			File file = new File(contextPath + "/chocolates.txt");
+			File file = new File(contextPath + "/chocolates.csv");
 			System.out.println(file.getCanonicalPath());
 			in = new BufferedReader(new FileReader(file));
 			String line, id = "", name = "", price = "", kind = "", factory = "", type = "", weight = "", description = "", image = "", status = "", quantity = "";
