@@ -1,6 +1,8 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 import AddChocolateView from '../views/AddChocolateView.vue';
+import AddChocolate from '../components/AddChocolate.vue';
+import Factory from '../components/Factory.vue';
 
 const routes = [
   {
@@ -14,6 +16,11 @@ const routes = [
     component: AddChocolateView
   },
   {
+    path: "/factories",
+    name: "factories",
+    component: AddChocolate
+  },
+  {
     path: "/about",
     name: "about",
     // route level code-splitting
@@ -21,6 +28,11 @@ const routes = [
     // which is lazy-loaded when the route is visited.
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
+  },
+  {
+    path:"/factories",
+    name:"factories",
+    component: Factory,
   },
 ];
 

@@ -34,6 +34,14 @@
           <label for="description">Description: </label>
           <textarea v-model="chocolate.description" id="description" required></textarea>
         </div>
+        <div class="form-group">
+        <label for="factory">Factory: </label>
+        <select v-model="chocolate.factory" id="factory" required>
+          <option v-for="factory in factories" :key="factory.id" :value="factory.name">
+            {{ factory.name }}
+          </option>
+        </select>
+      </div>
         <div class="form-group file-input-group">
           <label for="image">Image: </label>
           <input type="file" @change="handleImageUpload" id="image" required/>
@@ -48,6 +56,7 @@
   </template>
   
   <script>
+import axios from 'axios';
   export default {
     data() {
       return {
@@ -61,10 +70,24 @@
           image: null,
           quantity: 0
         },
+        factories: [],
         preview: null
       };
     },
+    mounted() {
+    this.loadFactories();
+  },
     methods: {
+      loadFactories() {
+      axios.get('http://localhost:8080/backend/rest/factories/')
+        .then(response => {
+          this.factories = response.data;
+          console.log(this.factories);
+        })
+        .catch(error => {
+          console.error('Error fetching factories:', error);
+        });
+    },
       handleImageUpload(event) {
         const file = event.target.files[0];
         this.chocolate.image = file;

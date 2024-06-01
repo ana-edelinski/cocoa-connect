@@ -45,8 +45,8 @@ onMounted(() => {
 	loadProducts();
 })
 
-function loadProducts() {
-	axios.get('http://localhost:8080/WebShopAppREST/rest/products/')
+function loadProducts() {http://localhost:8080/backend/rest/factories/
+	axios.get('')
 		.then(response => {
 			console.log(response.data)
 		})
