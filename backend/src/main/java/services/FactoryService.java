@@ -1,3 +1,4 @@
+
 package services;
 
 import java.util.Collection;
@@ -46,7 +47,7 @@ public class FactoryService {
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-    public Factory findById(@PathParam("id") String id) {
+    public Factory findById(@PathParam("id") Integer id) {
 		FactoryDAO dao = (FactoryDAO) ctx.getAttribute("factoryDao");
         return dao.findById(id);
     }
@@ -55,7 +56,7 @@ public class FactoryService {
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Factory update(@PathParam("id") String id, Factory updatedChocolate) {
+	public Factory update(@PathParam("id") Integer id, Factory updatedChocolate) {
 		FactoryDAO dao = (FactoryDAO) ctx.getAttribute("factoryDao");
 	    return dao.update(id, updatedChocolate);
 	}
@@ -75,7 +76,7 @@ public class FactoryService {
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-    public void deleteChocolate(@PathParam("id") String id) {
+    public void deleteChocolate(@PathParam("id") Integer id) {
         FactoryDAO dao = (FactoryDAO) ctx.getAttribute("factoryDao");
         dao.deleteChocolate(id);
     }

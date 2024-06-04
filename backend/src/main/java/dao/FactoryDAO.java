@@ -14,7 +14,7 @@ import beans.Chocolate;
 import beans.Factory;
 
 public class FactoryDAO {
-	private HashMap<String, Factory> factories = new HashMap<String, Factory>();
+	private HashMap<Integer, Factory> factories = new HashMap<Integer, Factory>();
     private String contextPath;
     
     public FactoryDAO() {}
@@ -25,21 +25,21 @@ public class FactoryDAO {
     }
     
     public Collection<Factory> findAll() {
-        Collection<Factory> retVal = new ArrayList();
+        Collection<Factory> result = new ArrayList();
         
         for(var c : factories.values()) {
         	if(!c.isDeleted()) 		
-        		retVal.add(c);
+        		result.add(c);
         }
         
-        return retVal;
+        return result;
     }
     
-    public Factory findById(String id) {
+    public Factory findById(int id) {
 		return factories.containsKey(id) ? factories.get(id) : null;
 	}
     
-    public Factory update(String id, Factory factory) {
+    public Factory update(int id, Factory factory) {
 		Factory f = factories.containsKey(id) ? factories.get(id) : null;
 		if (f == null) {
 			return save(factory);
@@ -57,14 +57,14 @@ public class FactoryDAO {
     
     public Factory save(Factory factory) {
 		Integer maxId = -1;
-		for (String id : factories.keySet()) {
-			int idNum =Integer.parseInt(id);
+		for (Integer id : factories.keySet()) {
+			int idNum = id;
 			if (idNum > maxId) {
 				maxId = idNum;
 			}
 		}
 		maxId++;
-		factory.setId(maxId.toString());
+		factory.setId(maxId);
 		factories.put(factory.getId(), factory);
 		return factory;
 	}
@@ -94,7 +94,7 @@ public class FactoryDAO {
 					deleted =  st.nextToken().trim();
 
 				}
-				factories.put(id, new Factory(id, name,factoryStatus,city,country,Double.parseDouble(averageRating), Boolean.parseBoolean(deleted)));
+				factories.put(Integer.parseInt(id), new Factory(Integer.parseInt(id), name,factoryStatus,city,country,Double.parseDouble(averageRating), Boolean.parseBoolean(deleted)));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -141,7 +141,7 @@ public class FactoryDAO {
         }
 		return true;
     }
-    public Factory deleteChocolate(String id) {
+    public Factory deleteChocolate(int id) {
 		Factory factory = findById(id);
 		if(factory == null) return null;
 		factory.setDeleted(false);

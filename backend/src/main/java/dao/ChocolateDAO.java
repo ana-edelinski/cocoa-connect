@@ -1,32 +1,50 @@
 package dao;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.StringTokenizer;
 
+import javax.ws.rs.Path;
+
 import beans.Chocolate;
+import beans.Factory;
+import enums.ChocolateStatus;
 
 public class ChocolateDAO {
-    private HashMap<String, Chocolate> chocolates = new HashMap<String, Chocolate>();
+    private HashMap<Integer, Chocolate> chocolates = new HashMap<Integer, Chocolate>();
+    public String contextPath;
     
     public ChocolateDAO() {}
     
     public ChocolateDAO(String contextPath) {
 		loadProducts(contextPath);
+		this.contextPath = contextPath;
     }
     
     public Collection<Chocolate> findAll() {
-        return chocolates.values();
+    	Collection<Chocolate> result = new ArrayList();
+        
+        for(var c : chocolates.values()) {
+        	if(!c.isDeleted()) 		
+        		result.add(c);
+        }
+        
+        return result;
     }
     
-    public Chocolate findById(String id) {
+    public Chocolate findById(int id) {
 		return chocolates.containsKey(id) ? chocolates.get(id) : null;
 	}
     
-    public Chocolate update(String id, Chocolate chocolate) {
+    public Chocolate update(int id, Chocolate chocolate) {
 		Chocolate c = chocolates.containsKey(id) ? chocolates.get(id) : null;
 		if (c == null) {
 			return save(chocolate);
@@ -48,15 +66,17 @@ public class ChocolateDAO {
     
     public Chocolate save(Chocolate chocolate) {
 		Integer maxId = -1;
-		for (String id : chocolates.keySet()) {
-			int idNum =Integer.parseInt(id);
+		for (Integer id : chocolates.keySet()) {
+			int idNum =id;
 			if (idNum > maxId) {
 				maxId = idNum;
 			}
 		}
 		maxId++;
-		chocolate.setId(maxId.toString());
+		chocolate.setId(maxId);
+		chocolate.setImage("../resources/" + chocolate.getImage());
 		chocolates.put(chocolate.getId(), chocolate);
+		saveToFile(contextPath);
 		return chocolate;
 	}
     
@@ -66,7 +86,7 @@ public class ChocolateDAO {
 			File file = new File(contextPath + "/chocolates.csv");
 			System.out.println(file.getCanonicalPath());
 			in = new BufferedReader(new FileReader(file));
-			String line, id = "", name = "", price = "", kind = "", factory = "", type = "", weight = "", description = "", image = "", status = "", quantity = "";
+			String line, id = "", name = "", price = "", kind = "", factory = "", type = "", weight = "", description = "", image = "", status = "", quantity = "",deleted="";
 			StringTokenizer st;
 			while ((line = in.readLine()) != null) {
 				line = line.trim();
@@ -85,9 +105,9 @@ public class ChocolateDAO {
 					image = st.nextToken().trim();
 					status = st.nextToken().trim();
 					quantity = st.nextToken().trim();
-
+					deleted = st.nextToken().trim();
 				}
-				chocolates.put(id, new Chocolate(id, name, Double.parseDouble(price), kind, factory, type, Integer.parseInt(weight), description, image, status, Integer.parseInt(quantity)));
+				chocolates.put(Integer.parseInt(id), new Chocolate(Integer.parseInt(id), name, Double.parseDouble(price), kind, Integer.parseInt(factory), type, Integer.parseInt(weight), description, image, Integer.parseInt(quantity), Boolean.parseBoolean(deleted)));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -101,7 +121,57 @@ public class ChocolateDAO {
 		}
 	}
 
-    public boolean deleteChocolate(String id) {
-		return chocolates.remove(id) != null;
-	}  
+    public boolean deleteChocolate(int id) {
+		Chocolate c = findById(id);
+		if(c == null) return false;
+		c.setDeleted(true);
+		return saveToFile(contextPath);
+    }  
+    
+    public Collection<Chocolate> getAllForFactory(Integer factoryId) {
+        List<Chocolate> result = new ArrayList<>();
+        for (Chocolate chocolate : findAll()) {
+            if (chocolate.getFactory() ==  factoryId) {
+                result.add(chocolate);
+            }
+        }
+        return result;
+    }
+    private boolean saveToFile(String path) {
+        BufferedWriter out = null;
+        try {
+            File file = new File(path + "chocolates.csv");
+            out = new BufferedWriter(new FileWriter(file));
+
+            for (Chocolate chocolate : chocolates.values()) {
+                StringBuilder line = new StringBuilder();
+                line.append(chocolate.getId()).append(";");
+                line.append(chocolate.getName()).append(";");
+                line.append(chocolate.getPrice()).append(";");
+                line.append(chocolate.getKind()).append(";");
+                line.append(chocolate.getFactory()).append(";");
+                line.append(chocolate.getType()).append(";");
+                line.append(chocolate.getWeight()).append(";");
+                line.append(chocolate.getDescription()).append(";");
+                line.append(chocolate.getImage()).append(";");
+                line.append(chocolate.getStatus()).append(";");
+                line.append(chocolate.getQuantity()).append(";");
+                line.append(chocolate.isDeleted());
+                out.write(line.toString());
+                out.newLine();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return false;
+                }
+            }
+        }
+		return true;
+    }
 }

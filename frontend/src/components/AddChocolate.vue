@@ -13,17 +13,17 @@
         <div class="form-group">
           <label for="kind">Kind: </label>
           <select v-model="chocolate.kind" id="kind" required>
-            <option>Regular</option>
-            <option>Cooking</option>
-            <option>Drinking</option>
+            <option value = "REGULAR">Regular</option>
+            <option value = "COOKING">Cooking</option>
+            <option value = "DRINKING">Drinking</option>
           </select>
         </div>
         <div class="form-group">
           <label for="type">Type: </label>
           <select v-model="chocolate.type" id="type" required>
-            <option>Milk</option>
-            <option>Dark</option>
-            <option>White</option>
+            <option value = "MILK">Milk</option>
+            <option value = "DARK">Dark</option>
+            <option value = "WHITE">White</option>
           </select>
         </div>
         <div class="form-group">
@@ -44,19 +44,23 @@
       </div>
         <div class="form-group file-input-group">
           <label for="image">Image: </label>
-          <input type="file" @change="handleImageUpload" id="image" required/>
+          <input type="file"  @change="handleImageUpload" id="image" required/>
           <button type="button" @click="previewImage">Preview</button>
         </div>
         <div class="form-group">
           <img v-if="preview" :src="preview" alt="Chocolate Image Preview" />
         </div>
-        <button type="submit">Add Chocolate</button>
+        <button type="submit" @click="create">Add Chocolate</button>
       </form>
     </div>
   </template>
   
   <script>
 import axios from 'axios';
+import { useRouter } from 'vue-router';
+
+
+
   export default {
     data() {
       return {
@@ -68,7 +72,8 @@ import axios from 'axios';
           weight: '',
           description: '',
           image: null,
-          quantity: 0
+          quantity: 0,
+          factory: ''
         },
         factories: [],
         preview: null
@@ -90,7 +95,7 @@ import axios from 'axios';
     },
       handleImageUpload(event) {
         const file = event.target.files[0];
-        this.chocolate.image = file;
+        this.chocolate.image = file.name;
         this.preview = URL.createObjectURL(file);
       },
       previewImage() {
@@ -99,6 +104,21 @@ import axios from 'axios';
       submitForm() {
         // todo
         console.log('Form submitted:', this.chocolate);
+      },
+      create() {
+        this.factories.forEach((f) => {
+          if(f.name == this.chocolate.factory) {
+            this.chocolate.factory = f.id;
+          }
+        });
+        axios.post('http://localhost:8080/backend/rest/chocolates/', this.chocolate)
+        .then(response => {
+          const factoryId = this.chocolate.factory;
+          this.$router.push({ name: 'chocolates', params: { factoryId } });
+        })
+        .catch(error => {
+          console.error('Error fetching factories:', error);
+        });
       }
     }
   };

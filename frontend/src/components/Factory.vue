@@ -9,6 +9,7 @@
           <th>City</th>
           <th>Country</th>
           <th>Average Rating</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -18,6 +19,7 @@
           <td>{{ factory.city }}</td>
           <td>{{ factory.country }}</td>
           <td>{{ factory.averageRating }}</td>
+          <td><button type="submit" @click="viewChocolates(factory.id)"> View chocolates </button></td>
         </tr>
       </tbody>
     </table>
@@ -27,6 +29,9 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import axios from 'axios';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 defineProps({
   msg: {
@@ -53,6 +58,10 @@ function loadFactories() {
       filtredFactories.value = factories.value;
     })
     .catch(error => console.error(error));
+}
+
+function viewChocolates(factoryId) {
+  router.push({ name: 'chocolates', params: { factoryId } });
 }
 
 

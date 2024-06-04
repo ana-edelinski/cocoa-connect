@@ -5,22 +5,22 @@ import enums.ChocolateStatus;
 import enums.ChocolateType;
 
 public class Chocolate {
-		private String id;
+		private int id;
 	 	private String name;
 	    private double price;
 	    private ChocolateKind kind;
-	    private String factory;
+	    private Integer factory;
 	    private ChocolateType type;
 	    private int weight;
 	    private String description;
 	    private String image;
 	    private ChocolateStatus status;
 	    private int quantity;
-	
+	    private boolean deleted;
 	public Chocolate() {}
 
-	public Chocolate(String id, String name, double price, String kind, String factory, String type, int weight,
-            String description, String image, String status, int quantity) {
+	public Chocolate(int id, String name, double price, String kind, Integer factory, String type, int weight,
+            String description, String image, int quantity, boolean deleted) {
 		this.id = id;
 		this.name = name;
 		this.price = price;
@@ -30,15 +30,21 @@ public class Chocolate {
 		this.weight = weight;
 		this.description = description;
 		this.image = image;
-		this.status = ChocolateStatus.valueOf(status.toUpperCase());
+		this.status = ChocolateStatus.OUT_OF_STOCK;
 		this.quantity = quantity;
+		this.deleted = deleted;
 	}
-	
-	public String getId() {
+	public boolean isDeleted() {
+		return deleted;
+	}
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
+	}
+	public int getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
@@ -66,11 +72,11 @@ public class Chocolate {
 		this.kind = kind;
 	}
 
-	public String getFactory() {
+	public Integer getFactory() {
 		return factory;
 	}
 
-	public void setFactory(String factory) {
+	public void setFactory(Integer factory) {
 		this.factory = factory;
 	}
 

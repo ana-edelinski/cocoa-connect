@@ -3,7 +3,7 @@ import HomeView from '../views/HomeView.vue';
 import AddChocolateView from '../views/AddChocolateView.vue';
 import AddChocolate from '../components/AddChocolate.vue';
 import Factory from '../components/Factory.vue';
-
+import Chocolate from '../components/Chocolate.vue';
 const routes = [
   {
     path: "/",
@@ -19,6 +19,11 @@ const routes = [
     path: "/factories",
     name: "factories",
     component: AddChocolate
+  },
+  {
+    path: "/chocolates/:factoryId",
+    name: "chocolates",
+    component: Chocolate
   },
   {
     path: "/about",

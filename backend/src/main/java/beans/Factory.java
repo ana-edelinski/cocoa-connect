@@ -3,14 +3,14 @@ package beans;
 import enums.FactoryStatus;
 
 public class Factory {
-	private String id;
+	private int id;
  	private String name;
  	private FactoryStatus factoryStatus;
  	private String city;
  	private String country;
  	private double averageRating;
  	private boolean deleted;
-	public Factory(String id, String name, String factoryStatus, String city, String country,
+	public Factory(int id, String name, String factoryStatus, String city, String country,
 			double averageRating , boolean deleted) {
 		super();
 		this.id = id;
@@ -27,10 +27,10 @@ public class Factory {
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
 	}
-	public String getId() {
+	public int getId() {
 		return id;
 	}
-	public void setId(String id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 	public String getName() {
