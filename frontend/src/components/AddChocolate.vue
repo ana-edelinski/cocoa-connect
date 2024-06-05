@@ -42,12 +42,12 @@
           </option>
         </select>
       </div>
-      <div class="form-group">
-        <label for="image">Image URL: </label>
-        <input type="text" v-model="chocolate.image" id="image" required/>
+      <div class="form-group file-input-group">
+        <label for="image">Image: </label>
+        <input type="file" @change="handleImageUpload" id="image" required/>
       </div>
       <div class="form-group">
-        <img v-if="chocolate.image" :src="chocolate.image" alt="Chocolate Image Preview" />
+        <img v-if="preview" :src="preview" alt="Chocolate Image Preview" />
       </div>
       <button type="submit" @click="create">Add Chocolate</button>
     </form>
@@ -69,7 +69,7 @@ export default {
         kind: '',
         weight: '',
         description: '',
-        image: '',
+        image: null,
         quantity: 0,
         factory: ''
       },
@@ -98,6 +98,12 @@ export default {
           console.error('Error fetching factories:', error);
         });
     },
+    handleImageUpload(event) {
+      const file = event.target.files[0];
+      this.chocolate.image = file.name;
+      this.preview = URL.createObjectURL(file);
+    },
+    
     submitForm() {
       // TODO
       console.log('Form submitted:', this.chocolate);
