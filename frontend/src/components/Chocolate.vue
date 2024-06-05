@@ -1,6 +1,19 @@
 <template>
   <div>
-    <h1>{{ msg }}</h1>
+    <h1>{{ factory.name }}</h1>
+    <img :src="factory.logo" alt="Factory Logo" width="100" />
+    <p><strong>Working Hours:</strong> {{ factory.workingHours }}</p>
+    <p><strong>Status:</strong> {{ factory.factoryStatus }}</p>
+    <p><strong>Location:</strong> {{ factory.city }}, {{ factory.country }}</p>
+    <p><strong>Rating:</strong> {{ factory.averageRating ? factory.averageRating : 'No rating available' }}</p>
+    <div v-if="factory.comments && factory.comments.length">
+      <h3>Comments:</h3>
+      <ul>
+        <li v-for="comment in factory.comments" :key="comment.id">{{ comment.text }}</li>
+      </ul>
+    </div>
+
+    <h2>Chocolates Offered</h2>
     <table>
       <thead>
         <tr>
@@ -46,36 +59,37 @@ const router = useRouter();
 const route = useRoute();
 const factoryId = route.params.factoryId; 
 
-
-defineProps({
-  msg: {
-    type: String,
-    required: true
-  }
-});
-
+const factory = ref({});
 const chocolates = ref([]);
 
 onMounted(() => {
+  loadFactory();
   loadChocolates();
 });
 
-function loadChocolates() {
-  axios.get('http://localhost:8080/chocolate-factory/rest/chocolates/getAllForFactory/' + factoryId)
+function loadFactory() {
+  axios.get(`http://localhost:8080/chocolate-factory/rest/factories/${factoryId}`)
     .then(response => {
-      console.log(chocolates.value);
+      factory.value = response.data;
+    })
+    .catch(error => console.error(error));
+}
+
+function loadChocolates() {
+  axios.get(`http://localhost:8080/chocolate-factory/rest/chocolates/getAllForFactory/${factoryId}`)
+    .then(response => {
       chocolates.value = response.data;
     })
     .catch(error => console.error(error));
 }
+
 function deleteChocolate(chocolateId) {
-  axios.delete('http://localhost:8080/chocolate-factory/rest/chocolates/'+chocolateId)
+  axios.delete(`http://localhost:8080/chocolate-factory/rest/chocolates/${chocolateId}`)
     .then(() => {
       chocolates.value = chocolates.value.filter(chocolate => chocolate.id !== chocolateId);
     })
     .catch(error => console.error(error));
 }
-
 
 function editChocolate(chocolateId) {
   router.push({ name: 'editChocolate', params: { chocolateId } });
@@ -102,6 +116,7 @@ thead tr {
 th, td {
   padding: 12px 15px;
   border: 1px solid #ddd;
+  text-align: center;
 }
 
 tbody tr {

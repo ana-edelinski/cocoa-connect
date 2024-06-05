@@ -1,6 +1,7 @@
 <template>
   <div>
     <h1>{{ msg }}</h1>
+    <h2>Chocolate Factories</h2>
     <table>
       <thead>
         <tr>
@@ -87,6 +88,7 @@ thead tr {
 th, td {
   padding: 12px 15px;
   border: 1px solid #ddd;
+  text-align: center;
 }
 
 tbody tr {
@@ -104,5 +106,9 @@ tbody tr:last-of-type {
 img {
   max-width: 100%;
   height: auto;
+}
+
+h2 {
+  color: #43392F;
 }
 </style>
