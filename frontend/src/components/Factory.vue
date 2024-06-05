@@ -78,7 +78,7 @@ table {
 }
 
 thead tr {
-  background-color: #009879;
+  background-color: #43392F;
   color: #ffffff;
   text-align: left;
   font-weight: bold;
@@ -98,7 +98,7 @@ tbody tr:nth-of-type(even) {
 }
 
 tbody tr:last-of-type {
-  border-bottom: 2px solid #009879;
+  border-bottom: 2px solid #43392F;
 }
 
 img {
