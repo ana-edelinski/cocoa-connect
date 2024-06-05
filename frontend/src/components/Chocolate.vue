@@ -21,7 +21,7 @@
           <td>{{ chocolate.name }}</td>
           <td>{{ chocolate.price }}</td>
           <td>{{ chocolate.type }}</td>
-          <td>{{ chocolate.category }}</td>
+          <td>{{ chocolate.kind }}</td>
           <td>{{ chocolate.weight }} g</td>
           <td>{{ chocolate.description }}</td>
           <td>

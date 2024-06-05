@@ -1,7 +1,7 @@
 <template>
   <div class="add-chocolate-container">
     <h1>Add New Chocolate</h1>
-    <form @submit.prevent="submitForm">
+    <form>
       <div class="form-group">
         <label for="name">Name: </label>
         <input type="text" :style="{ backgroundColor: nameFill ? 'white' : 'red' }" v-model="chocolate.name" id="name" required />
@@ -45,7 +45,6 @@
       <div class="form-group file-input-group">
         <label for="image">Image: </label>
         <input type="file" @change="handleImageUpload" id="image" required/>
-        <button type="button" @click="previewImage">Preview</button>
       </div>
       <div class="form-group">
         <img v-if="preview" :src="preview" alt="Chocolate Image Preview" />
@@ -103,13 +102,6 @@ export default {
       const file = event.target.files[0];
       this.chocolate.image = file.name;
       this.preview = URL.createObjectURL(file);
-    },
-    previewImage() {
-      // TODO
-    },
-    submitForm() {
-      // TODO
-      console.log('Form submitted:', this.chocolate);
     },
     create() {
       this.checkFields();
