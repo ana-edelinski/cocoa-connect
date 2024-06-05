@@ -1,6 +1,5 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
-import HomeView from '../views/HomeView.vue';
-import AddChocolateView from '../views/AddChocolateView.vue';
+import HelloWorld from '../components/HelloWorld.vue';
 import AddChocolate from '../components/AddChocolate.vue';
 import Factory from '../components/Factory.vue';
 import Chocolate from '../components/Chocolate.vue';
@@ -8,18 +7,14 @@ const routes = [
   {
     path: "/",
     name: "home",
-    component: HomeView,
+    component: Factory,
   },
   {
     path: "/addChocolate",
     name: "addChocolate",
-    component: AddChocolateView
-  },
-  {
-    path: "/factories",
-    name: "factories",
     component: AddChocolate
   },
+  
   {
     path: "/chocolates/:factoryId",
     name: "chocolates",
