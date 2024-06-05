@@ -54,6 +54,9 @@ public class ChocolateService {
     @Consumes(MediaType.APPLICATION_JSON)
     public Chocolate update(@PathParam("id") Integer id, Chocolate updatedChocolate) {
         ChocolateDAO dao = (ChocolateDAO) ctx.getAttribute("chocolateDAO");
+        if(!dao.validateChocolate(updatedChocolate)) {
+        	return null;
+        }
         return dao.update(id, updatedChocolate);
     }
 

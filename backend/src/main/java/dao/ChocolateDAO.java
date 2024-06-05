@@ -81,6 +81,9 @@ public class ChocolateDAO {
 	}
     
     public boolean validateChocolate(Chocolate chocolate) {
+    	if(chocolate == null) {
+    		return false;
+    	}
     	if(chocolate.getName() == null || chocolate.getName().equals("")) {
     		return false;
     	}

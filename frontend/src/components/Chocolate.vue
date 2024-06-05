@@ -12,6 +12,7 @@
           <th>Weight</th>
           <th>Description</th>
           <th></th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -26,6 +27,9 @@
           <td>
             <button type="submit" @click="deleteChocolate(chocolate.id)">Delete</button>
           </td>
+          <td>
+            <button type="submit" @click="editChocolate(chocolate.id)">Edit</button>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -36,7 +40,9 @@
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 const route = useRoute();
 const factoryId = route.params.factoryId; 
 
@@ -55,7 +61,7 @@ onMounted(() => {
 });
 
 function loadChocolates() {
-  axios.get('http://localhost:8080/backend/rest/chocolates/getAllForFactory/' + factoryId)
+  axios.get('http://localhost:8080/chocolate-factory/rest/chocolates/getAllForFactory/' + factoryId)
     .then(response => {
       console.log(chocolates.value);
       chocolates.value = response.data;
@@ -63,11 +69,16 @@ function loadChocolates() {
     .catch(error => console.error(error));
 }
 function deleteChocolate(chocolateId) {
-  axios.delete('http://localhost:8080/backend/rest/chocolates/'+chocolateId)
+  axios.delete('http://localhost:8080/chocolate-factory/rest/chocolates/'+chocolateId)
     .then(() => {
       chocolates.value = chocolates.value.filter(chocolate => chocolate.id !== chocolateId);
     })
     .catch(error => console.error(error));
+}
+
+
+function editChocolate(chocolateId) {
+  router.push({ name: 'editChocolate', params: { chocolateId } });
 }
 </script>
 

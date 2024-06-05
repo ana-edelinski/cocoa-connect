@@ -48,7 +48,7 @@ onMounted(() => {
 });
 
 function loadFactories() {
-  axios.get('http://localhost:8080/backend/rest/factories/')
+  axios.get('http://localhost:8080/chocolate-factory/rest/factories/')
     .then(response => {
       factories.value = response.data.sort((a, b) => {
         if (a.factoryStatus === 'OPENED' && b.factoryStatus !== 'OPENED') return -1;
