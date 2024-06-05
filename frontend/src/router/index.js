@@ -3,6 +3,7 @@ import HelloWorld from '../components/HelloWorld.vue';
 import AddChocolate from '../components/AddChocolate.vue';
 import Factory from '../components/Factory.vue';
 import Chocolate from '../components/Chocolate.vue';
+import EditChocolate from '../components/EditChocolate.vue';
 const routes = [
   {
     path: "/",
@@ -14,7 +15,11 @@ const routes = [
     name: "addChocolate",
     component: AddChocolate
   },
-  
+  {
+    path: "/editChocolate/:chocolateId",
+    name: "editChocolate",
+    component: EditChocolate
+  },
   {
     path: "/chocolates/:factoryId",
     name: "chocolates",

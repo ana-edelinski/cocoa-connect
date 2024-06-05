@@ -1,6 +1,7 @@
 <template>
   <div>
     <h1>{{ msg }}</h1>
+    <h2>FABRIKE ČOKOLADE</h2>
     <table>
       <thead>
         <tr>
@@ -8,6 +9,7 @@
           <th>Name</th>
           <th>City</th>
           <th>Country</th>
+          <th>Status</th>
           <th>Average Rating</th>
           <th></th>
         </tr>
@@ -18,6 +20,7 @@
           <td>{{ factory.name }}</td>
           <td>{{ factory.city }}</td>
           <td>{{ factory.country }}</td>
+          <td>{{ formatStatus(factory.factoryStatus) }}</td>
           <td>{{ factory.averageRating }}</td>
           <td><button type="submit" @click="viewChocolates(factory.id)"> View chocolates </button></td>
         </tr>
@@ -64,7 +67,14 @@ function viewChocolates(factoryId) {
   router.push({ name: 'chocolates', params: { factoryId } });
 }
 
-
+function formatStatus(status) {
+  const statusMap = {
+    'OPENED': 'Opened',
+    'CLOSED': 'Closed',
+    // Add other statuses if needed
+  };
+  return statusMap[status] || status;
+}
 </script>
 
 <style>

@@ -74,13 +74,16 @@ public class ChocolateDAO {
 		}
 		maxId++;
 		chocolate.setId(maxId);
-		chocolate.setImage("../resources/" + chocolate.getImage());
+		//chocolate.setImage("../resources/" + chocolate.getImage());
 		chocolates.put(chocolate.getId(), chocolate);
-		saveToFile(contextPath);
+		//saveToFile(contextPath);
 		return chocolate;
 	}
     
     public boolean validateChocolate(Chocolate chocolate) {
+    	if(chocolate == null) {
+    		return false;
+    	}
     	if(chocolate.getName() == null || chocolate.getName().equals("")) {
     		return false;
     	}
@@ -102,15 +105,13 @@ public class ChocolateDAO {
     	if(chocolate.getDescription().equals("")) {
     		return false;
     	}
-    	/*if(chocolate.getImage().equals("")) {
+    	if(chocolate.getImage().equals("") || chocolate.getImage() == null) {
     		return false;
-    	}*/
+    	}
     	if(chocolate.getStatus() == null) {
     		return false;
     	}
-    	if(chocolate.getQuantity() <= 0) {
-    		return false;
-    	}
+    	
     	return true;
     }
     

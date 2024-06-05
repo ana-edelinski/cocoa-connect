@@ -15,6 +15,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import beans.Chocolate;
 import dao.ChocolateDAO;
+import enums.ChocolateStatus;
 
 @Path("/chocolates")
 public class ChocolateService {
@@ -54,6 +55,9 @@ public class ChocolateService {
     @Consumes(MediaType.APPLICATION_JSON)
     public Chocolate update(@PathParam("id") Integer id, Chocolate updatedChocolate) {
         ChocolateDAO dao = (ChocolateDAO) ctx.getAttribute("chocolateDAO");
+        if(!dao.validateChocolate(updatedChocolate)) {
+        	return null;
+        }
         return dao.update(id, updatedChocolate);
     }
 
@@ -62,6 +66,7 @@ public class ChocolateService {
     @Consumes(MediaType.APPLICATION_JSON)
     public Chocolate save(Chocolate chocolate) {
         ChocolateDAO dao = (ChocolateDAO) ctx.getAttribute("chocolateDAO");
+        chocolate.setStatus(ChocolateStatus.OUT_OF_STOCK);
         if(!dao.validateChocolate(chocolate)) {
         	return null;
         }

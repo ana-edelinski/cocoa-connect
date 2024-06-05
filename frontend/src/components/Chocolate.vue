@@ -1,6 +1,23 @@
 <template>
   <div>
     <h1>{{ msg }}</h1>
+    <div v-if="factory">
+      <h2>Factory Information</h2>
+      <p><strong>Name:</strong> {{ factory.name }}</p>
+      <p><strong>Working Hours:</strong> {{ factory.workingHours }}</p>
+      <p><strong>Status:</strong> {{ factory.factoryStatus }}</p>
+      <p><strong>Location:</strong> {{ factory.city }}, {{ factory.country }}</p>
+      <p v-if="factory.logo"><strong>Logo:</strong> <img :src="factory.logo" alt="Factory Logo" width="100" /></p>
+      <p v-if="factory.averageRating"><strong>Rating:</strong> {{ factory.averageRating }}</p>
+      <div v-if="factory.comments && factory.comments.length">
+        <strong>Comments:</strong>
+        <ul>
+          <li v-for="comment in factory.comments" :key="comment.id">{{ comment.text }}</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2>Chocolates</h2>
     <table>
       <thead>
         <tr>
@@ -8,9 +25,10 @@
           <th>Name</th>
           <th>Price</th>
           <th>Type</th>
-          <th>Category</th>
+          <th>Kind</th>
           <th>Weight</th>
           <th>Description</th>
+          <th></th>
           <th></th>
         </tr>
       </thead>
@@ -20,11 +38,14 @@
           <td>{{ chocolate.name }}</td>
           <td>{{ chocolate.price }}</td>
           <td>{{ chocolate.type }}</td>
-          <td>{{ chocolate.category }}</td>
+          <td>{{ chocolate.kind }}</td>
           <td>{{ chocolate.weight }} g</td>
           <td>{{ chocolate.description }}</td>
           <td>
             <button type="submit" @click="deleteChocolate(chocolate.id)">Delete</button>
+          </td>
+          <td>
+            <button type="submit" @click="editChocolate(chocolate.id)">Edit</button>
           </td>
         </tr>
       </tbody>
@@ -36,10 +57,11 @@
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 const route = useRoute();
 const factoryId = route.params.factoryId; 
-
 
 defineProps({
   msg: {
@@ -48,26 +70,40 @@ defineProps({
   }
 });
 
+const factory = ref(null);
 const chocolates = ref([]);
 
 onMounted(() => {
+  loadFactory();
   loadChocolates();
 });
+
+function loadFactory() {
+  axios.get('http://localhost:8080/backend/rest/factories/' + factoryId)
+    .then(response => {
+      factory.value = response.data;
+    })
+    .catch(error => console.error(error));
+}
 
 function loadChocolates() {
   axios.get('http://localhost:8080/backend/rest/chocolates/getAllForFactory/' + factoryId)
     .then(response => {
-      console.log(chocolates.value);
       chocolates.value = response.data;
     })
     .catch(error => console.error(error));
 }
+
 function deleteChocolate(chocolateId) {
-  axios.delete('http://localhost:8080/backend/rest/chocolates/'+chocolateId)
+  axios.delete('http://localhost:8080/backend/rest/chocolates/' + chocolateId)
     .then(() => {
       chocolates.value = chocolates.value.filter(chocolate => chocolate.id !== chocolateId);
     })
     .catch(error => console.error(error));
+}
+
+function editChocolate(chocolateId) {
+  router.push({ name: 'editChocolate', params: { chocolateId } });
 }
 </script>
 

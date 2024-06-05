@@ -1,6 +1,6 @@
 <template>
-  <div class="add-chocolate-container">
-    <h1>Add New Chocolate</h1>
+  <div class="edit-chocolate-container">
+    <h1>Edit Chocolate</h1>
     <form @submit.prevent="submitForm">
       <div class="form-group">
         <label for="name">Name: </label>
@@ -37,19 +37,19 @@
       <div class="form-group">
         <label for="factory">Factory: </label>
         <select v-model="chocolate.factory" id="factory" :style="{ backgroundColor: factoryFill ? 'white' : 'red' }" required>
-          <option  v-for="factory in factories" :key="factory.id" :value="factory.name">
+          <option v-for="factory in factories" :key="factory.id" :value="factory.id">
             {{ factory.name }}
           </option>
         </select>
       </div>
-      <div class="form-group">
-        <label for="image">Image URL: </label>
-        <input type="text" v-model="chocolate.image" id="image" required/>
+      <div class="form-group file-input-group">
+        <label for="image">Image: </label>
+        <input type="file" @change="handleImageUpload" id="image" />
       </div>
       <div class="form-group">
-        <img v-if="chocolate.image" :src="chocolate.image" alt="Chocolate Image Preview" />
+        <img v-if="preview" :src="preview" alt="Chocolate Image Preview" />
       </div>
-      <button type="submit" @click="create">Add Chocolate</button>
+      <button type="submit">Save Changes</button>
     </form>
   </div>
 </template>
@@ -69,7 +69,7 @@ export default {
         kind: '',
         weight: '',
         description: '',
-        image: '',
+        image: null,
         quantity: 0,
         factory: ''
       },
@@ -86,6 +86,7 @@ export default {
   },
   mounted() {
     this.loadFactories();
+    this.loadChocolate();
   },
   methods: {
     loadFactories() {
@@ -98,11 +99,33 @@ export default {
           console.error('Error fetching factories:', error);
         });
     },
-    submitForm() {
-      // TODO
-      console.log('Form submitted:', this.chocolate);
+    loadChocolate() {
+      const chocolateId = this.$route.params.chocolateId;
+      axios.get(`http://localhost:8080/backend/rest/chocolates/${chocolateId}`)
+        .then(response => {
+            this.chocolate = response.data;
+            const factoryId = this.chocolate.factory;
+            axios.get(`http://localhost:8080/backend/rest/factories/${factoryId}`)
+            .then(response => {
+                console.log('Factory details:', response.data);
+                this.chocolate.factory = response.data.id;
+            })
+            .catch(error => {
+                console.error('Error fetching factory:', error);
+            });
+
+        })
+        .catch(error => {
+          console.error('Error fetching chocolate:', error);
+        });
     },
-    create() {
+   
+    handleImageUpload(event) {
+      const file = event.target.files[0];
+      this.chocolate.image = file.name;
+      this.preview = URL.createObjectURL(file);
+    },
+    submitForm() {
       this.checkFields();
       if (!this.nameFill || !this.priceFill || !this.kindFill || !this.typeFill || !this.weightFill || !this.descriptionFill || !this.factoryFill) {
         return;
@@ -112,13 +135,13 @@ export default {
           this.chocolate.factory = f.id;
         }
       });
-      axios.post('http://localhost:8080/backend/rest/chocolates/', this.chocolate)
+      axios.put(`http://localhost:8080/backend/rest/chocolates/${this.chocolate.id}`, this.chocolate)
         .then(response => {
           const factoryId = this.chocolate.factory;
           this.$router.push({ name: 'chocolates', params: { factoryId } });
         })
         .catch(error => {
-          console.error('Error fetching factories:', error);
+          console.error('Error updating chocolate:', error);
         });
     },
     checkFields() {
@@ -135,7 +158,7 @@ export default {
 </script>
 
 <style scoped>
-.add-chocolate-container {
+.edit-chocolate-container {
   max-width: 600px;
   margin: 0 auto;
   padding: 20px;
