@@ -74,7 +74,7 @@ public class ChocolateDAO {
 		}
 		maxId++;
 		chocolate.setId(maxId);
-		chocolate.setImage("../resources/" + chocolate.getImage());
+		//chocolate.setImage("../resources/" + chocolate.getImage());
 		chocolates.put(chocolate.getId(), chocolate);
 		saveToFile(contextPath);
 		return chocolate;
