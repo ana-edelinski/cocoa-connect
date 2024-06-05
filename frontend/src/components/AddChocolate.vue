@@ -4,15 +4,15 @@
     <form @submit.prevent="submitForm">
       <div class="form-group">
         <label for="name">Name: </label>
-        <input type="text" :style="{ backgroundColor: nameFill ? 'white' : 'red' }" v-model="chocolate.name" id="name" required />
+        <input type="text" :style="{ backgroundColor: nameFill ? 'white' : 'red' }" v-model="chocolate.name" id="name"  />
       </div>
       <div class="form-group">
         <label for="price">Price: </label>
-        <input type="number" :style="{ backgroundColor: priceFill ? 'white' : 'red' }" v-model="chocolate.price" id="price" required />
+        <input type="number" :style="{ backgroundColor: priceFill ? 'white' : 'red' }" v-model="chocolate.price" id="price"  />
       </div>
       <div class="form-group">
         <label for="kind">Kind: </label>
-        <select :style="{ backgroundColor: kindFill ? 'white' : 'red' }" v-model="chocolate.kind" id="kind" required>
+        <select :style="{ backgroundColor: kindFill ? 'white' : 'red' }" v-model="chocolate.kind" id="kind" >
           <option value="REGULAR">Regular</option>
           <option value="COOKING">Cooking</option>
           <option value="DRINKING">Drinking</option>
@@ -20,7 +20,7 @@
       </div>
       <div class="form-group">
         <label for="type">Type: </label>
-        <select :style="{ backgroundColor: typeFill ? 'white' : 'red' }" v-model="chocolate.type" id="type" required>
+        <select :style="{ backgroundColor: typeFill ? 'white' : 'red' }" v-model="chocolate.type" id="type" >
           <option value="MILK">Milk</option>
           <option value="DARK">Dark</option>
           <option value="WHITE">White</option>
@@ -28,23 +28,23 @@
       </div>
       <div class="form-group">
         <label for="weight">Weight [grams]:</label>
-        <input type="number" :style="{ backgroundColor: weightFill ? 'white' : 'red' }" v-model="chocolate.weight" id="weight" required />
+        <input type="number" :style="{ backgroundColor: weightFill ? 'white' : 'red' }" v-model="chocolate.weight" id="weight"  />
       </div>
       <div class="form-group">
         <label for="description">Description: </label>
-        <textarea :style="{ backgroundColor: descriptionFill ? 'white' : 'red' }" v-model="chocolate.description" id="description" required></textarea>
+        <textarea :style="{ backgroundColor: descriptionFill ? 'white' : 'red' }" v-model="chocolate.description" id="description" ></textarea>
       </div>
       <div class="form-group">
         <label for="factory">Factory: </label>
-        <select v-model="chocolate.factory" id="factory" :style="{ backgroundColor: factoryFill ? 'white' : 'red' }" required>
-          <option  v-for="factory in factories" :key="factory.id" :value="factory.name">
+        <select v-model="chocolate.factory" id="factory" :style="{ backgroundColor: factoryFill ? 'white' : 'red' }" >
+          <option v-for="factory in factories" :key="factory.id" :value="factory.name">
             {{ factory.name }}
           </option>
         </select>
       </div>
       <div class="form-group">
         <label for="image">Image URL: </label>
-        <input type="text" v-model="chocolate.image" id="image" required/>
+        <input type="text" v-model="chocolate.image" id="image" :style="{ backgroundColor: factoryFill ? 'white' : 'red' }" />
       </div>
       <div class="form-group">
         <img v-if="chocolate.image" :src="chocolate.image" alt="Chocolate Image Preview" />
@@ -80,6 +80,7 @@ export default {
       weightFill: true,
       descriptionFill: true,
       factoryFill: true,
+      imageFill: true,
       factories: [],
       preview: null
     };
@@ -104,7 +105,7 @@ export default {
     },
     create() {
       this.checkFields();
-      if (!this.nameFill || !this.priceFill || !this.kindFill || !this.typeFill || !this.weightFill || !this.descriptionFill || !this.factoryFill) {
+      if (!this.nameFill || !this.priceFill || !this.kindFill || !this.typeFill || !this.weightFill || !this.descriptionFill || !this.factoryFill ||!this.imageFill) {
         return;
       }
       this.factories.forEach((f) => {
@@ -129,6 +130,7 @@ export default {
       this.weightFill = this.chocolate.weight > 0;
       this.descriptionFill = this.chocolate.description !== '';
       this.factoryFill = this.chocolate.factory !== '';
+      this.imageFill = this.chocolate.image !== '';
     }
   }
 };
@@ -139,52 +141,58 @@ export default {
   max-width: 600px;
   margin: 0 auto;
   padding: 20px;
-  border: 2px solid #43392F;
+  border: 2px solid #28a745;
   border-radius: 10px;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 h1 {
   text-align: center;
-  color: #43392F;
+  color: #28a745;
 }
 .form-group {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   margin-bottom: 15px;
 }
 label {
-  flex: 0 0 150px;
-  margin-right: 10px;
+  margin-bottom: 5px;
+  color: #333;
+  text-align: left;
 }
 input, select, textarea {
-  flex: 1;
-  padding: 8px;
-  box-sizing: border-box;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: #28a745;
+  outline: none;
 }
 button {
-  background-color: #43392F;
+  background-color: #28a745;
   color: white;
   padding: 10px 20px;
   border: none;
+  border-radius: 5px;
   cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
 }
 button[type="submit"] {
   display: block;
   width: 100%;
   margin-top: 20px;
 }
+button:hover {
+  background-color: #218838;
+}
 img {
   display: block;
   margin-top: 10px;
   max-width: 100%;
-}
-.file-input-group {
-  display: flex;
-  align-items: center;
-}
-.file-input-group input[type="file"] {
-  flex: 1;
-}
-.file-input-group button {
-  margin-left: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
 }
 </style>
