@@ -62,6 +62,9 @@ public class ChocolateService {
     @Consumes(MediaType.APPLICATION_JSON)
     public Chocolate save(Chocolate chocolate) {
         ChocolateDAO dao = (ChocolateDAO) ctx.getAttribute("chocolateDAO");
+        if(!dao.validateChocolate(chocolate)) {
+        	return null;
+        }
         return dao.save(chocolate);
     }
 

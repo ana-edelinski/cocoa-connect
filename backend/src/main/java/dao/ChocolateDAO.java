@@ -80,6 +80,40 @@ public class ChocolateDAO {
 		return chocolate;
 	}
     
+    public boolean validateChocolate(Chocolate chocolate) {
+    	if(chocolate.getName() == null || chocolate.getName().equals("")) {
+    		return false;
+    	}
+    	if(chocolate.getPrice() <= 0) {
+    		return false;
+    	}
+    	if(chocolate.getKind() == null) {
+    		return false;
+    	}
+    	if(chocolate.getType() == null) {
+    		return false;
+    	}
+    	if(chocolate.getFactory() <= 0) {
+    		return false;
+    	}
+    	if(chocolate.getWeight() <= 0) {
+    		return false;
+    	}
+    	if(chocolate.getDescription().equals("")) {
+    		return false;
+    	}
+    	/*if(chocolate.getImage().equals("")) {
+    		return false;
+    	}*/
+    	if(chocolate.getStatus() == null) {
+    		return false;
+    	}
+    	if(chocolate.getQuantity() <= 0) {
+    		return false;
+    	}
+    	return true;
+    }
+    
     private void loadProducts(String contextPath) {
 		BufferedReader in = null;
 		try {
