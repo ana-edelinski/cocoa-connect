@@ -4,7 +4,10 @@
     <div v-if="factory">
       <h2>Factory Information</h2>
       <p><strong>Name:</strong> {{ factory.name }}</p>
-      <p><strong>Working Hours:</strong> {{ factory.workingHours }}</p>
+      <p v-if="factory.workingHours">
+        <strong>Working Hours:</strong>
+        {{ formatWorkingHours(factory.workingHours) }}
+      </p>
       <p><strong>Status:</strong> {{ factory.factoryStatus }}</p>
       <p><strong>Location:</strong> {{ factory.city }}, {{ factory.country }}</p>
       <p v-if="factory.logo"><strong>Logo:</strong> <img :src="factory.logo" alt="Factory Logo" width="100" /></p>
@@ -61,7 +64,7 @@ import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const route = useRoute();
-const factoryId = route.params.factoryId; 
+const factoryId = route.params.factoryId;
 
 defineProps({
   msg: {
@@ -104,6 +107,10 @@ function deleteChocolate(chocolateId) {
 
 function editChocolate(chocolateId) {
   router.push({ name: 'editChocolate', params: { chocolateId } });
+}
+
+function formatWorkingHours(workingHours) {
+  return `${workingHours.startTime.slice(0, 5)} - ${workingHours.endTime.slice(0, 5)}`;
 }
 </script>
 

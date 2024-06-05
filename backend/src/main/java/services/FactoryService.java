@@ -1,4 +1,3 @@
-
 package services;
 
 import java.util.Collection;
@@ -16,10 +15,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import beans.Chocolate;
 import beans.Factory;
-import dao.ChocolateDAO;
 import dao.FactoryDAO;
+
 @Path("/factories")
 public class FactoryService {
 	@Context
@@ -29,7 +27,7 @@ public class FactoryService {
 	
 	@PostConstruct
 	public void init() {
-		if(ctx.getAttribute("factoryDao") == null) {
+		if (ctx.getAttribute("factoryDao") == null) {
 			String contextPath = ctx.getRealPath("");
 			ctx.setAttribute("factoryDao", new FactoryDAO(contextPath));
 		}
@@ -56,9 +54,9 @@ public class FactoryService {
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Factory update(@PathParam("id") Integer id, Factory updatedChocolate) {
+	public Factory update(@PathParam("id") Integer id, Factory updatedFactory) {
 		FactoryDAO dao = (FactoryDAO) ctx.getAttribute("factoryDao");
-	    return dao.update(id, updatedChocolate);
+	    return dao.update(id, updatedFactory);
 	}
 	
 	@POST
@@ -70,16 +68,12 @@ public class FactoryService {
 		return dao.save(factory);
     }
 
-	
-
     @DELETE
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-    public void deleteChocolate(@PathParam("id") Integer id) {
+    public void deleteFactory(@PathParam("id") Integer id) {
         FactoryDAO dao = (FactoryDAO) ctx.getAttribute("factoryDao");
-        dao.deleteChocolate(id);
+        dao.deleteFactory(id);
     }
-
-    
 }

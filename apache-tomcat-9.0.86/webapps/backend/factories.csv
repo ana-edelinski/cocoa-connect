@@ -1,10 +1,10 @@
-1;Milka;OPENED;Bludenz;Austrija;4.5;false
-2;Lindt & Sprüngli;OPENED;Kilchberg;Švajcarska;4.8;true
-3;Cadbury;OPENED;Birmingham;Velika Britanija;4.2;true
-4;Hershey's Chocolate World;OPENED;Hershey;Sjedinjene Američke Države;4.6;false
-5;Ferrero;OPENED;Alba;Italija;4.7;false
-6;Godiva;CLOSED;Brisel;Belgija;4.3;false
-7;Nestlé;OPENED;Vevey;Švajcarska;4.4;false
-8;Toblerone;OPENED;Bern;Švajcarska;4.6;true
-9;Thorntons;CLOSED;Derbi;Velika Britanija;4.1;false
-10;Mars;OPENED;Hackettstown;Sjedinjene Američke Države;4.5;true
+1;Milka;OPENED;Bludenz;Austrija;4.5;false;http://example.com/milka-logo.png;08:00-17:00
+2;Lindt & Sprüngli;OPENED;Kilchberg;Švajcarska;4.8;true;http://example.com/lindt-logo.png;08:00-17:00
+3;Cadbury;OPENED;Birmingham;Velika Britanija;4.2;true;http://example.com/cadbury-logo.png;08:00-17:00
+4;Hershey's Chocolate World;OPENED;Hershey;Sjedinjene Američke Države;4.6;false;http://example.com/hershey-logo.png;08:00-17:00
+5;Ferrero;OPENED;Alba;Italija;4.7;false;http://example.com/ferrero-logo.png;08:00-17:00
+6;Godiva;CLOSED;Brisel;Belgija;4.3;false;http://example.com/godiva-logo.png;08:00-17:00
+7;Nestlé;OPENED;Vevey;Švajcarska;4.4;false;http://example.com/nestle-logo.png;08:00-17:00
+8;Toblerone;OPENED;Bern;Švajcarska;4.6;true;http://example.com/toblerone-logo.png;08:00-17:00
+9;Thorntons;CLOSED;Derbi;Velika Britanija;4.1;false;http://example.com/thorntons-logo.png;08:00-17:00
+10;Mars;OPENED;Hackettstown;Sjedinjene Američke Države;4.5;true;http://example.com/mars-logo.png;08:00-17:00
