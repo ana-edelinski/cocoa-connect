@@ -113,7 +113,7 @@ tbody tr:nth-of-type(even) {
 }
 
 tbody tr:last-of-type {
-  border-bottom: 2px solid #43392F9;
+  border-bottom: 2px solid #43392F;
 }
 
 img {
