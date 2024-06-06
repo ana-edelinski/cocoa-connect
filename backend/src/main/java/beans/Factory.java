@@ -12,9 +12,10 @@ public class Factory {
 	private boolean deleted;
 	private String logo; 
 	private WorkingHours workingHours;
+	private String comment; 
 
 	public Factory(int id, String name, String factoryStatus, String city, String country,
-			double averageRating, boolean deleted, String logo, WorkingHours workingHours) {
+			double averageRating, boolean deleted, String logo, WorkingHours workingHours, String comment) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -25,6 +26,16 @@ public class Factory {
 		this.deleted = deleted;
 		this.logo = logo;
 		this.workingHours = workingHours;
+		this.comment = comment; 
+	}
+
+	// Getter and setter methods for comment
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
 	}
 
 	public boolean isDeleted() {

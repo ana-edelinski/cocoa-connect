@@ -50,6 +50,7 @@ public class FactoryDAO {
             f.setAverageRating(factory.getAverageRating());
             f.setLogo(factory.getLogo());
             f.setWorkingHours(factory.getWorkingHours());
+            f.setComment(factory.getComment()); // Update comment field
         }
         saveToFile(contextPath);
         return f;
@@ -76,7 +77,7 @@ public class FactoryDAO {
             File file = new File(contextPath + "/factories.csv");
             System.out.println(file.getCanonicalPath());
             in = new BufferedReader(new FileReader(file));
-            String line, id = "", name = "", factoryStatus = "", city = "", country = "", averageRating = "", deleted = "", logo = "", workingHours = "";
+            String line, id = "", name = "", factoryStatus = "", city = "", country = "", averageRating = "", deleted = "", logo = "", workingHours = "", comment = "";
             StringTokenizer st;
             while ((line = in.readLine()) != null) {
                 line = line.trim();
@@ -93,10 +94,11 @@ public class FactoryDAO {
                     deleted = st.nextToken().trim();
                     logo = st.nextToken().trim();
                     workingHours = st.nextToken().trim();
+                    comment = st.nextToken().trim(); // Read comment
                 }
                 String[] hours = workingHours.split("-");
                 WorkingHours wh = new WorkingHours(LocalTime.parse(hours[0]), LocalTime.parse(hours[1]));
-                factories.put(Integer.parseInt(id), new Factory(Integer.parseInt(id), name, factoryStatus, city, country, Double.parseDouble(averageRating), Boolean.parseBoolean(deleted), logo, wh));
+                factories.put(Integer.parseInt(id), new Factory(Integer.parseInt(id), name, factoryStatus, city, country, Double.parseDouble(averageRating), Boolean.parseBoolean(deleted), logo, wh, comment));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -128,7 +130,8 @@ public class FactoryDAO {
                 line.append(factory.isDeleted()).append(";");
                 line.append(factory.getLogo()).append(";");
                 line.append(factory.getWorkingHours().getStartTime().toString()).append("-");
-                line.append(factory.getWorkingHours().getEndTime().toString());
+                line.append(factory.getWorkingHours().getEndTime().toString()).append(";");
+                line.append(factory.getComment()); // Append comment
                 out.write(line.toString());
                 out.newLine();
             }
