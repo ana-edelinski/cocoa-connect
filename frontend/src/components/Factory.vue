@@ -2,7 +2,7 @@
   <div class="container">
     <header>
       <h1>{{ msg }}</h1>
-      <h2>Our Factories: </h2>
+      <h2>Our Factories </h2>
     </header>
     <div class="factories-grid">
       <div v-for="factory in filtredFactories" :key="factory.id" class="factory-card">
@@ -11,7 +11,7 @@
         <p>{{ factory.city }}, {{ factory.country }}</p>
         <p>Average Rating: {{ factory.averageRating }}</p>
         <p class="status" :class="{'open': factory.factoryStatus === 'OPENED', 'closed': factory.factoryStatus === 'CLOSED'}">{{ formatStatus(factory.factoryStatus) }}</p>
-        <button class="btn btn-view" @click="viewChocolates(factory.id)"> View chocolates </button>
+        <button class="btn btn-view" @click="viewChocolates(factory.id)"> PREVIEW </button>
       </div>
     </div>
   </div>
@@ -83,6 +83,8 @@ header h1 {
 header h2 {
   text-align: left;
   margin-left: 70px;
+  font-size: xx-large;
+  color: #2D1E17;
 }
 
 .factories-grid {
@@ -134,11 +136,12 @@ header h2 {
   border: none;
   border-radius: 5px;
   color: #fff;
-  background-color: #3498db;
+  background-color: #523F31;
   transition: background-color 0.3s ease;
+  font-weight: bold;
 }
 
 .btn:hover {
-  background-color: #2980b9;
+  background-color: #796254;
 }
 </style>

@@ -150,7 +150,6 @@ header {
   margin-bottom: 50px;
   margin-left: 170px;
   margin-top: 50px;
-
 }
 
 .factory-details-box {
@@ -178,8 +177,8 @@ header {
 
 .factory-logo img {
   max-width: 100%;
-  height: 200px;
-  width: 200px;
+  height: auto;
+  width: auto;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
