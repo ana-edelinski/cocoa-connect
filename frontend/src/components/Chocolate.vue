@@ -216,6 +216,7 @@ header {
   flex-grow: 1;
   margin-bottom: 10px;
   font-family: "Poppins", sans-serif;
+  text-align: justify;
 }
 
 .btn {

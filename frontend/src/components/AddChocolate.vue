@@ -177,7 +177,8 @@ button {
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 14px;
+  font-weight: 500;
   transition: background-color 0.3s ease;
   font-family: "Poppins", sans-serif;
 }
