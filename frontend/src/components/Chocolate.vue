@@ -1,9 +1,5 @@
 <template>
   <div class="container">
-    <header>
-      <h1 class="factory-name">{{ factory ? factory.name : msg }}</h1>
-    </header>
-
     <div v-if="factory" class="factory-info">
       <div class="factory-details-box">
         <div class="factory-details">
@@ -14,7 +10,7 @@
           <p><strong>Status:</strong> {{ factory.factoryStatus }}</p>
           <p><strong>Location:</strong> {{ factory.city }}, {{ factory.country }}</p>
           <p v-if="factory.averageRating"><strong>Rating:</strong> {{ factory.averageRating }}</p>
-          <p v-if="factory.comment"><strong>Comment:</strong> {{ factory.comment }}</p> <!-- Added comment field -->
+          <p v-if="factory.comment"><strong>Comment:</strong> {{ factory.comment }}</p>
           <div v-if="factory.comments && factory.comments.length">
             <strong>Comments:</strong>
             <ul>
@@ -29,42 +25,29 @@
     </div>
 
     <section class="chocolates-section">
-      <h2>Chocolates</h2>
-      <table class="chocolates-table">
-        <thead>
-          <tr>
-            <th>Image</th>
-            <th>Name</th>
-            <th>Price</th>
-            <th>Type</th>
-            <th>Kind</th>
-            <th>Weight</th>
-            <th>Description</th>
-            <th></th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="chocolate in chocolates" :key="chocolate.id">
-            <td><img :src="chocolate.image" alt="Image" width="50" /></td>
-            <td>{{ chocolate.name }}</td>
-            <td>{{ chocolate.price }}</td>
-            <td>{{ chocolate.type }}</td>
-            <td>{{ chocolate.kind }}</td>
-            <td>{{ chocolate.weight }} g</td>
-            <td>{{ chocolate.description }}</td>
-            <td>
-              <button class="btn btn-delete" @click="deleteChocolate(chocolate.id)">Delete</button>
-            </td>
-            <td>
-              <button class="btn btn-edit" @click="editChocolate(chocolate.id)">Edit</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <h2 class="section-title">Our products</h2>
+      <div class="chocolates-grid">
+        <div v-for="chocolate in chocolates" :key="chocolate.id" class="chocolate-card">
+          <img :src="chocolate.image" alt="Chocolate Image" class="chocolate-image" />
+          <h3>{{ chocolate.name }}</h3>
+          <p><strong>Price:</strong> {{ chocolate.price }}</p>
+          <p><strong>Type:</strong> {{ chocolate.type }}</p>
+          <p><strong>Kind:</strong> {{ chocolate.kind }}</p>
+          <p><strong>Weight:</strong> {{ chocolate.weight }} g</p>
+          <p class="chocolate-description"><strong>Description:</strong> {{ chocolate.description }}</p>
+          <div class="buttons">
+            <button class="btn btn-delete" @click="deleteChocolate(chocolate.id)">Delete</button>
+            <button class="btn btn-edit" @click="editChocolate(chocolate.id)">Edit</button>
+          </div>
+        </div>
+      </div>
     </section>
   </div>
 </template>
+
+
+
+
 
 <script setup>
 import { ref, onMounted } from 'vue';
@@ -125,22 +108,18 @@ function formatWorkingHours(workingHours) {
 </script>
 
 <style>
+
 .container {
   width: 90%;
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
-  font-family: 'Arial', sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 
 header {
   text-align: center;
   margin-bottom: 20px;
-}
-
-.factory-name {
-  color: #800080; 
-  text-align: center;
 }
 
 .factory-info {
@@ -187,51 +166,90 @@ header {
   margin-top: 20px;
 }
 
-.chocolates-table {
+.section-title {
+  color: #2D1E17;
+  text-align: center;
+  font-family: "Poppins", sans-serif;
+  font-size: xx-large;
+  margin-bottom: 15px;
+  margin-top: -30px;
+}
+
+.chocolates-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.chocolate-card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px;
+  transition: transform 0.2s;
+}
+
+.chocolate-card:hover {
+  transform: scale(1.05);
+}
+
+.chocolate-image {
   width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
+  height: 200px;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 5px;
+  margin-bottom: 10px;
 }
 
-.chocolates-table thead tr {
-  background-color: #009879;
-  color: #ffffff;
-  text-align: left;
-  font-weight: bold;
+.chocolate-card p {
+  margin: 5px 0;
 }
 
-.chocolates-table th, .chocolates-table td {
-  padding: 12px 15px;
-  border: 1px solid #ddd;
-}
-
-.chocolates-table tbody tr {
-  border-bottom: 1px solid #ddd;
-}
-
-.chocolates-table tbody tr:nth-of-type(even) {
-  background-color: #f3f3f3;
-}
-
-.chocolates-table tbody tr:last-of-type {
-  border-bottom: 2px solid #009879;
+.chocolate-description {
+  flex-grow: 1;
+  margin-bottom: 10px;
+  font-family: "Poppins", sans-serif;
+  text-align: justify;
 }
 
 .btn {
-  padding: 8px 12px;
-  margin: 2px;
+  padding: 10px 20px;
   cursor: pointer;
   border: none;
-  border-radius: 4px;
+  border-radius: 5px;
   color: #fff;
-  text-align: center;
+  background-color: #523F31;
+  transition: background-color 0.3s ease;
+  font-weight: 500;
+  font-family: "Poppins", sans-serif;
+}
+
+.btn:hover {
+  background-color: #796254;
 }
 
 .btn-delete {
-  background-color: #e74c3c;
+  background-color: #523F31;
+  margin-right: 10px;
+  font-family: "Poppins", sans-serif;
 }
 
 .btn-edit {
-  background-color: #3498db;
+  background-color: #523F31;
+  font-family: "Poppins", sans-serif;
 }
+
+.buttons {
+  display: flex;
+  justify-content: center;
+}
+
+
 </style>
