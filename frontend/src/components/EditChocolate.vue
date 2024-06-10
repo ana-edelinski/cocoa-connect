@@ -91,7 +91,7 @@ export default {
   },
   methods: {
     loadFactories() {
-      axios.get('http://localhost:8080/backend/rest/factories/')
+      axios.get('http://localhost:8080/chocolate-factory/rest/factories/')
         .then(response => {
           this.factories = response.data;
           console.log(this.factories);
@@ -102,11 +102,11 @@ export default {
     },
     loadChocolate() {
       const chocolateId = this.$route.params.chocolateId;
-      axios.get(`http://localhost:8080/backend/rest/chocolates/${chocolateId}`)
+      axios.get(`http://localhost:8080/chocolate-factory/rest/chocolates/${chocolateId}`)
         .then(response => {
           this.chocolate = response.data;
           const factoryId = this.chocolate.factory;
-          axios.get(`http://localhost:8080/backend/rest/factories/${factoryId}`)
+          axios.get(`http://localhost:8080/chocolate-factory/rest/factories/${factoryId}`)
             .then(response => {
               console.log('Factory details:', response.data);
               this.chocolate.factory = response.data.id;
@@ -129,7 +129,7 @@ export default {
           this.chocolate.factory = f.id;
         }
       });
-      axios.put(`http://localhost:8080/backend/rest/chocolates/${this.chocolate.id}`, this.chocolate)
+      axios.put(`http://localhost:8080/chocolate-factory/rest/chocolates/${this.chocolate.id}`, this.chocolate)
         .then(response => {
           const factoryId = this.chocolate.factory;
           this.$router.push({ name: 'chocolates', params: { factoryId } });

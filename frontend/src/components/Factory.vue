@@ -2,32 +2,18 @@
   <div class="container">
     <header>
       <h1>{{ msg }}</h1>
-      <h2>FABRIKE ČOKOLADE</h2>
+      <h2>Our Factories: </h2>
     </header>
-    <table class="factories-table">
-      <thead>
-        <tr>
-          <th>Logo</th>
-          <th>Name</th>
-          <th>City</th>
-          <th>Country</th>
-          <th>Status</th>
-          <th>Average Rating</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="factory in filtredFactories" :key="factory.id">
-          <td><img :src="factory.logo" alt="Logo" width="50" /></td>
-          <td>{{ factory.name }}</td>
-          <td>{{ factory.city }}</td>
-          <td>{{ factory.country }}</td>
-          <td>{{ formatStatus(factory.factoryStatus) }}</td>
-          <td>{{ factory.averageRating }}</td>
-          <td><button class="btn btn-view" @click="viewChocolates(factory.id)"> View chocolates </button></td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="factories-grid">
+      <div v-for="factory in filtredFactories" :key="factory.id" class="factory-card">
+        <img :src="factory.logo" alt="Logo" class="factory-logo" />
+        <h3>{{ factory.name }}</h3>
+        <p>{{ factory.city }}, {{ factory.country }}</p>
+        <p class="status" :class="{'open': factory.factoryStatus === 'OPENED', 'closed': factory.factoryStatus === 'CLOSED'}">{{ formatStatus(factory.factoryStatus) }}</p>
+        <p>Average Rating: {{ factory.averageRating }}</p>
+        <button class="btn btn-view" @click="viewChocolates(factory.id)"> View chocolates </button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -53,7 +39,7 @@ onMounted(() => {
 });
 
 function loadFactories() {
-  axios.get('http://localhost:8080/backend/rest/factories/')
+  axios.get('http://localhost:8080/chocolate-factory/rest/factories/')
     .then(response => {
       factories.value = response.data.sort((a, b) => {
         if (a.factoryStatus === 'OPENED' && b.factoryStatus !== 'OPENED') return -1;
@@ -86,83 +72,73 @@ function formatStatus(status) {
   margin: 0 auto;
   padding: 20px;
   font-family: 'Arial', sans-serif;
-}
-
-header {
   text-align: center;
-  margin-bottom: 20px;
 }
 
 header h1 {
-  margin-bottom: 10px;
+  margin-bottom: 15px;
+  text-align: left;
 }
 
 header h2 {
-  margin-top: 0;
-  margin-bottom: 30px; }
-
-.factories-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 20px 0;
-  font-size: 1em;
-  font-family: 'Arial', sans-serif;
-  min-width: 400px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  overflow: hidden;
+  text-align: left;
+  margin-left: 70px;
 }
 
-.factories-table thead tr {
-  background-color: #009879;
-  color: #ffffff;
-  text-align: left;
+.factories-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.factory-card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  width: 300px;
+  text-align: center;
+  padding: 20px;
+  transition: transform 0.2s;
+}
+
+.factory-card:hover {
+  transform: scale(1.05);
+}
+
+.factory-logo {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 5px;
+}
+
+.status {
   font-weight: bold;
 }
 
-.factories-table th, .factories-table td {
-  padding: 12px 15px;
-  border: 1px solid #ddd;
+.status.open {
+  color: green;
 }
 
-.factories-table tbody tr {
-  border-bottom: 1px solid #ddd;
-}
-
-.factories-table tbody tr:nth-of-type(even) {
-  background-color: #f3f3f3;
-}
-
-.factories-table tbody tr:last-of-type {
-  border-bottom: 2px solid #009879;
-}
-
-img {
-  max-width: 100%;
-  height: auto;
+.status.closed {
+  color: red;
 }
 
 .btn {
-  padding: 8px 12px;
-  margin: 2px;
+  padding: 10px 20px;
+  margin-top: 10px;
   cursor: pointer;
   border: none;
-  border-radius: 4px;
+  border-radius: 5px;
   color: #fff;
-  text-align: center;
   background-color: #3498db;
   transition: background-color 0.3s ease;
 }
 
 .btn:hover {
-  background-color: #2980b9;
-}
-
-.btn-view {
-  background-color: #3498db;
-}
-
-.btn-view:hover {
   background-color: #2980b9;
 }
 </style>

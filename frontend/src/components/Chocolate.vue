@@ -93,7 +93,7 @@ onMounted(() => {
 });
 
 function loadFactory() {
-  axios.get('http://localhost:8080/backend/rest/factories/' + factoryId)
+  axios.get('http://localhost:8080/chocolate-factory/rest/factories/' + factoryId)
     .then(response => {
       factory.value = response.data;
     })
@@ -101,7 +101,7 @@ function loadFactory() {
 }
 
 function loadChocolates() {
-  axios.get('http://localhost:8080/backend/rest/chocolates/getAllForFactory/' + factoryId)
+  axios.get('http://localhost:8080/chocolate-factory/rest/chocolates/getAllForFactory/' + factoryId)
     .then(response => {
       chocolates.value = response.data;
     })
@@ -109,7 +109,7 @@ function loadChocolates() {
 }
 
 function deleteChocolate(chocolateId) {
-  axios.delete('http://localhost:8080/backend/rest/chocolates/' + chocolateId)
+  axios.delete('http://localhost:8080/chocolate-factory/rest/chocolates/' + chocolateId)
     .then(() => {
       chocolates.value = chocolates.value.filter(chocolate => chocolate.id !== chocolateId);
     })
