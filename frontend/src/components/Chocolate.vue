@@ -1,7 +1,5 @@
 <template>
   <div class="container">
-    
-
     <div v-if="factory" class="factory-info">
       <div class="factory-details-box">
         <div class="factory-details">
@@ -27,7 +25,7 @@
     </div>
 
     <section class="chocolates-section">
-      <h2>Our products</h2>
+      <h2 class="section-title">Our products</h2>
       <div class="chocolates-grid">
         <div v-for="chocolate in chocolates" :key="chocolate.id" class="chocolate-card">
           <img :src="chocolate.image" alt="Chocolate Image" class="chocolate-image" />
@@ -46,6 +44,7 @@
     </section>
   </div>
 </template>
+
 
 
 
@@ -167,6 +166,15 @@ header {
   margin-top: 20px;
 }
 
+.section-title {
+  color: #2D1E17;
+  text-align: center;
+  font-family: "Poppins", sans-serif;
+  font-size: xx-large;
+  margin-bottom: 15px;
+  margin-top: -30px;
+}
+
 .chocolates-grid {
   display: flex;
   flex-wrap: wrap;
@@ -201,7 +209,7 @@ header {
 }
 
 .chocolate-card p {
-  margin: 5px 0; 
+  margin: 5px 0;
 }
 
 .chocolate-description {
@@ -227,13 +235,13 @@ header {
 }
 
 .btn-delete {
-  background-color: #e74c3c;
+  background-color: #523F31;
   margin-right: 10px;
   font-family: "Poppins", sans-serif;
 }
 
 .btn-edit {
-  background-color: #3498db;
+  background-color: #523F31;
   font-family: "Poppins", sans-serif;
 }
 
@@ -242,13 +250,5 @@ header {
   justify-content: center;
 }
 
-h2 {
-  color: #2D1E17; 
-  text-align: left;
-  margin-left: 175px;
-  margin-top: -20px;
-  font-family: "Poppins", sans-serif;
-  font-size: xx-large;
-}
 
 </style>

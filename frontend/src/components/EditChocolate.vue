@@ -155,16 +155,16 @@ export default {
 <style scoped>
 .edit-chocolate-container {
   max-width: 600px;
-  margin: 0 auto;
+  margin: 50px auto;
   padding: 20px;
-  border: 2px solid #28a745;
+  border: 2px solid #523F31;
   border-radius: 10px;
   background-color: #f9f9f9;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 h1 {
   text-align: center;
-  color: #28a745;
+  color: #523F31;
   margin-bottom: 20px;
 }
 .form-group {
@@ -184,11 +184,11 @@ input, select, textarea {
   font-size: 16px;
 }
 input:focus, select:focus, textarea:focus {
-  border-color: #28a745;
+  border-color: #523F31;
   outline: none;
 }
 button {
-  background-color: #28a745;
+  background-color: #523F31;
   color: white;
   padding: 10px 20px;
   border: none;
@@ -196,14 +196,16 @@ button {
   cursor: pointer;
   font-size: 16px;
   transition: background-color 0.3s ease;
+  font-family: "Poppins", sans-serif;
 }
 button[type="submit"] {
   display: block;
-  width: 100%;
+  width: auto;
   margin-top: 20px;
+  margin: 20px auto 0;
 }
 button:hover {
-  background-color: #218838;
+  background-color: #796254;
 }
 img {
   display: block;
