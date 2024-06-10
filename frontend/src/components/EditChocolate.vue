@@ -69,7 +69,7 @@ export default {
         kind: '',
         weight: '',
         description: '',
-        image: null,
+        image: '',
         quantity: 0,
         factory: ''
       },
