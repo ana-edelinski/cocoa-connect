@@ -7,7 +7,6 @@
     <div v-if="factory" class="factory-info">
       <div class="factory-details-box">
         <div class="factory-details">
-          <h2>Factory Information</h2>
           <p v-if="factory.workingHours">
             <strong>Working Hours:</strong>
             {{ formatWorkingHours(factory.workingHours) }}
@@ -140,7 +139,8 @@ header {
 }
 
 .factory-name {
-  color: #800080; /* Purple color for the factory name */
+  color: #800080; 
+  text-align: center;
 }
 
 .factory-info {
@@ -149,12 +149,13 @@ header {
   align-items: center;
   margin-bottom: 50px;
   margin-left: 170px;
-  margin-up: 50;
+  margin-top: 50px;
 
 }
 
 .factory-details-box {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   width: 80%;
@@ -170,9 +171,14 @@ header {
   align-items: left;
 }
 
+.factory-logo {
+  flex: 0 1 200px;
+  margin-left: auto;
+}
+
 .factory-logo img {
   max-width: 100%;
-  height: auto;
+  height: 200px;
   width: 200px;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);

@@ -9,8 +9,8 @@
         <img :src="factory.logo" alt="Logo" class="factory-logo" />
         <h3>{{ factory.name }}</h3>
         <p>{{ factory.city }}, {{ factory.country }}</p>
-        <p class="status" :class="{'open': factory.factoryStatus === 'OPENED', 'closed': factory.factoryStatus === 'CLOSED'}">{{ formatStatus(factory.factoryStatus) }}</p>
         <p>Average Rating: {{ factory.averageRating }}</p>
+        <p class="status" :class="{'open': factory.factoryStatus === 'OPENED', 'closed': factory.factoryStatus === 'CLOSED'}">{{ formatStatus(factory.factoryStatus) }}</p>
         <button class="btn btn-view" @click="viewChocolates(factory.id)"> View chocolates </button>
       </div>
     </div>
