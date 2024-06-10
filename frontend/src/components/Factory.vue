@@ -71,7 +71,7 @@ function formatStatus(status) {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
-  font-family: 'Arial', sans-serif;
+  font-family: "Poppins", sans-serif;
   text-align: center;
 }
 
@@ -85,6 +85,7 @@ header h2 {
   margin-left: 70px;
   font-size: xx-large;
   color: #2D1E17;
+  font-family: "Poppins", sans-serif;
 }
 
 .factories-grid {
@@ -103,6 +104,7 @@ header h2 {
   text-align: center;
   padding: 20px;
   transition: transform 0.2s;
+  font-family: "Poppins", sans-serif;
 }
 
 .factory-card:hover {
@@ -138,7 +140,8 @@ header h2 {
   color: #fff;
   background-color: #523F31;
   transition: background-color 0.3s ease;
-  font-weight: bold;
+  font-weight: 500;
+  font-family: "Poppins", sans-serif;
 }
 
 .btn:hover {
