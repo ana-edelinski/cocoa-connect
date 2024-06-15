@@ -5,6 +5,9 @@ import java.time.LocalTime;
 public class WorkingHours {
     private LocalTime startTime;
     private LocalTime endTime;
+    
+    public WorkingHours() {
+    }
 
     public WorkingHours(LocalTime startTime, LocalTime endTime) {
         this.startTime = startTime;

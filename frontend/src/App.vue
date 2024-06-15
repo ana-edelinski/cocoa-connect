@@ -6,8 +6,10 @@
       </div>
       <div class="nav-links">
         <router-link to="/" class="nav-link">Home</router-link>
-        <router-link to="/addChocolate" class="nav-link">Add Chocolate</router-link>
-        <router-link to="/login" class="nav-link">Login</router-link>
+        <router-link to="/add-chocolate" class="nav-link">Add Chocolate</router-link>
+        <router-link to="/create-factory" class="nav-link">Create Factory</router-link>
+        <router-link to="/sign-in" class="nav-link">Sign In</router-link>
+        <router-link to="/sign-up" class="nav-link">Sign Up</router-link> 
       </div>
     </nav>
     <router-view/>

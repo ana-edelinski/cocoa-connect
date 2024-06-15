@@ -13,9 +13,13 @@ public class Factory {
 	private String logo; 
 	private WorkingHours workingHours;
 	private String comment; 
+	//
+	private int managerId;
+	
+	public Factory() {}
 
 	public Factory(int id, String name, String factoryStatus, String city, String country,
-			double averageRating, boolean deleted, String logo, WorkingHours workingHours, String comment) {
+			double averageRating, boolean deleted, String logo, WorkingHours workingHours, String comment, int managerId) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -27,6 +31,7 @@ public class Factory {
 		this.logo = logo;
 		this.workingHours = workingHours;
 		this.comment = comment; 
+		this.managerId = managerId;
 	}
 
 	// Getter and setter methods for comment
@@ -109,4 +114,13 @@ public class Factory {
 	public void setWorkingHours(WorkingHours workingHours) {
 		this.workingHours = workingHours;
 	}
+
+	public int getManagerId() {
+		return managerId;
+	}
+
+	public void setManagerId(int managerId) {
+		this.managerId = managerId;
+	}
+	
 }
