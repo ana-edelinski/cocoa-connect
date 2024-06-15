@@ -13,7 +13,6 @@ public class Factory {
 	private String logo; 
 	private WorkingHours workingHours;
 	private String comment; 
-	//
 	private int managerId;
 	
 	public Factory() {}
