@@ -10,6 +10,7 @@
         <router-link to="/create-factory" class="nav-link">Create Factory</router-link>
         <router-link to="/sign-in" class="nav-link">Sign In</router-link>
         <router-link to="/sign-up" class="nav-link">Sign Up</router-link> 
+        <router-link to="/my-account" class="nav-link">My Account</router-link>
       </div>
     </nav>
     <router-view/>

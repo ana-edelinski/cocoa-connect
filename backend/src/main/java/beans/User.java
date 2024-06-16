@@ -1,8 +1,11 @@
 	package beans;
 	
 	import java.util.Date;
-	import enums.Gender;
-	import enums.Role;
+
+import javax.json.bind.annotation.JsonbDateFormat;
+
+import enums.Gender;
+import enums.Role;
 	
 	public class User {
 	    private int id; 
@@ -11,6 +14,7 @@
 	    private String name;
 	    private String surname;
 	    private Gender gender;
+	    @JsonbDateFormat("yyyy-MM-dd")
 	    private Date dateOfBirth;
 	    private Role role;
 	    private boolean isAssigned;

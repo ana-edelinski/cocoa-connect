@@ -17,7 +17,7 @@ import enums.Gender;
 import enums.Role;
 
 public class UserDAO {
-    private HashMap<Integer, User> users = new HashMap<>(); // Promijenjen tip ključa u mapi
+    private HashMap<Integer, User> users = new HashMap<>(); 
     private String contextPath;
 
     public UserDAO() {}

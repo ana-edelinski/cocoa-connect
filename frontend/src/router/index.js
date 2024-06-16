@@ -4,7 +4,8 @@ import AddChocolate from '../components/AddChocolate.vue';
 import Factory from '../components/Factory.vue';
 import Chocolate from '../components/Chocolate.vue';
 import EditChocolate from '../components/EditChocolate.vue';
-import CreateFactory from '../components/CreateFactory.vue'
+import CreateFactory from '../components/CreateFactory.vue';
+import MyAccount from '../components/MyAccount.vue'
 const routes = [
   {
     path: "/",
@@ -30,6 +31,11 @@ const routes = [
     path: "/create-factory",
     name: "createFactory",
     component: CreateFactory
+  },
+  {
+    path: "/my-account",
+    name: "myAccount",
+    component: MyAccount
   },
   {
     path: "/about",
