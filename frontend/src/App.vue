@@ -10,7 +10,14 @@
         <router-link to="/create-factory" class="nav-link">Create Factory</router-link>
         <router-link to="/sign-in" class="nav-link">Sign In</router-link>
         <router-link to="/sign-up" class="nav-link">Sign Up</router-link> 
-        <router-link to="/my-account" class="nav-link">My Account</router-link>
+
+        <div class="dropdown">
+          <img src="@/images/logout.png" alt="User Icon" class="user-icon" @click="toggleDropdown" />
+          <div v-if="showDropdown" class="dropdown-menu">
+            <router-link to="/my-account" class="dropdown-item" @click.native="closeDropdown">My Account</router-link>
+            <router-link to="/log-out" class="dropdown-item" @click.native="closeDropdown">Log Out</router-link>
+          </div>
+        </div>
       </div>
     </nav>
     <router-view/>
@@ -19,7 +26,31 @@
 
 <script>
 export default {
-  name: 'App'
+  name: 'App',
+  data() {
+    return {
+      showDropdown: false
+    }
+  },
+  mounted() {
+    document.addEventListener('click', this.handleClickOutside);
+  },
+  beforeDestroy() {
+    document.removeEventListener('click', this.handleClickOutside);
+  },
+  methods: {
+    toggleDropdown() {
+      this.showDropdown = !this.showDropdown;
+    },
+    closeDropdown() {
+      this.showDropdown = false;
+    },
+    handleClickOutside(event) {
+      if (!this.$el.contains(event.target)) {
+        this.closeDropdown();
+      }
+    }
+  }
 }
 </script>
 
@@ -66,5 +97,38 @@ export default {
 
 .nav-link.router-link-exact-active {
   color: #796254; 
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.user-icon {
+  height: 27px;
+  cursor: pointer;
+}
+
+.dropdown-menu {
+  display: block;
+  position: absolute;
+  top: 40px;
+  right: 0;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid #ddd;
+  z-index: 1000;
+}
+
+.dropdown-item {
+  display: block;
+  padding: 10px 20px;
+  text-decoration: none;
+  color: #2D1E17;
+  white-space: nowrap;
+}
+
+.dropdown-item:hover {
+  background-color: #f1f1f1;
 }
 </style>
