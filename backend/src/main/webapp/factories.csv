@@ -1,10 +1,10 @@
-1;Milka;OPENED;Bludenz;Austria;4.5;false;https://th.bing.com/th/id/R.ded4d8398d359e4625808a95a2396375?rik=Iat6rPq9fw8YFQ&pid=ImgRaw&r=0;08:00-17:00;A popular chocolate factory in Austria.
-2;Lindt & Sprüngli;OPENED;Kilchberg;Switzerland;4.8;true;https://logowik.com/content/uploads/images/lindt-sprungli5028.jpg;08:00-17:00;Famous for its Swiss chocolates.
-3;Cadbury;OPENED;Birmingham;United Kingdom;4.2;true;https://th.bing.com/th/id/OIP.fhs3eWNIWKpvBqb3cleZPAHaE3?rs=1&pid=ImgDetMain;08:00-17:00;Known for its Dairy Milk chocolate.
-4;Hershey's Chocolate World;OPENED;Hershey;United States;4.6;false;https://th.bing.com/th/id/OIP.Nj49ATxX_uDLiGzdRguOHwHaHa?rs=1&pid=ImgDetMain;08:00-17:00;One of the largest chocolate manufacturers in the US.
-5;Ferrero;OPENED;Alba;Italy;4.7;false;https://th.bing.com/th/id/OIP.eg-wvOnXIVLsXI9QI7GgrwHaEK?rs=1&pid=ImgDetMain;08:00-17:00;Makers of Nutella and Ferrero Rocher.
-6;Godiva;CLOSED;Brussels;Belgium;4.3;false;https://th.bing.com/th/id/R.b1a9e19110c30149d38cf7883c9af65c?rik=%2fuW22eYo0CwT6Q&pid=ImgRaw&r=0;08:00-17:00;Known for its premium chocolates.
-7;Nestlé;OPENED;Vevey;Switzerland;4.4;false;https://th.bing.com/th/id/R.74e1438d27f2d91f3ea461e9634a1100?rik=bLgyWo61hYUR6A&pid=ImgRaw&r=0;08:00-17:00;A global leader in nutrition and health.
-8;Toblerone;OPENED;Bern;Switzerland;4.6;true;https://th.bing.com/th/id/R.4453fed5317f6e5b7f808bcba9c011c9?rik=SGqqExRriFX0cw&pid=ImgRaw&r=0;08:00-17:00;Famous for its triangular chocolate bars.
-9;Thorntons;CLOSED;Derby;United Kingdom;4.1;false;https://www.morganwilliams.ca/wp-content/uploads/2014/10/Thorntons-Logo-square.jpg;08:00-17:00;Known for its toffee and chocolates.
-10;Mars;OPENED;Hackettstown;United States;4.5;true;https://th.bing.com/th/id/R.e03aa5193594c5b8b0915976f950f46c?rik=l1ID6WpVz8eisw&pid=ImgRaw&r=0;08:00-17:00;Makers of the popular Mars bar.
+1;Milka;OPENED;Bludenz;Austria;4.5;false;https://th.bing.com/th/id/R.ded4d8398d359e4625808a95a2396375?rik=Iat6rPq9fw8YFQ&pid=ImgRaw&r=0;08:00-17:00;A popular chocolate factory in Austria.;2
+2;Lindt & Sprüngli;OPENED;Kilchberg;Switzerland;4.8;true;https://logowik.com/content/uploads/images/lindt-sprungli5028.jpg;08:00-17:00;Famous for its Swiss chocolates.;3
+3;Cadbury;OPENED;Birmingham;United Kingdom;4.2;true;https://th.bing.com/th/id/OIP.fhs3eWNIWKpvBqb3cleZPAHaE3?rs=1&pid=ImgDetMain;08:00-17:00;Known for its Dairy Milk chocolate.;4
+4;Hershey's Chocolate World;OPENED;Hershey;United States;4.6;false;https://th.bing.com/th/id/OIP.Nj49ATxX_uDLiGzdRguOHwHaHa?rs=1&pid=ImgDetMain;08:00-17:00;One of the largest chocolate manufacturers in the US.;5
+5;Ferrero;OPENED;Alba;Italy;4.7;false;https://th.bing.com/th/id/OIP.eg-wvOnXIVLsXI9QI7GgrwHaEK?rs=1&pid=ImgDetMain;08:00-17:00;Makers of Nutella and Ferrero Rocher.;6
+6;Godiva;CLOSED;Brussels;Belgium;4.3;false;https://th.bing.com/th/id/R.b1a9e19110c30149d38cf7883c9af65c?rik=%2fuW22eYo0CwT6Q&pid=ImgRaw&r=0;08:00-17:00;Known for its premium chocolates.;7
+7;Nestlé;OPENED;Vevey;Switzerland;4.4;false;https://th.bing.com/th/id/R.74e1438d27f2d91f3ea461e9634a1100?rik=bLgyWo61hYUR6A&pid=ImgRaw&r=0;08:00-17:00;A global leader in nutrition and health.;8
+8;Toblerone;OPENED;Bern;Switzerland;4.6;true;https://th.bing.com/th/id/R.4453fed5317f6e5b7f808bcba9c011c9?rik=SGqqExRriFX0cw&pid=ImgRaw&r=0;08:00-17:00;Famous for its triangular chocolate bars.;9
+9;Thorntons;CLOSED;Derby;United Kingdom;4.1;false;https://www.morganwilliams.ca/wp-content/uploads/2014/10/Thorntons-Logo-square.jpg;08:00-17:00;Known for its toffee and chocolates.;10
+10;Mars;OPENED;Hackettstown;United States;4.5;true;https://th.bing.com/th/id/R.e03aa5193594c5b8b0915976f950f46c?rik=l1ID6WpVz8eisw&pid=ImgRaw&r=0;08:00-17:00;Makers of the popular Mars bar.;11

@@ -4,6 +4,8 @@ import AddChocolate from '../components/AddChocolate.vue';
 import Factory from '../components/Factory.vue';
 import Chocolate from '../components/Chocolate.vue';
 import EditChocolate from '../components/EditChocolate.vue';
+import CreateFactory from '../components/CreateFactory.vue';
+import MyAccount from '../components/MyAccount.vue'
 const routes = [
   {
     path: "/",
@@ -11,12 +13,12 @@ const routes = [
     component: Factory,
   },
   {
-    path: "/addChocolate",
+    path: "/add-chocolate",
     name: "addChocolate",
     component: AddChocolate
   },
   {
-    path: "/editChocolate/:chocolateId",
+    path: "/edit-chocolate/:chocolateId",
     name: "editChocolate",
     component: EditChocolate
   },
@@ -24,6 +26,16 @@ const routes = [
     path: "/chocolates/:factoryId",
     name: "chocolates",
     component: Chocolate
+  },
+  {
+    path: "/create-factory",
+    name: "createFactory",
+    component: CreateFactory
+  },
+  {
+    path: "/my-account",
+    name: "myAccount",
+    component: MyAccount
   },
   {
     path: "/about",
