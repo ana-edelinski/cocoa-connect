@@ -1,16 +1,16 @@
-package beans;
+package dto;
 
 import java.util.Date;
 
 import javax.json.bind.annotation.JsonbDateFormat;
 
+import beans.User;
 import enums.Gender;
 import enums.Role;
 
-public class User {
+public class UserDto {
 	private int id;
 	private String username;
-	private String password;
 	private String name;
 	private String surname;
 	private Gender gender;
@@ -19,22 +19,19 @@ public class User {
 	private Role role;
 	private boolean isAssigned;
 
-	public User() {
+	public UserDto() {
 		super();
 	}
-
-	public User(int id, String username, String password, String name, String surname, Gender gender, Date dateOfBirth,
-			Role role, boolean isAssigned) {
-		super();
-		this.id = id;
-		this.username = username;
-		this.password = password;
-		this.name = name;
-		this.surname = surname;
-		this.gender = gender;
-		this.dateOfBirth = dateOfBirth;
-		this.role = role;
-		this.isAssigned = isAssigned;
+	
+	public UserDto(User user) {
+		id = user.getId();
+		username = user.getUsername();
+		name = user.getName();
+		surname = user.getSurname();
+		gender = user.getGender();
+		dateOfBirth = user.getDateOfBirth();
+		role = user.getRole();
+		isAssigned = user.getIsAssigned();
 	}
 
 	public int getId() {
@@ -51,14 +48,6 @@ public class User {
 
 	public void setUsername(String username) {
 		this.username = username;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
 	}
 
 	public String getName() {
@@ -101,11 +90,12 @@ public class User {
 		this.role = role;
 	}
 
-	public boolean getIsAssigned() {
+	public boolean isAssigned() {
 		return isAssigned;
 	}
 
-	public void setIsAssigned(boolean isAssigned) {
+	public void setAssigned(boolean isAssigned) {
 		this.isAssigned = isAssigned;
 	}
+
 }

@@ -5,6 +5,8 @@ import Factory from '../components/Factory.vue';
 import Chocolate from '../components/Chocolate.vue';
 import EditChocolate from '../components/EditChocolate.vue';
 import CreateFactory from '../components/CreateFactory.vue';
+import Registration from '../components/Registration.vue';
+import SignIn from '../components/SignIn.vue';
 import MyAccount from '../components/MyAccount.vue'
 const routes = [
   {
@@ -27,6 +29,7 @@ const routes = [
     name: "chocolates",
     component: Chocolate
   },
+  
   {
     path: "/create-factory",
     name: "createFactory",
@@ -51,6 +54,16 @@ const routes = [
     name:"factories",
     component: Factory,
   },
+  {
+    path: "/registration",
+    name: "registration",
+    component: Registration
+  },
+  {
+    path: "/signIn",
+    name: "signIn",
+    component: SignIn
+  }
 ];
 
 const router = createRouter({

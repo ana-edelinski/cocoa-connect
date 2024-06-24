@@ -8,8 +8,9 @@
         <router-link to="/" class="nav-link">Home</router-link>
         <router-link to="/add-chocolate" class="nav-link">Add Chocolate</router-link>
         <router-link to="/create-factory" class="nav-link">Create Factory</router-link>
-        <router-link to="/sign-in" class="nav-link">Sign In</router-link>
-        <router-link to="/sign-up" class="nav-link">Sign Up</router-link> 
+        <router-link to="/signIn" class="nav-link">Sign In</router-link>
+        <router-link to="/registration" class="nav-link">Sign Up</router-link>
+       
 
         <div class="dropdown">
           <img src="@/images/logout.png" alt="User Icon" class="user-icon" @click="toggleDropdown" />
