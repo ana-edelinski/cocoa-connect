@@ -93,4 +93,25 @@ public class UserService {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
+    
+    @POST
+    @Path("/register-manager")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response registerManager(UserCreationDto userDto) {
+        UserDAO dao = (UserDAO) ctx.getAttribute("userDao");
+        try {
+            User user = userDto.convertToUser();
+            user.setRole(Role.MANAGER);
+            user.setIsAssigned(false);
+            user = dao.save(user);
+            
+            UserDto returnDto = new UserDto(user);
+            return Response.status(Response.Status.CREATED).entity(returnDto).build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
 }
