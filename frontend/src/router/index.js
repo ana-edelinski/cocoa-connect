@@ -5,9 +5,11 @@ import Factory from '../components/Factory.vue';
 import Chocolate from '../components/Chocolate.vue';
 import EditChocolate from '../components/EditChocolate.vue';
 import CreateFactory from '../components/CreateFactory.vue';
+import RegisteredUsers from '../components/RegisteredUsers.vue'
 import Registration from '../components/Registration.vue';
 import SignIn from '../components/SignIn.vue';
-import MyAccount from '../components/MyAccount.vue'
+import MyAccount from '../components/MyAccount.vue';
+
 const routes = [
   {
     path: "/",
@@ -53,6 +55,11 @@ const routes = [
     path:"/factories",
     name:"factories",
     component: Factory,
+  },
+  {
+    path: "/registered-users",
+    name: "registeredUsers",
+    component: RegisteredUsers,
   },
   {
     path: "/registration",
