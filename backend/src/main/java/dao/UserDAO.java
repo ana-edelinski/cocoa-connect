@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.StringTokenizer;
 
 import beans.User;
+import dto.SearchCriteriaDTO;
 import enums.Gender;
 import enums.Role;
 
@@ -181,4 +182,46 @@ public class UserDAO {
 			users.put(managerId, manager);
 		}
 	}
+	
+	public Collection<User> searchUsers(SearchCriteriaDTO criteria) {
+	    Collection<User> result = new ArrayList<>();
+
+	    for (User user : users.values()) {
+	        boolean match = true;
+
+	        // Check each criterion if not null or empty
+	        if (criteria.getUsername() != null && !criteria.getUsername().isEmpty()) {
+	            if (!user.getUsername().toLowerCase().contains(criteria.getUsername().toLowerCase())) {
+	                match = false;
+	            }
+	        }
+
+	        if (criteria.getName() != null && !criteria.getName().isEmpty()) {
+	            if (!user.getName().toLowerCase().contains(criteria.getName().toLowerCase())) {
+	                match = false;
+	            }
+	        }
+
+	        if (criteria.getSurname() != null && !criteria.getSurname().isEmpty()) {
+	            if (!user.getSurname().toLowerCase().contains(criteria.getSurname().toLowerCase())) {
+	                match = false;
+	            }
+	        }
+
+	        if (criteria.getRole() != null) {
+	            if (user.getRole() != criteria.getRole()) {
+	                match = false;
+	            }
+	        }
+
+
+	        // Add user to result if all criteria match
+	        if (match) {
+	            result.add(user);
+	        }
+	    }
+
+	    return result;
+	}
+
 }

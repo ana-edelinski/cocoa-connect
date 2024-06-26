@@ -16,6 +16,7 @@ import javax.ws.rs.core.Response;
 import beans.User;
 import dao.UserDAO;
 import dto.LoginDto;
+import dto.SearchCriteriaDTO;
 import dto.UserCreationDto;
 import dto.UserDto;
 import enums.ChocolateStatus;
@@ -133,6 +134,15 @@ public class UserService {
             e.printStackTrace();
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
+    }
+    
+    @POST
+    @Path("/search")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Collection<User> searchUsers(SearchCriteriaDTO criteria) {
+        UserDAO dao = (UserDAO) ctx.getAttribute("userDao");
+        return dao.searchUsers(criteria);
     }
 
 }
