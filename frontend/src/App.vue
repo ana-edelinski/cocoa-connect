@@ -16,6 +16,7 @@
         <div v-else-if="loggedUserRole === 'MANAGER'">
             <router-link to="/" class="nav-link">Home</router-link>
             <router-link to="/add-chocolate" class="nav-link">Add Chocolate</router-link>
+            <router-link to="/add-employee" class="nav-link">Add Employee</router-link>
         </div>
         <div v-else-if="loggedUserRole === 'EMPLOYEE'">
             <router-link to="/" class="nav-link">Home</router-link>

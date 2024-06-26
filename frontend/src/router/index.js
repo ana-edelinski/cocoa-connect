@@ -9,6 +9,7 @@ import RegisteredUsers from '../components/RegisteredUsers.vue'
 import Registration from '../components/Registration.vue';
 import SignIn from '../components/SignIn.vue';
 import MyAccount from '../components/MyAccount.vue';
+import AddEmployee from '../components/AddEmployee.vue';
 
 const routes = [
   {
@@ -42,6 +43,11 @@ const routes = [
     path: "/my-account",
     name: "myAccount",
     component: MyAccount
+  },
+  {
+    path: "/add-employee",
+    name: "addEmployee",
+    component: AddEmployee
   },
   {
     path: "/about",
