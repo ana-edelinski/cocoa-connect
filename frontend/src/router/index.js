@@ -16,6 +16,7 @@ const routes = [
     name: "home",
     component: Factory,
   },
+  
   {
     path: "/add-chocolate",
     name: "addChocolate",

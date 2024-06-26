@@ -120,7 +120,7 @@ export default {
   },
   methods: {
     loadAvailableManagers() {
-      axios.get('http://localhost:8080/chocolate-factory/rest/users/available-managers')
+      axios.get('http://localhost:8080/backend/rest/users/available-managers')
         .then(response => {
           this.availableManagers = response.data;
         })

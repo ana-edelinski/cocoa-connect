@@ -5,18 +5,33 @@
         <img src="@/images/logo-01.png" alt="COCOA connect Logo" class="logo-image" />
       </div>
       <div class="nav-links">
-        <router-link to="/" class="nav-link">Home</router-link>
-        <router-link to="/add-chocolate" class="nav-link">Add Chocolate</router-link>
-        <router-link to="/create-factory" class="nav-link">Create Factory</router-link>
-        <router-link to="/signIn" class="nav-link">Sign In</router-link>
-        <router-link to="/registration" class="nav-link">Sign Up</router-link>
-        <router-link to="/registered-users" class="nav-link">Registered Users</router-link>
+          <div v-if="loggedUserRole === 'ADMINISTRATOR'">
+            <router-link to="/" class="nav-link">Home</router-link>
+            <router-link to="/registered-users" class="nav-link">Registered Users</router-link>
+            <router-link to="/create-factory" class="nav-link">Create Factory</router-link>
+        </div>
+        <div v-else-if="loggedUserRole === 'CUSTOMER'">
+            <router-link to="/" class="nav-link">Home</router-link>
+        </div>
+        <div v-else-if="loggedUserRole === 'MANAGER'">
+            <router-link to="/" class="nav-link">Home</router-link>
+            <router-link to="/add-chocolate" class="nav-link">Add Chocolate</router-link>
+        </div>
+        <div v-else-if="loggedUserRole === 'EMPLOYEE'">
+            <router-link to="/" class="nav-link">Home</router-link>
+        </div>
+        <div v-else>
+            <router-link to="/" class="nav-link">Home</router-link>
+            <router-link to="/signIn" class="nav-link">Sign In</router-link>
+            <router-link to="/registration" class="nav-link">Sign Up</router-link>
+        </div>
+        
 
         <div class="dropdown">
           <img src="@/images/logout.png" alt="User Icon" class="user-icon" @click="toggleDropdown" />
           <div v-if="showDropdown" class="dropdown-menu">
             <router-link to="/my-account" class="dropdown-item" @click.native="closeDropdown">My Account</router-link>
-            <router-link to="/log-out" class="dropdown-item" @click.native="closeDropdown">Log Out</router-link>
+            <router-link to="/" class="dropdown-item" @click.native="logOut">Log Out</router-link>
           </div>
         </div>
       </div>
@@ -30,21 +45,43 @@ export default {
   name: 'App',
   data() {
     return {
-      showDropdown: false
+      showDropdown: false,
+      loggedUserRole: null,
     }
   },
   mounted() {
+    this.initialize();
     document.addEventListener('click', this.handleClickOutside);
   },
+ watch: {
+    '$route'() {
+      this.initialize(); // Watch for route changes and update role accordingly
+    }
+  },
   beforeDestroy() {
     document.removeEventListener('click', this.handleClickOutside);
   },
   methods: {
+     initialize() {
+      let loggedUsrStr = localStorage.getItem('loggedUser');
+      if (loggedUsrStr !== null) {
+        let loggedUser = JSON.parse(loggedUsrStr);
+        this.loggedUserRole = loggedUser.role;
+      } else {
+        this.loggedUserRole = null;
+      }
+    },
     toggleDropdown() {
       this.showDropdown = !this.showDropdown;
     },
     closeDropdown() {
       this.showDropdown = false;
+    },
+    logOut(){
+      localStorage.clear();
+      this.closeDropdown();
+      this.$router.push('/'); // Navigate to home
+      window.location.reload();
     },
     handleClickOutside(event) {
       if (!this.$el.contains(event.target)) {

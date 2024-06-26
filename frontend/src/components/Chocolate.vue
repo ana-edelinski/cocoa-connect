@@ -35,7 +35,7 @@
           <p><strong>Kind:</strong> {{ chocolate.kind }}</p>
           <p><strong>Weight:</strong> {{ chocolate.weight }} g</p>
           <p class="chocolate-description"><strong>Description:</strong> {{ chocolate.description }}</p>
-          <div class="buttons">
+          <div class="buttons" v-if="loggedUser">
             <button class="btn btn-delete" @click="deleteChocolate(chocolate.id)">Delete</button>
             <button class="btn btn-edit" @click="editChocolate(chocolate.id)">Edit</button>
           </div>
@@ -44,10 +44,6 @@
     </section>
   </div>
 </template>
-
-
-
-
 
 <script setup>
 import { ref, onMounted } from 'vue';
@@ -59,17 +55,16 @@ const router = useRouter();
 const route = useRoute();
 const factoryId = route.params.factoryId;
 
-defineProps({
-  msg: {
-    type: String,
-    required: true
-  }
-});
+const loggedUser = ref(null);
 
 const factory = ref(null);
 const chocolates = ref([]);
 
 onMounted(() => {
+  const storedUser = localStorage.getItem('loggedUser');
+  if (storedUser) {
+    loggedUser.value = JSON.parse(storedUser);
+  }
   loadFactory();
   loadChocolates();
 });
@@ -85,13 +80,13 @@ function loadFactory() {
 function loadChocolates() {
   axios.get('http://localhost:8080/chocolate-factory/rest/chocolates/getAllForFactory/' + factoryId)
     .then(response => {
-      chocolates.value = response.data;
+      chocolates.value = response.data.filter(chocolate => !chocolate.deleted);
     })
     .catch(error => console.error(error));
 }
 
 function deleteChocolate(chocolateId) {
-  axios.delete('http://localhost:8080/chocolate-factory/rest/chocolates/' + chocolateId)
+  axios.delete(`http://localhost:8080/backend/rest/chocolates/${chocolateId}`)
     .then(() => {
       chocolates.value = chocolates.value.filter(chocolate => chocolate.id !== chocolateId);
     })
@@ -108,7 +103,7 @@ function formatWorkingHours(workingHours) {
 </script>
 
 <style>
-
+/* Your existing CSS */
 .container {
   width: 90%;
   max-width: 1200px;
@@ -250,6 +245,4 @@ header {
   display: flex;
   justify-content: center;
 }
-
-
 </style>

@@ -39,10 +39,14 @@ export default {
         return;
       }
 
-      axios.post('http://localhost:8080/chocolate-factory/rest/users/login', this.form)
+      axios.post('http://localhost:8080/backend/rest/users/login', this.form)
         .then(response => {
             alert('Login successfull!');          
-            //this.$router.push('/signIn');
+           
+            let loggedUser = JSON.stringify(response.data);
+            localStorage.setItem('loggedUser', loggedUser);
+
+            this.$router.push('/');
         })
         .catch(error => {
             console.error('Error registering:', error);
