@@ -35,7 +35,7 @@
           <p><strong>Kind:</strong> {{ chocolate.kind }}</p>
           <p><strong>Weight:</strong> {{ chocolate.weight }} g</p>
           <p class="chocolate-description"><strong>Description:</strong> {{ chocolate.description }}</p>
-          <div class="buttons" v-if="loggedUser">
+          <div class="buttons" v-if="loggedUser && loggedUser.role === 'MANAGER'">
             <button class="btn btn-delete" @click="deleteChocolate(chocolate.id)">Delete</button>
             <button class="btn btn-edit" @click="editChocolate(chocolate.id)">Edit</button>
           </div>
@@ -103,7 +103,6 @@ function formatWorkingHours(workingHours) {
 </script>
 
 <style>
-/* Your existing CSS */
 .container {
   width: 90%;
   max-width: 1200px;
