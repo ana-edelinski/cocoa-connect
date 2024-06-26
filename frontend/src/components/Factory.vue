@@ -138,7 +138,7 @@ onMounted(() => {
 });
 
 function loadFactories() {
-  axios.get('http://localhost:8080/backend/rest/factories/')
+  axios.get('http://localhost:8080/chocolate-factory/rest/factories/')
     .then(response => {
       factories.value = response.data.sort((a, b) => {
         if (a.factoryStatus === 'OPENED' && b.factoryStatus !== 'OPENED') return -1;
@@ -251,18 +251,17 @@ header h1 {
 
 header h2 {
   text-align: left;
-  margin-left: 70px;
+  margin-left: 100px;
   font-size: 2rem;
   color: #2D1E17;
   font-family: "Poppins", sans-serif;
 }
 
 .search-container {
-  border: 2px solid #8B4513; /* Brown color border */
   padding: 20px;
-  border-radius: 10px;
+  margin: 0 auto;
   margin-bottom: 20px;
-  background-color: #f9f9f9;
+  width: 1000px;
 }
 
 .search-bar {
@@ -272,8 +271,8 @@ header h2 {
 }
 
 .search-bar input, .search-bar select {
-  padding: 15px;
-  border: 1px solid #ddd;
+  padding: 10px;
+  border: 1px solid #523F31;
   border-radius: 5px;
   font-family: "Poppins", sans-serif;
   font-size: 1rem;
@@ -290,7 +289,7 @@ header h2 {
 }
 
 .filter-container {
-  border: 2px solid #8B4513; /* Brown color border */
+  border: 2px solid #523F31; /* Brown color border */
   padding: 20px;
   border-radius: 10px;
   margin-bottom: 20px;
@@ -331,7 +330,10 @@ header h2 {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
-  margin-top: 10px;
+  margin: 10px;
+  margin-right: 100px;
+  margin-bottom: 30px;
+  
 }
 
 .btn {

@@ -41,7 +41,7 @@
     },
     methods: {
       fetchUsers() {
-        axios.get('http://localhost:8080/backend/rest/users/')
+        axios.get('http://localhost:8080/chocolate-factory/rest/users/')
           .then(response => {
             this.users = response.data;
           })

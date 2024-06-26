@@ -70,7 +70,7 @@ onMounted(() => {
 });
 
 function loadFactory() {
-  axios.get('http://localhost:8080/backend/rest/factories/' + factoryId)
+  axios.get('http://localhost:8080/chocolate-factory/rest/factories/' + factoryId)
     .then(response => {
       factory.value = response.data;
     })
@@ -86,7 +86,7 @@ function loadChocolates() {
 }
 
 function deleteChocolate(chocolateId) {
-  axios.delete(`http://localhost:8080/backend/rest/chocolates/${chocolateId}`)
+  axios.delete(`http://localhost:8080/chocolate-factory/rest/chocolates/${chocolateId}`)
     .then(() => {
       chocolates.value = chocolates.value.filter(chocolate => chocolate.id !== chocolateId);
     })

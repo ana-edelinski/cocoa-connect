@@ -113,7 +113,7 @@ export default {
           this.chocolate.factory = f.id;
         }
       });
-      axios.post('http://localhost:8080/backend/chocolate-factory/chocolates/', this.chocolate)
+      axios.post('http://localhost:8080/chocolate-factory/rest/chocolates/', this.chocolate)
         .then(response => {
           const factoryId = this.chocolate.factory;
           this.$router.push({ name: 'chocolates', params: { factoryId } });
