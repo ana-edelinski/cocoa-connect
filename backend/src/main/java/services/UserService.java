@@ -15,11 +15,11 @@ import javax.ws.rs.core.Response;
 
 import beans.User;
 import dao.UserDAO;
+import dto.EmployeeCreationDto;
 import dto.LoginDto;
 import dto.SearchCriteriaDTO;
 import dto.UserCreationDto;
 import dto.UserDto;
-import enums.ChocolateStatus;
 import enums.Role;
 
 @Path("/users")
@@ -119,12 +119,10 @@ public class UserService {
     @Path("/employees")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addEmployee(UserCreationDto userDto) {
+    public Response addEmployee(EmployeeCreationDto employeDto) {
         UserDAO dao = (UserDAO) ctx.getAttribute("userDao");
         try {
-            User user = userDto.convertToUser();
-            user.setRole(Role.EMPLOYEE); 
-            user.setIsAssigned(true); 
+            User user = employeDto.convertToUser();
                         
             user = dao.save(user); 
                 

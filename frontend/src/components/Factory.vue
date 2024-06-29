@@ -1,3 +1,4 @@
+
 <template>
   <div class="container">
     <header>
@@ -8,6 +9,7 @@
       <div class="search-bar">
         <input v-model="searchCriteria.name" type="text" placeholder="Search by factory name" />
         <input v-model="searchCriteria.location" type="text" placeholder="Search by city or country" />
+        <input v-model="searchCriteria.chocolateName" type="text" placeholder="Search by chocolate name" />
         <div class="rating-range">
           <input v-model.number="searchCriteria.minRating" type="number" step="0.1" placeholder="Min rating" />
           <input v-model.number="searchCriteria.maxRating" type="number" step="0.1" placeholder="Max rating" />
@@ -24,20 +26,16 @@
     </div>
     <div v-if="showFilters" class="filter-container">
       <div class="filter-bar">
-        <select v-model="searchCriteria.chocolateType">
+        <select v-model="filterCriteria.chocolateType">
           <option value="">All Chocolate Types</option>
-          <option value="dark">Dark</option>
-          <option value="milk">Milk</option>
-          <option value="white">White</option>
+          <option v-for="type in chocolateTypes" :key="type" :value="type">{{ type }}</option>
         </select>
-        <select v-model="searchCriteria.chocolateCategory">
-          <option value="">All Chocolate Categories</option>
-          <option value="bar">Bar</option>
-          <option value="truffle">Truffle</option>
-          <option value="bonbon">Bonbon</option>
+        <select v-model="filterCriteria.chocolateKind">
+          <option value="">All Chocolate Kinds</option>
+          <option v-for="kind in chocolateKinds" :key="kind" :value="kind">{{ kind }}</option>
         </select>
         <label class="filter-checkbox">
-          <input type="checkbox" v-model="searchCriteria.openOnly" />
+          <input type="checkbox" v-model="filterCriteria.openOnly" />
           Show only open factories
         </label>
         <div class="buttons">
@@ -48,48 +46,46 @@
     <div v-if="showSorting" class="sorting-container">
       <div class="sorting-buttons">
         <label>
-          <input type="checkbox" v-model="sortCriteria.nameAsc" />
-          Sort by Name (Ascending)
+          <input type="radio" v-model="sortCriteria.sortBy" value="name" />
+          Sort by Name
         </label>
         <label>
-          <input type="checkbox" v-model="sortCriteria.nameDesc" />
-          Sort by Name (Descending)
+          <input type="radio" v-model="sortCriteria.sortBy" value="location" />
+          Sort by Location
         </label>
         <label>
-          <input type="checkbox" v-model="sortCriteria.locationAsc" />
-          Sort by Location (Ascending)
+          <input type="radio" v-model="sortCriteria.sortBy" value="rating" />
+          Sort by Rating
         </label>
         <label>
-          <input type="checkbox" v-model="sortCriteria.locationDesc" />
-          Sort by Location (Descending)
+          <input type="radio" v-model="sortCriteria.order" value="asc" />
+          Ascending
         </label>
         <label>
-          <input type="checkbox" v-model="sortCriteria.ratingAsc" />
-          Sort by Rating (Ascending)
+          <input type="radio" v-model="sortCriteria.order" value="desc" />
+          Descending
         </label>
-        <label>
-          <input type="checkbox" v-model="sortCriteria.ratingDesc" />
-          Sort by Rating (Descending)
-        </label>
+        <div class="buttons">
+          <button class="btn btn-done" @click="applySorting">Done</button>
+          <button class="btn btn-clear" @click="clearSort">Clear Sort</button>
+        </div>
       </div>
     </div>
     <div class="factories-grid">
-      <div v-for="factory in sortedAndFilteredFactories" :key="factory.id" class="factory-card">
+      <div v-for="factory in factories" :key="factory.id" class="factory-card">
         <img :src="factory.logo" alt="Logo" class="factory-logo" />
         <h3>{{ factory.name }}</h3>
         <p>{{ factory.city }}, {{ factory.country }}</p>
         <p>Average Rating: {{ factory.averageRating }}</p>
         <p class="status" :class="{'open': factory.factoryStatus === 'OPENED', 'closed': factory.factoryStatus === 'CLOSED'}">{{ formatStatus(factory.factoryStatus) }}</p>
         <button class="btn btn-view" @click="viewChocolates(factory.id)">PREVIEW</button>
-
       </div>
     </div>
   </div>
 </template>
 
-
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 
@@ -103,24 +99,24 @@ defineProps({
 });
 
 const factories = ref([]);
-const filteredFactories = ref([]);
 const searchCriteria = ref({
   name: '',
   location: '',
+  chocolateName: '',
   minRating: null,
   maxRating: null,
+});
+const filterCriteria = ref({
   chocolateType: '',
-  chocolateCategory: '',
-  openOnly: false,
+  chocolateKind: '',
+  openOnly: null,
 });
 const sortCriteria = ref({
-  nameAsc: false,
-  nameDesc: false,
-  locationAsc: false,
-  locationDesc: false,
-  ratingAsc: false,
-  ratingDesc: false,
+  sortBy: '',
+  order: '',
 });
+const chocolateTypes = ref([]);
+const chocolateKinds = ref([]);
 const loggedUser = ref(null);
 const showFilters = ref(false);
 const showSorting = ref(false);
@@ -133,48 +129,102 @@ onMounted(() => {
   }
 
   loadFactories();
-  // Display all factories initially
-  filteredFactories.value = factories.value;
+  loadChocolateTypes();
+  loadChocolateKinds();
 });
 
 function loadFactories() {
-  axios.get('http://localhost:8080/chocolate-factory/rest/factories/')
+  axios.get('http://localhost:8080/backend/rest/factories/')
     .then(response => {
       factories.value = response.data.sort((a, b) => {
         if (a.factoryStatus === 'OPENED' && b.factoryStatus !== 'OPENED') return -1;
         if (a.factoryStatus !== 'OPENED' && b.factoryStatus === 'OPENED') return 1;
         return 0;
       });
-      filteredFactories.value = factories.value; // Display all factories initially
+    })
+    .catch(error => console.error(error));
+}
+
+function loadChocolateTypes() {
+  axios.get('http://localhost:8080/backend/rest/factories/chocolateTypes')
+    .then(response => {
+      chocolateTypes.value = response.data;
+    })
+    .catch(error => console.error(error));
+}
+
+function loadChocolateKinds() {
+  axios.get('http://localhost:8080/backend/rest/factories/chocolateKinds')
+    .then(response => {
+      chocolateKinds.value = response.data;
     })
     .catch(error => console.error(error));
 }
 
 function searchFactories() {
-  filteredFactories.value = factories.value.filter(factory => {
-    const matchesName = factory.name.toLowerCase().includes(searchCriteria.value.name.toLowerCase());
-    const matchesLocation = factory.city.toLowerCase().includes(searchCriteria.value.location.toLowerCase()) || factory.country.toLowerCase().includes(searchCriteria.value.location.toLowerCase());
-    const matchesMinRating = searchCriteria.value.minRating === null || factory.averageRating >= searchCriteria.value.minRating;
-    const matchesMaxRating = searchCriteria.value.maxRating === null || factory.averageRating <= searchCriteria.value.maxRating;
-    const matchesChocolateType = searchCriteria.value.chocolateType === '' || factory.chocolates.some(chocolate => chocolate.type.toLowerCase() === searchCriteria.value.chocolateType.toLowerCase());
-    const matchesChocolateCategory = searchCriteria.value.chocolateCategory === '' || factory.chocolates.some(chocolate => chocolate.category.toLowerCase() === searchCriteria.value.chocolateCategory.toLowerCase());
-    const matchesOpenStatus = !searchCriteria.value.openOnly || factory.factoryStatus === 'OPENED';
+  const params = {
+    name: searchCriteria.value.name,
+    chocolateName: searchCriteria.value.chocolateName,
+    location: searchCriteria.value.location,
+    minRating: searchCriteria.value.minRating,
+    maxRating: searchCriteria.value.maxRating
+  };
 
-    return matchesName && matchesLocation && matchesMinRating && matchesMaxRating && matchesChocolateType && matchesChocolateCategory && matchesOpenStatus;
-  });
+  axios.get('http://localhost:8080/backend/rest/factories/search', { params })
+    .then(response => {
+      factories.value = response.data;
+    })
+    .catch(error => console.error(error));
+}
+
+function applyFilters() {
+  const params = {
+    chocolateType: filterCriteria.value.chocolateType,
+    chocolateKind: filterCriteria.value.chocolateKind,
+    openOnly: filterCriteria.value.openOnly
+  };
+
+  axios.get('http://localhost:8080/backend/rest/factories/filter', { params })
+    .then(response => {
+      factories.value = response.data.sort((a, b) => {
+        if (a.factoryStatus === 'OPENED' && b.factoryStatus !== 'OPENED') return -1;
+        if (a.factoryStatus !== 'OPENED' && b.factoryStatus === 'OPENED') return 1;
+        return 0;
+      });
+    })
+    .catch(error => console.error(error));
+}
+
+function applySorting() {
+  const params = {
+    sortBy: sortCriteria.value.sortBy,
+    order: sortCriteria.value.order
+  };
+
+  axios.get('http://localhost:8080/backend/rest/factories/sort', { params })
+    .then(response => {
+      factories.value = response.data;
+    })
+    .catch(error => console.error(error));
 }
 
 function clearSearch() {
   searchCriteria.value = {
     name: '',
     location: '',
+    chocolateName: '',
     minRating: null,
     maxRating: null,
-    chocolateType: '',
-    chocolateCategory: '',
-    openOnly: false,
   };
-  filteredFactories.value = factories.value; // Reset to show all factories
+  loadFactories(); // Reload all factories
+}
+
+function clearSort() {
+  sortCriteria.value = {
+    sortBy: '',
+    order: '',
+  };
+  loadFactories(); // Reload all factories
 }
 
 function toggleFilters() {
@@ -183,11 +233,6 @@ function toggleFilters() {
 
 function toggleSorting() {
   showSorting.value = !showSorting.value;
-}
-
-function applyFilters() {
-  searchFactories();
-  showFilters.value = false;
 }
 
 function viewChocolates(factoryId) {
@@ -202,36 +247,7 @@ function formatStatus(status) {
   };
   return statusMap[status] || status;
 }
-
-const sortedAndFilteredFactories = computed(() => {
-  let sorted = [...filteredFactories.value];
-
-  if (sortCriteria.value.nameAsc) {
-    sorted.sort((a, b) => a.name.localeCompare(b.name));
-  }
-  if (sortCriteria.value.nameDesc) {
-    sorted.sort((a, b) => b.name.localeCompare(a.name));
-  }
-  if (sortCriteria.value.locationAsc) {
-    sorted.sort((a, b) => a.city.localeCompare(b.city) || a.country.localeCompare(b.country));
-  }
-  if (sortCriteria.value.locationDesc) {
-    sorted.sort((a, b) => b.city.localeCompare(a.city) || b.country.localeCompare(a.country));
-  }
-  if (sortCriteria.value.ratingAsc) {
-    sorted.sort((a, b) => a.averageRating - b.averageRating);
-  }
-  if (sortCriteria.value.ratingDesc) {
-    sorted.sort((a, b) => b.averageRating - a.averageRating);
-  }
-  
-  return sorted;
-});
 </script>
-
-
-
-
 <style>
 .container {
   width: 90%;

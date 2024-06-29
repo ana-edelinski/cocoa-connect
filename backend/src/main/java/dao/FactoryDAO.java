@@ -8,11 +8,15 @@ import java.io.FileWriter;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 
+import beans.Chocolate;
 import beans.Factory;
 import beans.WorkingHours;
+import dto.FactoryWithChocolatesDto;
+import enums.FactoryStatus;
 
 public class FactoryDAO {
     private HashMap<Integer, Factory> factories = new HashMap<>();
@@ -33,11 +37,36 @@ public class FactoryDAO {
         }
         return result;
     }
+    
+    public Collection<FactoryWithChocolatesDto> findAllWithChocolates() {
+        ArrayList<FactoryWithChocolatesDto> allFactoriesWith = new ArrayList<FactoryWithChocolatesDto>();
+        
+        ChocolateDAO chocolateDAO = new ChocolateDAO(this.contextPath);
+        
+        for(Factory factory : findAll()) {
+        	ArrayList<Chocolate> chocolates = new ArrayList<Chocolate>(chocolateDAO.getAllForFactory(factory.getId()));
+        	
+        	FactoryWithChocolatesDto chocolatesDto = new FactoryWithChocolatesDto(factory);
+        	chocolatesDto.setChocolates(chocolates);
+        	allFactoriesWith.add(chocolatesDto);
+        	
+        }
+        
+        return allFactoriesWith;
+    }
 
     public Factory findById(int id) {
         return factories.containsKey(id) ? factories.get(id) : null;
     }
 
+    public Factory getFactoryForManager(int managerId) {
+    	for(Factory factory : findAll()) {
+        	if(factory.getManagerId() == managerId) {
+        		return factory;
+        	}	
+        }
+    	return null;
+    }
     public Factory update(int id, Factory factory) {
         Factory f = factories.containsKey(id) ? factories.get(id) : null;
         if (f == null) {
@@ -153,6 +182,8 @@ public class FactoryDAO {
         }
         return true;
     }
+    
+    
 
     public Factory deleteFactory(int id) {
         Factory factory = findById(id);
@@ -160,4 +191,85 @@ public class FactoryDAO {
         factory.setDeleted(true);
         return saveToFile(contextPath) ? factory : null;
     }
+    
+    public Collection<FactoryWithChocolatesDto> searchFactories(String name, String chocolateName, String location, Double minRating, Double maxRating) {
+        ArrayList<FactoryWithChocolatesDto> allFactoriesWith = new ArrayList<>();
+        
+        ChocolateDAO chocolateDAO = new ChocolateDAO(this.contextPath);
+        
+        for (Factory factory : findAll()) {
+            
+            boolean matchesName = (name == null || name.isEmpty()) || factory.getName().toLowerCase().contains(name.toLowerCase());
+            boolean matchesLocation = (location == null || location.isEmpty()) || factory.getCity().toLowerCase().contains(location.toLowerCase()) || factory.getCountry().toLowerCase().contains(location.toLowerCase());
+            boolean matchesMinRating = (minRating == null) || factory.getAverageRating() >= minRating;
+            boolean matchesMaxRating = (maxRating == null) || factory.getAverageRating() <= maxRating;
+            
+           
+            ArrayList<Chocolate> chocolates = new ArrayList<>(chocolateDAO.getAllForFactory(factory.getId()));
+            
+            
+            boolean matchesChocolateName = (chocolateName == null || chocolateName.isEmpty()) || chocolates.stream().anyMatch(chocolate -> chocolate.getName().toLowerCase().contains(chocolateName.toLowerCase()));
+            
+            if (matchesName && matchesLocation && matchesMinRating && matchesMaxRating && matchesChocolateName) {
+                FactoryWithChocolatesDto chocolatesDto = new FactoryWithChocolatesDto(factory);
+                chocolatesDto.setChocolates(chocolates);
+                allFactoriesWith.add(chocolatesDto);
+            }
+        }
+        
+        return allFactoriesWith;
+    }
+    public Collection<FactoryWithChocolatesDto> filterFactories(String chocolateType, String chocolateCategory, Boolean openOnly) {
+        ArrayList<FactoryWithChocolatesDto> allFactoriesWith = new ArrayList<>();
+        
+        ChocolateDAO chocolateDAO = new ChocolateDAO(this.contextPath);
+        
+        for (Factory factory : findAll()) {
+        	boolean matchesOpenStatus;
+            if(openOnly == null) {
+            	matchesOpenStatus = true;
+            }else if(openOnly){
+            	matchesOpenStatus = factory.getFactoryStatus() == FactoryStatus.OPENED;
+            }else {
+            	matchesOpenStatus = factory.getFactoryStatus() == FactoryStatus.CLOSED;
+            }
+            
+            ArrayList<Chocolate> chocolates = new ArrayList<>(chocolateDAO.getAllForFactory(factory.getId()));
+            
+            boolean matchesChocolateType = (chocolateType == null || chocolateType.isEmpty()) || chocolates.stream().anyMatch(chocolate -> chocolate.getType().toString().equals(chocolateType));
+            boolean matchesChocolateKind = (chocolateCategory == null || chocolateCategory.isEmpty()) || chocolates.stream().anyMatch(chocolate -> chocolate.getKind().toString().equals(chocolateCategory));
+            
+            if (matchesOpenStatus && matchesChocolateType && matchesChocolateKind) {
+                FactoryWithChocolatesDto chocolatesDto = new FactoryWithChocolatesDto(factory);
+                chocolatesDto.setChocolates(chocolates);
+                allFactoriesWith.add(chocolatesDto);
+            }
+        }
+        
+        return allFactoriesWith;
+    }
+
+    public Collection<FactoryWithChocolatesDto> sortFactories(String sortBy, String order) {
+        ArrayList<FactoryWithChocolatesDto> sortedFactories = new ArrayList<>(findAllWithChocolates());
+        
+        sortedFactories.sort((a, b) -> {
+            int comparison = 0;
+            switch (sortBy.toLowerCase()) {
+                case "name":
+                    comparison = a.getName().compareToIgnoreCase(b.getName());
+                    break;
+                case "location":
+                    comparison = (a.getCity() + a.getCountry()).compareToIgnoreCase(b.getCity() + b.getCountry());
+                    break;
+                case "rating":
+                    comparison = Double.compare(a.getAverageRating(), b.getAverageRating());
+                    break;
+            }
+            return "desc".equalsIgnoreCase(order) ? -comparison : comparison;
+        });
+        
+        return sortedFactories;
+    }
+
+
 }

@@ -82,7 +82,6 @@ export default {
       localStorage.clear();
       this.closeDropdown();
       this.$router.push('/'); // Navigate to home
-      window.location.reload();
     },
     handleClickOutside(event) {
       if (!this.$el.contains(event.target)) {

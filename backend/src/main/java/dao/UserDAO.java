@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 
+import beans.Factory;
 import beans.User;
 import dto.SearchCriteriaDTO;
 import enums.Gender;
@@ -75,6 +76,36 @@ public class UserDAO {
 		}
 		maxId++;
 		user.setId(maxId);
+		users.put(user.getId(), user);
+		saveToFile(contextPath);
+		return user;
+	}
+	
+	public int findNewId() {
+		int maxId = -1;
+		for (Integer id : users.keySet()) {
+			int idNum = id;
+			if (id > maxId) {
+				maxId = idNum;
+			}
+		}
+		maxId++;
+		return maxId;
+	}
+	
+	public User saveEmploye(User user, int managerId) {
+		user.setRole(Role.EMPLOYEE);
+		user.setAssigned(true);
+		
+		FactoryDAO factoryDAO = new FactoryDAO(this.contextPath);
+		Factory factory = factoryDAO.getFactoryForManager(managerId);
+		if(factory == null) {
+			return null;
+		}
+		
+		user.setFactoryWorkingId(factory.getId());
+		
+		user.setId(findNewId());
 		users.put(user.getId(), user);
 		saveToFile(contextPath);
 		return user;

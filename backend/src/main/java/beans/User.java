@@ -18,6 +18,7 @@ public class User {
 	private Date dateOfBirth;
 	private Role role;
 	private boolean isAssigned;
+	private int factoryWorkingId;
 
 	public User() {
 		super();
@@ -108,4 +109,18 @@ public class User {
 	public void setIsAssigned(boolean isAssigned) {
 		this.isAssigned = isAssigned;
 	}
+
+	public int getFactoryWorkingId() {
+		return factoryWorkingId;
+	}
+
+	public void setFactoryWorkingId(int factoryWorkingId) {
+		this.factoryWorkingId = factoryWorkingId;
+	}
+
+	public void setAssigned(boolean isAssigned) {
+		this.isAssigned = isAssigned;
+	}
+	
+	
 }

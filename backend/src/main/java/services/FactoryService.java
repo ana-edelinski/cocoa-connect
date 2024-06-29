@@ -1,6 +1,10 @@
 package services;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
@@ -11,12 +15,16 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import beans.Factory;
 import dao.FactoryDAO;
 import dao.UserDAO;
+import dto.FactoryWithChocolatesDto;
+import enums.ChocolateKind;
+import enums.ChocolateType;
 
 @Path("/factories")
 public class FactoryService {
@@ -44,7 +52,13 @@ public class FactoryService {
         FactoryDAO dao = (FactoryDAO) ctx.getAttribute("factoryDao");
         return dao.findAll();
     }
-    
+    @GET
+    @Path("/withChocolates")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Collection<FactoryWithChocolatesDto> findAllWithChocolates() {
+    	FactoryDAO dao = (FactoryDAO) ctx.getAttribute("factoryDao");
+    	return dao.findAllWithChocolates();
+    }
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -85,5 +99,55 @@ public class FactoryService {
     public void deleteFactory(@PathParam("id") Integer id) {
         FactoryDAO dao = (FactoryDAO) ctx.getAttribute("factoryDao");
         dao.deleteFactory(id);
+    }
+    @GET
+    @Path("/search")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Collection<FactoryWithChocolatesDto> searchFactories(
+            @QueryParam("name") String name,
+            @QueryParam("chocolateName") String chocolateName,
+            @QueryParam("location") String location,
+            @QueryParam("minRating") Double minRating,
+            @QueryParam("maxRating") Double maxRating) {
+    	FactoryDAO dao = (FactoryDAO) ctx.getAttribute("factoryDao");
+        return dao.searchFactories(name, chocolateName, location, minRating, maxRating);
+    }
+    
+    @GET
+    @Path("/filter")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Collection<FactoryWithChocolatesDto> filterFactories(
+            @QueryParam("chocolateType") String chocolateType,
+            @QueryParam("chocolateKind") String chocolateKind,
+            @QueryParam("openOnly") Boolean openOnly) {
+    	FactoryDAO dao = (FactoryDAO) ctx.getAttribute("factoryDao");
+        return dao.filterFactories(chocolateType, chocolateKind, openOnly);
+    }
+
+    @GET
+    @Path("/sort")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Collection<FactoryWithChocolatesDto> sortFactories(
+            @QueryParam("sortBy") String sortBy,
+            @QueryParam("order") String order) {
+    	FactoryDAO dao = (FactoryDAO) ctx.getAttribute("factoryDao");
+        return dao.sortFactories(sortBy, order);
+    }
+    @GET
+    @Path("/chocolateTypes")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<String> getChocolateTypes() {
+        return Arrays.stream(ChocolateType.values())
+                .map(Enum::name)
+                .collect(Collectors.toList());
+    }
+
+    @GET
+    @Path("/chocolateKinds")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<String> getChocolateKinds() {
+        return Arrays.stream(ChocolateKind.values())
+                .map(Enum::name)
+                .collect(Collectors.toList());
     }
 }

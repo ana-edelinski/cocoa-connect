@@ -80,7 +80,7 @@ export default {
 
       console.log('Submitting form:', this.form);
 
-      axios.post('http://localhost:8080/chocolate-factory/rest/users/register', this.form)
+      axios.post('http://localhost:8080/backend/rest/users/register', this.form)
         .then(response => {
           console.log('Form successfully submitted!', response.data);
           this.$router.push('/signIn');
