@@ -104,16 +104,24 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  padding-top: 50px; 
+
 }
 
 .navbar {
-  display:flex;
+  display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 20px 40px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  border-bottom: 1px solid #2D1E17; 
+  border-bottom: 1px solid #2D1E17;
+  position: fixed; 
+  top: 0; 
+  width: 100%; 
+  background-color: #fff; 
+  z-index: 1000; 
 }
+
 
 .nav-links-left, .nav-links-right {
   display: flex;
@@ -163,6 +171,7 @@ export default {
 
 .user-icon {
   height: 27px;
+  margin-right: 100px;
   cursor: pointer;
 }
 
@@ -175,6 +184,7 @@ export default {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   border: 1px solid #ddd;
   z-index: 1000;
+  margin-right: 50px;
 }
 
 .dropdown-item {
