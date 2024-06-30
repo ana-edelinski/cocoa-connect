@@ -90,7 +90,7 @@ export default {
   },
   methods: {
     loadFactories() {
-      axios.get('http://localhost:8080/backend/rest/factories/')
+      axios.get('http://localhost:8080/chocolate-factory/rest/factories/')
         .then(response => {
           this.factories = response.data;
           console.log(this.factories);
@@ -113,7 +113,7 @@ export default {
           this.chocolate.factory = f.id;
         }
       });
-      axios.post('http://localhost:8080/backend/rest/chocolates/', this.chocolate)
+      axios.post('http://localhost:8080/chocolate-factory/rest/chocolates/', this.chocolate)
         .then(response => {
           const factoryId = this.chocolate.factory;
           this.$router.push({ name: 'chocolates', params: { factoryId } });

@@ -13,6 +13,9 @@
         </div>
         <button type="submit">Sign In</button>
       </form>
+      <p class="register-link">
+        No account yet? <router-link to="/registration">CREATE AN ACCOUNT</router-link>
+      </p>
     </div>
   </div>
 </template>
@@ -39,9 +42,9 @@ export default {
         return;
       }
 
-      axios.post('http://localhost:8080/backend/rest/users/login', this.form)
+      axios.post('http://localhost:8080/chocolate-factory/rest/users/login', this.form)
         .then(response => {
-            alert('Login successfull!');          
+            alert('Login successfull!');
            
             let loggedUser = JSON.stringify(response.data);
             localStorage.setItem('loggedUser', loggedUser);
@@ -50,8 +53,7 @@ export default {
         })
         .catch(error => {
             console.error('Error registering:', error);
-            alert('Login failed!');          
-
+            alert('Login failed!');
         });      
     },
     checkFields() {
@@ -118,5 +120,17 @@ button[type="submit"] {
 
 button:hover {
   background-color: #796254;
+}
+
+.register-link {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.register-link router-link {
+  color: #523F31;
+  text-decoration: underline;
+  cursor: pointer;
 }
 </style>

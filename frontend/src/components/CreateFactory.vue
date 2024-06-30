@@ -120,7 +120,7 @@ export default {
   },
   methods: {
     loadAvailableManagers() {
-      axios.get('http://localhost:8080/backend/rest/users/available-managers')
+      axios.get('http://localhost:8080/chocolate-factory/rest/users/available-managers')
         .then(response => {
           this.availableManagers = response.data;
         })
@@ -135,7 +135,7 @@ export default {
       this.checkManagerFields();
       if (!this.usernameFill || !this.managerNameFill || !this.surnameFill) return;
 
-      axios.post('http://localhost:8080/backend/rest/users/register-manager', this.newManager)
+      axios.post('http://localhost:8080/chocolate-factory/rest/users/register-manager', this.newManager)
         .then(response => {
           alert('Registration successful');
           this.factory.managerId = response.data.id;
@@ -153,7 +153,7 @@ export default {
         return;
       }
 
-      axios.post('http://localhost:8080/backend/rest/factories/', this.factory)
+      axios.post('http://localhost:8080/chocolate-factory/rest/factories/', this.factory)
         .then(response => {
           this.$router.push({ name: 'factories' });
         })

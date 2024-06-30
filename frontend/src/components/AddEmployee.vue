@@ -79,7 +79,7 @@ export default {
   },
   methods: {
     loadFactories() {
-      axios.get('http://localhost:8080/backend/rest/factories/')
+      axios.get('http://localhost:8080/chocolate-factory/rest/factories/')
         .then(response => {
           this.factories = response.data;
           console.log(this.factories);
@@ -101,7 +101,7 @@ export default {
 
       console.log('Submitting form:', this.form);
 
-      axios.post('http://localhost:8080/backend/rest/users/employees', this.form)
+      axios.post('http://localhost:8080/chocolate-factory/rest/users/employees', this.form)
         .then(response => {
           console.log('Employee successfully added!', response.data);
           this.$router.push('/'); 

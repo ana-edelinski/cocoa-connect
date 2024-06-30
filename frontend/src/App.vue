@@ -1,43 +1,44 @@
 <template>
   <div id="app">
     <nav class="navbar">
-      <div class="logo">
-        <img src="@/images/logo-01.png" alt="COCOA connect Logo" class="logo-image" />
-      </div>
-      <div class="nav-links">
-          <div v-if="loggedUserRole === 'ADMINISTRATOR'">
-            <router-link to="/" class="nav-link">Home</router-link>
-            <router-link to="/registered-users" class="nav-link">Registered Users</router-link>
-            <router-link to="/create-factory" class="nav-link">Create Factory</router-link>
+      <div class="nav-links-left">
+        <div v-if="loggedUserRole === 'ADMINISTRATOR'">
+          <router-link to="/" class="nav-link">HOME</router-link>
+          <router-link to="/registered-users" class="nav-link">REGISTERED USERS</router-link>
+          <router-link to="/create-factory" class="nav-link">CREATE FACTORY</router-link>
         </div>
         <div v-else-if="loggedUserRole === 'CUSTOMER'">
-            <router-link to="/" class="nav-link">Home</router-link>
+          <router-link to="/" class="nav-link">HOME</router-link>
         </div>
         <div v-else-if="loggedUserRole === 'MANAGER'">
-            <router-link to="/" class="nav-link">Home</router-link>
-            <router-link to="/add-chocolate" class="nav-link">Add Chocolate</router-link>
-            <router-link to="/add-employee" class="nav-link">Add Employee</router-link>
+          <router-link to="/" class="nav-link">HOME</router-link>
+          <router-link to="/add-chocolate" class="nav-link">ADD CHOCOLATE</router-link>
+          <router-link to="/add-employee" class="nav-link">ADD EMPLOYEE</router-link>
         </div>
         <div v-else-if="loggedUserRole === 'EMPLOYEE'">
-            <router-link to="/" class="nav-link">Home</router-link>
+          <router-link to="/" class="nav-link">HOME</router-link>
         </div>
         <div v-else>
-            <router-link to="/" class="nav-link">Home</router-link>
-            <router-link to="/signIn" class="nav-link">Sign In</router-link>
-            <router-link to="/registration" class="nav-link">Sign Up</router-link>
+          <router-link to="/" class="nav-link">HOME</router-link>
         </div>
-        
-
-        <div class="dropdown">
+      </div>
+      <div class="logo" @click="refreshHomePage">
+        <img src="@/images/logo-01.png" alt="COCOA connect Logo" class="logo-image" />
+      </div>
+      <div class="nav-links-right">
+        <div v-if="!loggedUserRole">
+          <router-link to="/signIn" class="nav-link">LOGIN / REGISTER</router-link>
+        </div>
+        <div class="dropdown" v-if="loggedUserRole">
           <img src="@/images/logout.png" alt="User Icon" class="user-icon" @click="toggleDropdown" />
           <div v-if="showDropdown" class="dropdown-menu">
-            <router-link to="/my-account" class="dropdown-item" @click.native="closeDropdown">My Account</router-link>
-            <router-link to="/" class="dropdown-item" @click.native="logOut">Log Out</router-link>
+            <router-link to="/my-account" class="dropdown-item" @click.native="closeDropdown">MY ACCOUNT</router-link>
+            <router-link to="/" class="dropdown-item" @click.native="logOut">LOG OUT</router-link>
           </div>
         </div>
       </div>
     </nav>
-    <router-view/>
+    <router-view />
   </div>
 </template>
 
@@ -54,16 +55,16 @@ export default {
     this.initialize();
     document.addEventListener('click', this.handleClickOutside);
   },
- watch: {
+  watch: {
     '$route'() {
-      this.initialize(); // Watch for route changes and update role accordingly
-    }
-  },
+      this.initialize(); 
+    }
+  },
   beforeDestroy() {
     document.removeEventListener('click', this.handleClickOutside);
   },
   methods: {
-     initialize() {
+    initialize() {
       let loggedUsrStr = localStorage.getItem('loggedUser');
       if (loggedUsrStr !== null) {
         let loggedUser = JSON.parse(loggedUsrStr);
@@ -78,15 +79,19 @@ export default {
     closeDropdown() {
       this.showDropdown = false;
     },
-    logOut(){
+    logOut() {
       localStorage.clear();
+      this.loggedUserRole = null;
       this.closeDropdown();
-      this.$router.push('/'); // Navigate to home
+      this.$router.push('/');
     },
     handleClickOutside(event) {
       if (!this.$el.contains(event.target)) {
         this.closeDropdown();
       }
+    },
+    refreshHomePage() {
+      this.$router.push('/'); 
     }
   }
 }
@@ -111,30 +116,45 @@ export default {
   border-bottom: 1px solid #2D1E17; 
 }
 
+.nav-links-left, .nav-links-right {
+  display: flex;
+  align-items: center;
+}
+
+.nav-links-left {
+  flex: 1;
+  justify-content: flex-start;
+  gap: 20px;
+}
+
+.nav-links-right {
+  flex: 1;
+  justify-content: flex-end;
+  gap: 20px;
+}
+
 .logo {
   flex: 1;
+  display: flex;
+  justify-content: center;
+  cursor: pointer; 
 }
 
 .logo-image {
-  height: 70px; 
-}
-
-.nav-links {
-  display: flex;
-  gap: 20px;
-  flex: 2;
-  justify-content: center; 
+  height: 70px;
 }
 
 .nav-link {
-  font-weight: bold;
+  font-weight:500; 
+  font-size: medium;
   color: #2D1E17;
   text-decoration: none;
   padding: 5px 10px;
+  text-transform: uppercase;
 }
 
 .nav-link.router-link-exact-active {
-  color: #796254; 
+  color: #796254;
 }
 
 .dropdown {
@@ -164,6 +184,7 @@ export default {
   text-decoration: none;
   color: #2D1E17;
   white-space: nowrap;
+  text-transform: uppercase; 
 }
 
 .dropdown-item:hover {
