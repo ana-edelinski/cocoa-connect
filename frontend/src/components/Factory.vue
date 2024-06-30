@@ -435,6 +435,14 @@ header h2 {
   transform: scale(1.05);
 }
 
+.factory-card h3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis; 
+}
+
 .factory-logo {
   width: 100%;
   height: 200px;
