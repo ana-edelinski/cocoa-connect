@@ -3,23 +3,23 @@
     <nav class="navbar">
       <div class="nav-links-left">
         <div v-if="loggedUserRole === 'ADMINISTRATOR'">
-          <router-link to="/" class="nav-link">HOME</router-link>
-          <router-link to="/registered-users" class="nav-link">REGISTERED USERS</router-link>
-          <router-link to="/create-factory" class="nav-link">CREATE FACTORY</router-link>
+          <router-link to="/" class="nav-link" @mouseover="setActiveLink('/')">HOME</router-link>
+          <router-link to="/registered-users" class="nav-link" @mouseover="setActiveLink('/registered-users')">REGISTERED USERS</router-link>
+          <router-link to="/create-factory" class="nav-link" @mouseover="setActiveLink('/create-factory')">CREATE FACTORY</router-link>
         </div>
         <div v-else-if="loggedUserRole === 'CUSTOMER'">
-          <router-link to="/" class="nav-link">HOME</router-link>
+          <router-link to="/" class="nav-link" @mouseover="setActiveLink('/')">HOME</router-link>
         </div>
         <div v-else-if="loggedUserRole === 'MANAGER'">
-          <router-link to="/" class="nav-link">HOME</router-link>
-          <router-link to="/add-chocolate" class="nav-link">ADD CHOCOLATE</router-link>
-          <router-link to="/add-employee" class="nav-link">ADD EMPLOYEE</router-link>
+          <router-link to="/" class="nav-link" @mouseover="setActiveLink('/')">HOME</router-link>
+          <router-link to="/add-chocolate" class="nav-link" @mouseover="setActiveLink('/add-chocolate')">ADD CHOCOLATE</router-link>
+          <router-link to="/add-employee" class="nav-link" @mouseover="setActiveLink('/add-employee')">ADD EMPLOYEE</router-link>
         </div>
         <div v-else-if="loggedUserRole === 'EMPLOYEE'">
-          <router-link to="/" class="nav-link">HOME</router-link>
+          <router-link to="/" class="nav-link" @mouseover="setActiveLink('/')">HOME</router-link>
         </div>
         <div v-else>
-          <router-link to="/" class="nav-link">HOME</router-link>
+          <router-link to="/" class="nav-link" @mouseover="setActiveLink('/')">HOME</router-link>
         </div>
       </div>
       <div class="logo" @click="refreshHomePage">
@@ -52,6 +52,7 @@ export default {
     return {
       showDropdown: false,
       loggedUserRole: null,
+      activeLink: null,
     }
   },
   mounted() {
@@ -75,6 +76,8 @@ export default {
       } else {
         this.loggedUserRole = null;
       }
+
+      this.activeLink = this.$route.path;
     },
     toggleDropdown() {
       this.showDropdown = !this.showDropdown;
@@ -95,6 +98,12 @@ export default {
     },
     refreshHomePage() {
       this.$router.push('/'); 
+    },
+    setActiveLink(route) {
+      this.activeLink = route;
+    },
+    clearActiveLink() {
+      this.activeLink = null;
     }
   }
 }
@@ -108,7 +117,6 @@ export default {
   text-align: center;
   color: #2c3e50;
   padding-top: 50px; 
-
 }
 
 .navbar {
@@ -124,7 +132,6 @@ export default {
   background-color: #fff; 
   z-index: 1000; 
 }
-
 
 .nav-links-left, .nav-links-right {
   display: flex;
@@ -156,7 +163,7 @@ export default {
 }
 
 .nav-link {
-  font-weight:500; 
+  font-weight: 500; 
   font-size: medium;
   color: #2D1E17;
   text-decoration: none;
@@ -164,8 +171,12 @@ export default {
   text-transform: uppercase;
 }
 
-.nav-link.router-link-exact-active {
-  color: #796254;
+.nav-link.router-link-active {
+  border-bottom: 2px solid #796254; 
+}
+
+.nav-link:hover {
+  border-bottom: 2px solid #796254; 
 }
 
 .dropdown {
