@@ -39,6 +39,9 @@
       </div>
     </nav>
     <router-view />
+    <footer class="footer">
+      <p>&copy; Cocoa Connect 2024</p>
+    </footer>
   </div>
 </template>
 
