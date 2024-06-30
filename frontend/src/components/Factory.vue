@@ -475,6 +475,11 @@ header h2 {
 }
 
 .sort-filter-buttons h2 {
-  margin-right: 470px;
+  margin-right: 470px; 
+  white-space: nowrap; 
+  justify-content: left;
+  overflow: auto; 
+  text-overflow: ellipsis; 
 }
+
 </style>
