@@ -308,14 +308,18 @@ header h2 {
   font-family: "Poppins", sans-serif;
 }
 
-.rating-range {
+.search-bar .rating-range {
+  width: fit-content;
   display: flex;
   gap: 10px;
-  justify-content: space-between;
 }
 
-.rating-range input {
-  width: 48%;
+.search-bar .rating-range input {
+  display: flex;
+  gap: 5px;
+  justify-content: space-between;
+  border: 1px solid #523F31;
+  border-radius: 5px;
 }
 
 .filter-container {
@@ -359,10 +363,24 @@ header h2 {
 
 }
 
-.buttons {
+.search-bar .buttons {
   display: flex;
+  flex-direction: row;
   gap: 10px;
   justify-content: center;
+}
+
+.buttons .btn-search {
+  color: white;
+  font-size: small;
+  background-color: #523F31;
+}
+
+.buttons .btn-clear {
+  color: white;
+  font-size: small;
+  background-color: #523F31;
+  width: 90px;
 }
 
 .sort-filter-buttons {
@@ -386,19 +404,6 @@ header h2 {
   transition: background-color 0.3s ease, transform 0.2s;
   font-size: small;
 }
-
-.btn-search {
-  background-color: #523F31;
-  font-size: small;
-}
-
-.btn-clear {
-  background-color: #ccc;
-  color: #523F31;
-  font-size: small;
-}
-
-
 
 .btn-view {
   background-color: #523F31;
