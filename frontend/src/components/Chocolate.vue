@@ -4,12 +4,12 @@
       <div class="factory-details-box">
         <div class="factory-details">
           <p v-if="factory.workingHours">
-            <strong>Working Hours:</strong>
+            <strong>⏰ Working Hours:</strong>
             {{ formatWorkingHours(factory.workingHours) }}
           </p>
-          <p><strong>Status:</strong> {{ factory.factoryStatus }}</p>
-          <p><strong>Location:</strong> {{ factory.city }}, {{ factory.country }}</p>
-          <p v-if="factory.averageRating"><strong>Rating:</strong> {{ factory.averageRating }}</p>
+          <p><strong>❔ Status:</strong> {{ factory.factoryStatus }}</p>
+          <p><strong>📍 Location:</strong> {{ factory.city }}, {{ factory.country }}</p>
+          <p v-if="factory.averageRating"><strong>⭐ Rating:</strong> {{ factory.averageRating }}</p>
           <p v-if="factory.comment"><strong>Comment:</strong> {{ factory.comment }}</p>
           <div v-if="factory.comments && factory.comments.length">
             <strong>Comments:</strong>
@@ -234,15 +234,24 @@ header {
   margin-bottom: 10px;
 }
 
-.chocolate-card p {
-  margin: 5px 0;
+.chocolate-card h3 {
+  margin: 10px 0 5px;
+}
+
+.chocolate-price {
+  color: #523F31;
+  margin: 0 0 5px;
+  font-size: 18px;
 }
 
 .chocolate-description {
-  flex-grow: 1;
-  margin-bottom: 10px;
-  font-family: "Poppins", sans-serif;
-  text-align: justify;
+  margin: 0 0 15px;
+  text-align: center;
+  font-size: 16px;
+}
+
+.chocolate-detail {
+  margin: 5px 0;
 }
 
 .btn {
