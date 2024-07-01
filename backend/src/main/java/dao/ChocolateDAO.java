@@ -59,6 +59,7 @@ public class ChocolateDAO {
 			c.setImage(chocolate.getImage());
 			c.setStatus(chocolate.getStatus());
 			c.setQuantity(chocolate.getQuantity());
+			saveToFile(contextPath);
 		}
 		
 		return c;

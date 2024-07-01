@@ -33,11 +33,19 @@
           <p><strong>Price:</strong> {{ chocolate.price }}</p>
           <p><strong>Type:</strong> {{ chocolate.type }}</p>
           <p><strong>Kind:</strong> {{ chocolate.kind }}</p>
+          <p><strong>Quantity:</strong> {{ chocolate.quantity }}</p>
           <p><strong>Weight:</strong> {{ chocolate.weight }} g</p>
           <p class="chocolate-description"><strong>Description:</strong> {{ chocolate.description }}</p>
-          <div class="buttons" v-if="loggedUser && loggedUser.role === 'MANAGER'">
-            <button class="btn btn-delete" @click="deleteChocolate(chocolate.id)">Delete</button>
-            <button class="btn btn-edit" @click="editChocolate(chocolate.id)">Edit</button>
+          <div class="buttons" v-if="loggedUser && (loggedUser.role === 'MANAGER' || loggedUser.role === 'EMPLOYEE')">
+            <button class="btn btn-delete" v-if="loggedUser.role === 'MANAGER'" @click="deleteChocolate(chocolate.id)">Delete</button>
+            <button class="btn btn-edit" v-if="loggedUser.role === 'MANAGER'" @click="editChocolate(chocolate.id)">Edit</button>
+            <div class="edit-quantity-section" v-if="loggedUser.role === 'EMPLOYEE'">
+              <button class="btn btn-edit-quantity" @click="toggleEditQuantity(chocolate.id)">Edit quantity</button>
+              <div v-if="chocolate.editQuantity">
+                <input v-model="chocolate.newQuantity" type="number" />
+                <button class="btn btn-done" @click="updateQuantity(chocolate.id)">Done</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -95,6 +103,30 @@ function deleteChocolate(chocolateId) {
 
 function editChocolate(chocolateId) {
   router.push({ name: 'editChocolate', params: { chocolateId } });
+}
+
+function toggleEditQuantity(chocolateId) {
+  const chocolate = chocolates.value.find(choc => choc.id === chocolateId);
+  if (chocolate) {
+    chocolate.editQuantity = !chocolate.editQuantity;
+    if (chocolate.editQuantity) {
+      chocolate.newQuantity = chocolate.quantity;
+    }
+  }
+}
+
+function updateQuantity(chocolateId) {
+  const chocolate = chocolates.value.find(choc => choc.id === chocolateId);
+  chocolate.quantity = chocolate.newQuantity;
+  if (chocolate) {
+    axios.put(`http://localhost:8080/chocolate-factory/rest/chocolates/${chocolateId}`, chocolate)
+      .then(response => {
+        chocolate.quantity = chocolate.newQuantity;
+        chocolate.editQuantity = false;
+      })
+      .catch(error => console.error(error));
+     
+  }
 }
 
 function formatWorkingHours(workingHours) {
@@ -181,7 +213,7 @@ header {
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
   overflow: hidden;
-  width: 300px;
+  width: 350px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -231,7 +263,7 @@ header {
 
 .btn-delete {
   background-color: #523F31;
-  margin-right: 10px;
+  margin-bottom: 10px;
   font-family: "Poppins", sans-serif;
 }
 
@@ -242,6 +274,33 @@ header {
 
 .buttons {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+
+.btn-edit-quantity {
+  background-color: #523F31;
+  font-family: "Poppins", sans-serif;
+  margin-top: 10px;
+}
+
+.btn-done {
+  background-color: #523F31;
+  font-family: "Poppins", sans-serif;
+  margin-top: 10px;
+}
+
+input[type="number"] {
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.edit-quantity-section {
+  margin-top: 10px;
+  width: 100%;
 }
 </style>

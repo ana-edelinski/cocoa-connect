@@ -201,3 +201,9 @@
 0:0:0:0:0:0:0:1 - - [28/Jun/2024:15:32:49 +0200] "GET /backend/rest/factories/ HTTP/1.1" 200 2116
 0:0:0:0:0:0:0:1 - - [28/Jun/2024:15:32:49 +0200] "GET /backend/rest/factories/chocolateTypes HTTP/1.1" 200 23
 0:0:0:0:0:0:0:1 - - [28/Jun/2024:15:32:49 +0200] "GET /backend/rest/factories/chocolateKinds HTTP/1.1" 404 713
+127.0.0.1 - - [28/Jun/2024:15:33:24 +0200] "GET / HTTP/1.1" 200 11428
+0:0:0:0:0:0:0:1 - - [28/Jun/2024:15:33:28 +0200] "GET /backend/rest/factories/chocolateTypes HTTP/1.1" 200 23
+0:0:0:0:0:0:0:1 - - [28/Jun/2024:15:33:28 +0200] "GET /backend/rest/factories/chocolateKinds HTTP/1.1" 200 32
+0:0:0:0:0:0:0:1 - - [28/Jun/2024:15:33:29 +0200] "GET /backend/rest/factories/ HTTP/1.1" 200 2116
+0:0:0:0:0:0:0:1 - - [28/Jun/2024:15:33:34 +0200] "GET /backend/rest/factories/filter?chocolateType=&chocolateKind=COOKING HTTP/1.1" 200 820
+0:0:0:0:0:0:0:1 - - [28/Jun/2024:15:34:13 +0200] "GET /backend/rest/factories/ HTTP/1.1" 200 2116
