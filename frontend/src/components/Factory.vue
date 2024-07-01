@@ -320,6 +320,7 @@ header h2 {
   justify-content: space-between;
   border: 1px solid #523F31;
   border-radius: 5px;
+  width: 48%;
 }
 
 .filter-container {
