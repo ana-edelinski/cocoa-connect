@@ -30,22 +30,24 @@
         <div v-for="chocolate in chocolates" :key="chocolate.id" class="chocolate-card">
           <img :src="chocolate.image" alt="Chocolate Image" class="chocolate-image" />
           <h3>{{ chocolate.name }}</h3>
-          <p><strong>Price:</strong> {{ chocolate.price }}</p>
-          <p><strong>Type:</strong> {{ chocolate.type }}</p>
-          <p><strong>Kind:</strong> {{ chocolate.kind }}</p>
-          <p><strong>Quantity:</strong> {{ chocolate.quantity }}</p>
-          <p><strong>Weight:</strong> {{ chocolate.weight }} g</p>
-          <p class="chocolate-description"><strong>Description:</strong> {{ chocolate.description }}</p>
+          <p class="chocolate-price"><strong> {{ chocolate.price }} RSD </strong></p>
+          <p class="chocolate-description">{{ chocolate.description }}</p>
+          <p class="chocolate-detail"><strong>Type:</strong> {{ chocolate.type }}</p>
+          <p class="chocolate-detail"><strong>Kind:</strong> {{ chocolate.kind }}</p>
+          <p class="chocolate-detail"><strong>Weight:</strong> {{ chocolate.weight }} g</p>  
+          <div class="quantity-row">
+          <template v-if="loggedUser && loggedUser.role !== 'EMPLOYEE'">
+            <p class="chocolate-detail"><strong>Quantity:</strong> {{ chocolate.quantity }}</p>
+          </template>
+          <span v-if="loggedUser && loggedUser.role === 'EMPLOYEE'" class="quantity-input">
+            <p class="chocolate-detail"><strong>Quantity:</strong></p>
+            <input v-model="chocolate.newQuantity" type="number" @blur="updateQuantity(chocolate.id)" />
+            <button class="btn btn-done" @click="updateQuantity(chocolate.id)">✔</button>
+          </span>
+        </div>
           <div class="buttons" v-if="loggedUser && (loggedUser.role === 'MANAGER' || loggedUser.role === 'EMPLOYEE')">
             <button class="btn btn-delete" v-if="loggedUser.role === 'MANAGER'" @click="deleteChocolate(chocolate.id)">Delete</button>
             <button class="btn btn-edit" v-if="loggedUser.role === 'MANAGER'" @click="editChocolate(chocolate.id)">Edit</button>
-            <div class="edit-quantity-section" v-if="loggedUser.role === 'EMPLOYEE'">
-              <button class="btn btn-edit-quantity" @click="toggleEditQuantity(chocolate.id)">Edit quantity</button>
-              <div v-if="chocolate.editQuantity">
-                <input v-model="chocolate.newQuantity" type="number" />
-                <button class="btn btn-done" @click="updateQuantity(chocolate.id)">Done</button>
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -89,6 +91,9 @@ function loadChocolates() {
   axios.get('http://localhost:8080/chocolate-factory/rest/chocolates/getAllForFactory/' + factoryId)
     .then(response => {
       chocolates.value = response.data.filter(chocolate => !chocolate.deleted);
+      chocolates.value.forEach(chocolate => {
+        chocolate.newQuantity = chocolate.quantity;
+      });
     })
     .catch(error => console.error(error));
 }
@@ -105,27 +110,14 @@ function editChocolate(chocolateId) {
   router.push({ name: 'editChocolate', params: { chocolateId } });
 }
 
-function toggleEditQuantity(chocolateId) {
-  const chocolate = chocolates.value.find(choc => choc.id === chocolateId);
-  if (chocolate) {
-    chocolate.editQuantity = !chocolate.editQuantity;
-    if (chocolate.editQuantity) {
-      chocolate.newQuantity = chocolate.quantity;
-    }
-  }
-}
-
 function updateQuantity(chocolateId) {
   const chocolate = chocolates.value.find(choc => choc.id === chocolateId);
-  chocolate.quantity = chocolate.newQuantity;
   if (chocolate) {
     axios.put(`http://localhost:8080/chocolate-factory/rest/chocolates/${chocolateId}`, chocolate)
       .then(response => {
         chocolate.quantity = chocolate.newQuantity;
-        chocolate.editQuantity = false;
       })
       .catch(error => console.error(error));
-     
   }
 }
 
@@ -254,6 +246,16 @@ header {
   margin: 5px 0;
 }
 
+.quantity-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quantity-input {
+  margin-left: 10px;
+}
+
 .btn {
   padding: 10px 20px;
   cursor: pointer;
@@ -279,12 +281,15 @@ header {
 .btn-edit {
   background-color: #523F31;
   font-family: "Poppins", sans-serif;
+  width: fit-content;
+  height: fit-content;
 }
 
 .buttons {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-direction: row;
+  justify-content: center;
+  gap: 10px;
 }
 
 .btn-edit-quantity {
@@ -295,16 +300,24 @@ header {
 
 .btn-done {
   background-color: #523F31;
-  font-family: "Poppins", sans-serif;
-  margin-top: 10px;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  margin-left: 10px;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
+.btn-done:hover {
+  background-color: #796254;
+}
+
+
 input[type="number"] {
-  margin-top: 10px;
-  padding: 10px;
+  padding: 8px;
   border: 1px solid #ddd;
   border-radius: 5px;
-  width: 100%;
+  width: 80px;
   box-sizing: border-box;
 }
 
