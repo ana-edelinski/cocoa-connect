@@ -20,9 +20,9 @@
         <div v-if="!loggedUserRole">
           <router-link to="/signIn" class="nav-link">LOGIN / REGISTER</router-link>
         </div>
-        <div class="dropdown" v-if="loggedUserRole">
+        <div class="dropdown" v-if="loggedUserRole" @mouseleave="closeDropdown">
           <img src="@/images/logout.png" alt="User Icon" class="user-icon" @mouseover="toggleDropdown" />
-          <div v-if="showDropdown" class="dropdown-menu" @mouseleave="closeDropdown">
+          <div v-if="showDropdown" class="dropdown-menu">
             <router-link to="/my-account" class="dropdown-item" @click.native="closeDropdown">MY ACCOUNT</router-link>
             <router-link to="/" class="dropdown-item" @click.native="logOut">LOG OUT</router-link>
           </div>
@@ -35,6 +35,7 @@
     </footer>
   </div>
 </template>
+
 
 <script>
 export default {
@@ -134,18 +135,17 @@ export default {
   display: flex;
   align-items: center;
   margin-right: 100px;
+  margin-left: 50px;
 }
 
 .nav-links-left {
   flex: 1;
   justify-content: flex-start;
-  gap: 20px;
 }
 
 .nav-links-right {
   flex: 1;
   justify-content: flex-end;
-  gap: 20px;
 }
 
 .logo {
@@ -172,6 +172,7 @@ export default {
   text-decoration: none;
   padding: 5px 10px;
   text-transform: uppercase;
+  margin: 0 5px;
 }
 
 .nav-link.router-link-active {
@@ -190,13 +191,14 @@ export default {
 .user-icon {
   height: 23px;
   cursor: pointer;
+  margin-left: 10px;
 }
 
 .dropdown-menu {
   display: block;
   position: absolute;
-  right: -10px; /* Pomaknuto desno */
-  top: 30px; /* Povećana udaljenost od ikone */
+  right: -10px; 
+  top: 30px; 
   background-color: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   border: 1px solid #ddd;
@@ -210,7 +212,7 @@ export default {
   color: #2D1E17;
   white-space: nowrap;
   text-transform: uppercase; 
-  font-size: smaller; /* Manji font */
+  font-size: smaller;
 }
 
 .dropdown-item:hover {
