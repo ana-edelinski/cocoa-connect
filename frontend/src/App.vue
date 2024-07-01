@@ -2,30 +2,21 @@
   <div id="app">
     <nav class="navbar">
       <div class="nav-links-left">
-        <div v-if="loggedUserRole === 'ADMINISTRATOR'">
-          <router-link to="/" class="nav-link" @mouseover="setActiveLink('/')">HOME</router-link>
-          <router-link to="/registered-users" class="nav-link" @mouseover="setActiveLink('/registered-users')">REGISTERED USERS</router-link>
-          <router-link to="/create-factory" class="nav-link" @mouseover="setActiveLink('/create-factory')">CREATE FACTORY</router-link>
-        </div>
-        <div v-else-if="loggedUserRole === 'CUSTOMER'">
-          <router-link to="/" class="nav-link" @mouseover="setActiveLink('/')">HOME</router-link>
-        </div>
-        <div v-else-if="loggedUserRole === 'MANAGER'">
-          <router-link to="/" class="nav-link" @mouseover="setActiveLink('/')">HOME</router-link>
-          <router-link to="/add-chocolate" class="nav-link" @mouseover="setActiveLink('/add-chocolate')">ADD CHOCOLATE</router-link>
-          <router-link to="/add-employee" class="nav-link" @mouseover="setActiveLink('/add-employee')">ADD EMPLOYEE</router-link>
-        </div>
-        <div v-else-if="loggedUserRole === 'EMPLOYEE'">
-          <router-link to="/" class="nav-link" @mouseover="setActiveLink('/')">HOME</router-link>
-        </div>
-        <div v-else>
-          <router-link to="/" class="nav-link" @mouseover="setActiveLink('/')">HOME</router-link>
-        </div>
+        <router-link to="/" class="nav-link" @mouseover="setActiveLink('/')">HOME</router-link>
+        <router-link to="/about" class="nav-link" @mouseover="setActiveLink('/about')">ABOUT US</router-link>
       </div>
       <div class="logo" :class="{ 'scrolled': isScrolled }" @click="refreshHomePage">
         <img src="@/images/logo-01.png" alt="COCOA connect Logo" class="logo-image" />
       </div>
       <div class="nav-links-right">
+        <div v-if="loggedUserRole === 'ADMINISTRATOR'">
+          <router-link to="/registered-users" class="nav-link" @mouseover="setActiveLink('/registered-users')">REGISTERED USERS</router-link>
+          <router-link to="/create-factory" class="nav-link" @mouseover="setActiveLink('/create-factory')">CREATE FACTORY</router-link>
+        </div>
+        <div v-else-if="loggedUserRole === 'MANAGER'">
+          <router-link to="/add-chocolate" class="nav-link" @mouseover="setActiveLink('/add-chocolate')">ADD CHOCOLATE</router-link>
+          <router-link to="/add-employee" class="nav-link" @mouseover="setActiveLink('/add-employee')">ADD EMPLOYEE</router-link>
+        </div>
         <div v-if="!loggedUserRole">
           <router-link to="/signIn" class="nav-link">LOGIN / REGISTER</router-link>
         </div>
@@ -122,13 +113,14 @@ export default {
   text-align: center;
   color: #2c3e50;
   padding-top: 50px; 
+  margin-left: -4px;
 }
 
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 40px;
+  padding: 10px 20px; 
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   border-bottom: 1px solid #2D1E17;
   position: fixed; 
@@ -165,17 +157,17 @@ export default {
 }
 
 .logo-image {
-  height: 70px;
+  height: 60px; 
   transition: height 0.3s ease;
 }
 
 .scrolled .logo-image {
-  height: 50px; 
+  height: 40px; 
 }
 
 .nav-link {
   font-weight: 500; 
-  font-size: medium;
+  font-size: small;
   color: #2D1E17;
   text-decoration: none;
   padding: 5px 10px;
@@ -196,20 +188,19 @@ export default {
 }
 
 .user-icon {
-  height: 27px;
-  margin-right: 100px;
+  height: 23px;
   cursor: pointer;
 }
 
 .dropdown-menu {
   display: block;
   position: absolute;
-  right: 0;
+  right: -10px; /* Pomaknuto desno */
+  top: 30px; /* Povećana udaljenost od ikone */
   background-color: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   border: 1px solid #ddd;
   z-index: 1000;
-  margin-right: 50px;
 }
 
 .dropdown-item {
@@ -219,9 +210,11 @@ export default {
   color: #2D1E17;
   white-space: nowrap;
   text-transform: uppercase; 
+  font-size: smaller; /* Manji font */
 }
 
 .dropdown-item:hover {
   background-color: #f1f1f1;
 }
+
 </style>
