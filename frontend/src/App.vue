@@ -22,7 +22,7 @@
           <router-link to="/" class="nav-link" @mouseover="setActiveLink('/')">HOME</router-link>
         </div>
       </div>
-      <div class="logo" @click="refreshHomePage">
+      <div class="logo" :class="{ 'scrolled': isScrolled }" @click="refreshHomePage">
         <img src="@/images/logo-01.png" alt="COCOA connect Logo" class="logo-image" />
       </div>
       <div class="nav-links-right">
@@ -30,8 +30,8 @@
           <router-link to="/signIn" class="nav-link">LOGIN / REGISTER</router-link>
         </div>
         <div class="dropdown" v-if="loggedUserRole">
-          <img src="@/images/logout.png" alt="User Icon" class="user-icon" @click="toggleDropdown" />
-          <div v-if="showDropdown" class="dropdown-menu">
+          <img src="@/images/logout.png" alt="User Icon" class="user-icon" @mouseover="toggleDropdown" />
+          <div v-if="showDropdown" class="dropdown-menu" @mouseleave="closeDropdown">
             <router-link to="/my-account" class="dropdown-item" @click.native="closeDropdown">MY ACCOUNT</router-link>
             <router-link to="/" class="dropdown-item" @click.native="logOut">LOG OUT</router-link>
           </div>
@@ -53,11 +53,13 @@ export default {
       showDropdown: false,
       loggedUserRole: null,
       activeLink: null,
+      isScrolled: false,
     }
   },
   mounted() {
     this.initialize();
     document.addEventListener('click', this.handleClickOutside);
+    window.addEventListener('scroll', this.handleScroll);
   },
   watch: {
     '$route'() {
@@ -80,7 +82,7 @@ export default {
       this.activeLink = this.$route.path;
     },
     toggleDropdown() {
-      this.showDropdown = !this.showDropdown;
+      this.showDropdown = true;
     },
     closeDropdown() {
       this.showDropdown = false;
@@ -95,6 +97,9 @@ export default {
       if (!this.$el.contains(event.target)) {
         this.closeDropdown();
       }
+    },
+    handleScroll() {
+      this.isScrolled = window.scrollY > 0;
     },
     refreshHomePage() {
       this.$router.push('/'); 
@@ -156,10 +161,16 @@ export default {
   display: flex;
   justify-content: center;
   cursor: pointer; 
+  transition: height 0.3s ease;
 }
 
 .logo-image {
   height: 70px;
+  transition: height 0.3s ease;
+}
+
+.scrolled .logo-image {
+  height: 50px; 
 }
 
 .nav-link {
@@ -193,7 +204,6 @@ export default {
 .dropdown-menu {
   display: block;
   position: absolute;
-  top: 40px;
   right: 0;
   background-color: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);

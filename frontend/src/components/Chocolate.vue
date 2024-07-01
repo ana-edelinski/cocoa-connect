@@ -4,12 +4,12 @@
       <div class="factory-details-box">
         <div class="factory-details">
           <p v-if="factory.workingHours">
-            <strong>Working Hours:</strong>
+            <strong>⏰ Working Hours:</strong>
             {{ formatWorkingHours(factory.workingHours) }}
           </p>
-          <p><strong>Status:</strong> {{ factory.factoryStatus }}</p>
-          <p><strong>Location:</strong> {{ factory.city }}, {{ factory.country }}</p>
-          <p v-if="factory.averageRating"><strong>Rating:</strong> {{ factory.averageRating }}</p>
+          <p><strong>❔ Status:</strong> {{ factory.factoryStatus }}</p>
+          <p><strong>📍 Location:</strong> {{ factory.city }}, {{ factory.country }}</p>
+          <p v-if="factory.averageRating"><strong>⭐ Rating:</strong> {{ factory.averageRating }}</p>
           <p v-if="factory.comment"><strong>Comment:</strong> {{ factory.comment }}</p>
           <div v-if="factory.comments && factory.comments.length">
             <strong>Comments:</strong>
@@ -30,11 +30,12 @@
         <div v-for="chocolate in chocolates" :key="chocolate.id" class="chocolate-card">
           <img :src="chocolate.image" alt="Chocolate Image" class="chocolate-image" />
           <h3>{{ chocolate.name }}</h3>
-          <p><strong>Price:</strong> {{ chocolate.price }}</p>
-          <p><strong>Type:</strong> {{ chocolate.type }}</p>
-          <p><strong>Kind:</strong> {{ chocolate.kind }}</p>
-          <p><strong>Weight:</strong> {{ chocolate.weight }} g</p>
-          <p class="chocolate-description"><strong>Description:</strong> {{ chocolate.description }}</p>
+          <p class="chocolate-price"><strong> {{ chocolate.price }} RSD </strong></p>
+          <p class="chocolate-description">{{ chocolate.description }}</p>
+
+          <p class="chocolate-detail"><strong>Type:</strong> {{ chocolate.type }}</p>
+          <p class="chocolate-detail"><strong>Kind:</strong> {{ chocolate.kind }}</p>
+          <p class="chocolate-detail"><strong>Weight:</strong> {{ chocolate.weight }} g</p>
           <div class="buttons" v-if="loggedUser && loggedUser.role === 'MANAGER'">
             <button class="btn btn-delete" @click="deleteChocolate(chocolate.id)">Delete</button>
             <button class="btn btn-edit" @click="editChocolate(chocolate.id)">Edit</button>
@@ -202,15 +203,24 @@ header {
   margin-bottom: 10px;
 }
 
-.chocolate-card p {
-  margin: 5px 0;
+.chocolate-card h3 {
+  margin: 10px 0 5px;
+}
+
+.chocolate-price {
+  color: #523F31;
+  margin: 0 0 5px;
+  font-size: 18px;
 }
 
 .chocolate-description {
-  flex-grow: 1;
-  margin-bottom: 10px;
-  font-family: "Poppins", sans-serif;
-  text-align: justify;
+  margin: 0 0 15px;
+  text-align: center;
+  font-size: 16px;
+}
+
+.chocolate-detail {
+  margin: 5px 0;
 }
 
 .btn {
