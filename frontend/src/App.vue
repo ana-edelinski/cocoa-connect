@@ -17,6 +17,11 @@
           <router-link to="/add-chocolate" class="nav-link" @mouseover="setActiveLink('/add-chocolate')">ADD CHOCOLATE</router-link>
           <router-link to="/add-employee" class="nav-link" @mouseover="setActiveLink('/add-employee')">ADD EMPLOYEE</router-link>
         </div>
+        <div v-else-if="loggedUserRole === 'CUSTOMER'">
+          <router-link to="/cart" class="nav-link">
+            <img src=" https://cdn.vectorstock.com/i/500p/33/02/shopping-cart-icon-vector-11363302.jpg" alt="Shopping Cart" class="shopping-cart-icon" />
+          </router-link>
+        </div>
         <div v-if="!loggedUserRole">
           <router-link to="/signIn" class="nav-link">LOGIN / REGISTER</router-link>
         </div>
@@ -218,5 +223,8 @@ export default {
 .dropdown-item:hover {
   background-color: #f1f1f1;
 }
-
+.shopping-cart-icon {
+  height: 60px; /* Smanjite visinu ikone korpe */
+  margin-left: 10px;
+}
 </style>

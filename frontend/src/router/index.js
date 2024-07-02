@@ -10,6 +10,7 @@ import Registration from '../components/Registration.vue';
 import SignIn from '../components/SignIn.vue';
 import MyAccount from '../components/MyAccount.vue';
 import AddEmployee from '../components/AddEmployee.vue';
+import ShoppingCart from '../components/ShoppingCart.vue';
 
 const routes = [
   {
@@ -72,6 +73,11 @@ const routes = [
     path: "/registration",
     name: "registration",
     component: Registration
+  },
+  {
+    path: "/cart",
+    name: "cart",
+    component: ShoppingCart
   },
   {
     path: "/signIn",
