@@ -11,6 +11,7 @@ import enums.Role;
 public class UserDto {
 	private int id;
 	private String username;
+	private String password;
 	private String name;
 	private String surname;
 	private Gender gender;
@@ -26,6 +27,7 @@ public class UserDto {
 	public UserDto(User user) {
 		id = user.getId();
 		username = user.getUsername();
+		password = user.getPassword();
 		name = user.getName();
 		surname = user.getSurname();
 		gender = user.getGender();
@@ -48,6 +50,14 @@ public class UserDto {
 
 	public void setUsername(String username) {
 		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 	public String getName() {

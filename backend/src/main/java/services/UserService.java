@@ -7,7 +7,9 @@ import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -15,6 +17,7 @@ import javax.ws.rs.core.Response;
 
 import beans.User;
 import dao.UserDAO;
+import dto.ChangePasswordDto;
 import dto.EmployeeCreationDto;
 import dto.LoginDto;
 import dto.SearchCriteriaDTO;
@@ -142,5 +145,53 @@ public class UserService {
         UserDAO dao = (UserDAO) ctx.getAttribute("userDao");
         return dao.searchUsers(criteria);
     }
+    
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getUserById(@PathParam("id") int id) {
+        UserDAO dao = (UserDAO) ctx.getAttribute("userDao");
+        User user = dao.findById(id);
+        if (user != null) {
+            return Response.ok(new UserDto(user)).build();
+        } else {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+    } 
+
+    @PUT
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public User update(@PathParam("id") Integer id, User updatedUser) {
+    	UserDAO dao = (UserDAO) ctx.getAttribute("userDao");
+    	//todo: Validacija
+    	return dao.update(id, updatedUser);
+    }
+    
+    @PUT
+    @Path("/changePassword/{userId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response changePassword(@PathParam("userId") int userId, ChangePasswordDto passwordDto) {
+        UserDAO userDao = (UserDAO) ctx.getAttribute("userDao");
+        User user = userDao.findById(userId);
+        
+        if (user == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        
+        // Provera trenutne lozinke
+        if (!user.getPassword().equals(passwordDto.getCurrentPassword())) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+        
+        // Promena lozinke
+        user.setPassword(passwordDto.getNewPassword());
+        userDao.update(userId, user);
+        
+        return Response.ok().build();
+    }
+
 
 }
