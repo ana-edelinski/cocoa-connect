@@ -1,21 +1,21 @@
 <template>
   <div class="cart-container">
-    <h1>Your Shopping Cart</h1>
+    <h1>Shopping Cart</h1>
     <div class="cart-items" v-if="cart.length">
-      <div class="cart-item" v-for="item in cart" :key="item.id">
+      <div class="cart-item" v-for="item in cart" :key="item.chocolate.id">
         <img :src="item.chocolate.image" alt="Chocolate Image" class="item-image" />
         <div class="item-details">
           <h3>{{ item.chocolate.name }}</h3>
-          <p><strong>Weight:</strong> {{ item.chocolate.weight }} g</p>
+          <p class="chocolate-price"><strong> {{ item.chocolate.price }} RSD </strong></p>
           <p><strong>Type:</strong> {{ item.chocolate.type }}</p>
           <p><strong>Kind:</strong> {{ item.chocolate.kind }}</p>
-          <p><strong>Price:</strong> {{ item.chocolate.price }} RSD</p>
+          <p><strong>Weight:</strong> {{ item.chocolate.weight }} g</p>
           <div class="quantity-controls">
             <button class="quantity-button" @click="decreaseQuantity(item)">-</button>
             <input v-model.number="item.quantity" type="number" @change="updateQuantity(item)" />
             <button class="quantity-button" @click="increaseQuantity(item)">+</button>
           </div>
-          <button class="remove-button" @click="removeItem(item)">Remove</button>
+          <button class="remove-button" @click="removeItem(item)">🗑</button>
         </div>
       </div>
       <div class="cart-total">
@@ -79,43 +79,55 @@ export default {
 
 <style>
 .cart-container {
+  overflow: hidden;
   width: 90%;
   max-width: 800px;
   margin: 50px auto;
   padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 10px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-  font-family: 'Poppins', sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px;
 }
+
 
 h1 {
   text-align: center;
   margin-bottom: 20px;
-  color: #2c3e50;
+  color: #2D1E17;
 }
 
 .cart-items {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  margin-top: 15px;
 }
 
 .cart-item {
   display: flex;
+  flex-direction: row;
+  justify-content: space-between;
   align-items: center;
   gap: 20px;
   padding: 20px;
   background-color: #fff;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+  justify-content: space-between;
+}
+
+.cart-item:hover {
+  transform: scale(1.05);
 }
 
 .item-image {
-  width: 100px;
-  height: 100px;
+  width: 200px;
+  height: 200px;
   object-fit: cover;
   border-radius: 10px;
+  margin-left: 40px;
 }
 
 .item-details {
@@ -124,12 +136,11 @@ h1 {
 
 .item-details h3 {
   margin: 0 0 10px;
-  color: #333;
+  color: #2d1e17;
 }
 
 .item-details p {
   margin: 5px 0;
-  color: #666;
 }
 
 .quantity-controls {
@@ -148,8 +159,8 @@ h1 {
 }
 
 .quantity-button {
-  background-color: #2c3e50;
-  color: #fff;
+  background-color: white;
+  color: #523F31;
   border: none;
   border-radius: 5px;
   padding: 5px 10px;
@@ -157,11 +168,12 @@ h1 {
 }
 
 .quantity-button:hover {
-  background-color: #1a252f;
+  background-color: #523F31;
+  color: #fff
 }
 
 .remove-button {
-  background-color: #e74c3c;
+  background-color: #523F31;
   color: white;
   border: none;
   padding: 10px 15px;
@@ -171,13 +183,20 @@ h1 {
 }
 
 .remove-button:hover {
-  background-color: #c0392b;
+  background-color: #796254;
 }
 
 .cart-total {
   text-align: right;
-  font-size: 1.5em;
+  font-size: 1.2em;
   margin-top: 20px;
-  color: #2c3e50;
+  color: #2d1e17;
 }
+
+.chocolate-price {
+  color: #523F31;
+  margin: 0 0 5px;
+  font-size: 18px;
+}
+
 </style>

@@ -19,21 +19,36 @@
             <button class="btn btn-clear" @click="clearSearch">RESET</button>
           </div>
         </div>
-        <div class="filter-container">
-          <h4>FILTER</h4>
+        <div class="separator">
 
+        </div>
+        <div class="filter-container">
           <div class="filter-bar">
-            <select v-model="filterCriteria.chocolateType">
-              <option value="">All Chocolate Types</option>
-              <option v-for="type in chocolateTypes" :key="type" :value="type">{{ type }}</option>
-            </select>
-            <select v-model="filterCriteria.chocolateKind">
-              <option value="">All Chocolate Kinds</option>
-              <option v-for="kind in chocolateKinds" :key="kind" :value="kind">{{ kind }}</option>
-            </select>
+            <h4>FILTER BY CHOCOLATE TYPES</h4>
+            <div class="filter-options">
+              <label>
+                <input type="radio" v-model="filterCriteria.chocolateType" value="" />
+                All Chocolate Types
+              </label>
+              <label v-for="type in chocolateTypes" :key="type">
+                <input type="radio" v-model="filterCriteria.chocolateType" :value="type" />
+                {{ type }}
+              </label>
+            </div>
+            <h4>FILTER BY CHOCOLATE KINDS</h4>
+            <div class="filter-options">
+              <label>
+                <input type="radio" v-model="filterCriteria.chocolateKind" value="" />
+                All Chocolate Kinds
+              </label>
+              <label v-for="kind in chocolateKinds" :key="kind">
+                <input type="radio" v-model="filterCriteria.chocolateKind" :value="kind" />
+                {{ kind }}
+              </label>
+            </div>
             <label class="filter-checkbox">
               <input type="checkbox" v-model="filterCriteria.openOnly" />
-              Show only open factories
+              Opened factories only
             </label>
             <div class="buttons">
               <button class="btn btn-done" @click="applyFilters">APPLY FILTERS</button>
@@ -186,7 +201,7 @@ function applyFilters() {
   const params = {
     chocolateType: filterCriteria.value.chocolateType,
     chocolateKind: filterCriteria.value.chocolateKind,
-    openOnly: filterCriteria.value.openOnly
+    openOnly: filterCriteria.value.openOnly ? filterCriteria.value.openOnly : null
   };
 
   axios.get('http://localhost:8080/chocolate-factory/rest/factories/filter', { params })
@@ -200,6 +215,7 @@ function applyFilters() {
     .catch(error => console.error(error));
 }
 
+
 function applySorting() {
   const params = {
     sortBy: sortCriteria.value.sortBy,
@@ -212,7 +228,6 @@ function applySorting() {
     })
     .catch(error => console.error(error));
 }
-
 
 function clearSearch() {
   searchCriteria.value = {
@@ -230,23 +245,16 @@ function clearSort() {
     sortBy: '',
     order: '',
   };
-  loadFactories(); // Reload all factories
-}
-
-function viewChocolates(factoryId) {
-  router.push({ name: 'chocolates', params: { factoryId } });
 }
 
 function formatStatus(status) {
-  const statusMap = {
-    'OPENED': 'Opened',
-    'CLOSED': 'Closed',
-  };
-  return statusMap[status] || status;
+  return status === 'OPENED' ? 'Opened' : 'Closed';
+}
+
+function viewChocolates(factoryId) {
+  router.push(`/chocolates/${factoryId}`);
 }
 </script>
-
-
 
 <style>
 .container {
@@ -280,7 +288,7 @@ header h2 {
 
 .search-container {
   margin-top: 10px;
-  margin-right: 20px;
+  margin-right: 50px;
   width: 25%;
 }
 
@@ -288,6 +296,7 @@ header h2 {
   text-align: left;
   margin-bottom: 5px;
   font-weight: 500;
+  font-size: 0.9rem;
 }
 
 .factories-container {
@@ -306,6 +315,7 @@ header h2 {
   border: 1px solid #523F31;
   border-radius: 5px;
   font-family: "Poppins", sans-serif;
+  font-size: 0.9rem;
 }
 
 .search-bar .rating-range {
@@ -324,7 +334,6 @@ header h2 {
 }
 
 .filter-container {
-  padding: 20px;
   margin-bottom: 20px;
 }
 
@@ -332,36 +341,55 @@ header h2 {
   text-align: left;
   margin-bottom: 5px;
   font-weight: 500;
+  font-size: 0.9rem;
 }
 
 .filter-bar {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  align-items: stretch;
+}
+
+.filter-bar .buttons {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.filter-options {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.filter-options label {
+  cursor: pointer;
+  font-size: 0.9rem;
+  text-align: left;
 }
 
 .filter-bar select, .filter-bar label {
-  padding: 15px;
-  border: 1px solid #523F31;
-  border-radius: 5px;
+  padding: 5px 0;
+  border: none;
   font-family: "Poppins", sans-serif;
   height: fit-content;
+  width: 100%;
 }
 
-.filter-checkbox {
+.filter-bar .filter-checkbox {
   display: flex;
   align-items: center;
-  padding: 15px;
-  border: 1px solid #523F31;
-  border-radius: 5px;
+  padding: 0;
+  border: none;
   font-family: "Poppins", sans-serif;
-  font-size: small; 
+  font-size: 0.9rem;
+  width: 100%;
+  height: 50px;
 }
 
 .filter-checkbox input {
   margin-right: 10px;
+  margin-left: 10px;
   height: fit-content;
-
 }
 
 .search-bar .buttons {
@@ -373,16 +401,16 @@ header h2 {
 
 .buttons .btn-search {
   color: white;
-  font-size: small;
   background-color: #523F31;
+  width: fit-content;
+  font-size: small;
 }
 
 .buttons .btn-clear {
   color: white;
-  font-size: small;
   background-color: #523F31;
-  width: 90px;
-}
+  width: fit-content;
+  font-size: small;}
 
 .sort-filter-buttons {
   display: flex;
@@ -391,7 +419,6 @@ header h2 {
   margin: 10px;
   margin-right: 30px;
   margin-bottom: 30px;
-  
 }
 
 .btn {
@@ -403,7 +430,7 @@ header h2 {
   font-weight: 500;
   font-family: "Poppins", sans-serif;
   transition: background-color 0.3s ease, transform 0.2s;
-  font-size: small;
+  font-size: 0.9rem;
 }
 
 .btn-view {
@@ -412,6 +439,8 @@ header h2 {
 
 .btn-done {
   background-color: #523F31;
+  width: fit-content;
+  font-size: small;
 }
 
 .btn:hover {
@@ -495,5 +524,34 @@ header h2 {
   overflow: auto; 
   text-overflow: ellipsis; 
 }
+
+.separator {
+  border-bottom: 1px solid #ddd; 
+  padding-bottom: 10px; 
+  margin-bottom: 10px; 
+}
+
+input[type="radio"]:checked::before,
+input[type="checkbox"]:checked::before {
+  content: "";
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  background-color: #523F31; 
+  border-radius: 50%; 
+  margin-right: 10px;
+}
+
+input[type="checkbox"]:checked::before {
+  border-radius: 3px; 
+}
+
+input[type="radio"]:checked,
+input[type="checkbox"]:checked {
+  background-color: #523F31; 
+  border-color: #523F31; 
+}
+
+
 
 </style>

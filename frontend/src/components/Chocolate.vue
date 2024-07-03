@@ -4,12 +4,12 @@
       <div class="factory-details-box">
         <div class="factory-details">
           <p v-if="factory.workingHours">
-            <strong>Working Hours:</strong>
+            <strong>⏰ Working Hours:</strong>
             {{ formatWorkingHours(factory.workingHours) }}
           </p>
-          <p><strong>Status:</strong> {{ factory.factoryStatus }}</p>
-          <p><strong>Location:</strong> {{ factory.city }}, {{ factory.country }}</p>
-          <p v-if="factory.averageRating"><strong>Rating:</strong> {{ factory.averageRating }}</p>
+          <p><strong>❔ Status:</strong> {{ factory.factoryStatus }}</p>
+          <p><strong>📍 Location:</strong> {{ factory.city }}, {{ factory.country }}</p>
+          <p v-if="factory.averageRating"><strong>⭐ Rating:</strong> {{ factory.averageRating }}</p>
           <p v-if="factory.comment"><strong>Comment:</strong> {{ factory.comment }}</p>
           <div v-if="factory.comments && factory.comments.length">
             <strong>Comments:</strong>
@@ -30,16 +30,26 @@
         <div v-for="chocolate in chocolates" :key="chocolate.id" class="chocolate-card">
           <img :src="chocolate.image" alt="Chocolate Image" class="chocolate-image" />
           <h3>{{ chocolate.name }}</h3>
-          <p><strong>Price:</strong> {{ chocolate.price }}</p>
-          <p><strong>Type:</strong> {{ chocolate.type }}</p>
-          <p><strong>Kind:</strong> {{ chocolate.kind }}</p>
-          <p><strong>Quantity:</strong> {{ chocolate.quantity }}</p>
-          <p><strong>Weight:</strong> {{ chocolate.weight }} g</p>
-          <p class="chocolate-description"><strong>Description:</strong> {{ chocolate.description }}</p>
-
+          <p class="chocolate-price"><strong> {{ chocolate.price }} RSD </strong></p>
+          <p class="chocolate-description">{{ chocolate.description }}</p>
+          <p class="chocolate-detail"><strong>Type:</strong> {{ chocolate.type }}</p>
+          <p class="chocolate-detail"><strong>Kind:</strong> {{ chocolate.kind }}</p>
+          <p class="chocolate-detail"><strong>Weight:</strong> {{ chocolate.weight }} g</p>  
+          <div class="quantity-row">
+          <template v-if="loggedUser && loggedUser.role !== 'EMPLOYEE'">
+            <p class="chocolate-detail"><strong>Quantity:</strong> {{ chocolate.quantity }}</p>
+          </template>
+          <span v-if="loggedUser && loggedUser.role === 'EMPLOYEE'" class="quantity-input">
+            <p class="chocolate-detail"><strong>Quantity:</strong></p>
+            <input v-model="chocolate.newQuantity" type="number" @blur="updateQuantity(chocolate.id)" />
+            <button class="btn btn-done" @click="updateQuantity(chocolate.id)">✔</button>
+          </span>
+        </div>
           <div class="buttons" v-if="loggedUser && (loggedUser.role === 'MANAGER' || loggedUser.role === 'EMPLOYEE')">
             <button class="btn btn-delete" v-if="loggedUser.role === 'MANAGER'" @click="deleteChocolate(chocolate.id)">Delete</button>
             <button class="btn btn-edit" v-if="loggedUser.role === 'MANAGER'" @click="editChocolate(chocolate.id)">Edit</button>
+
+            
             <div class="edit-quantity-section" v-if="loggedUser.role === 'EMPLOYEE'">
               <button class="btn btn-edit-quantity" @click="toggleEditQuantity(chocolate.id)">Edit quantity</button>
               <div v-if="chocolate.editQuantity">
@@ -51,12 +61,11 @@
           <div v-if="loggedUser && loggedUser.role === 'CUSTOMER'" class="purchase-section">
             <p><strong>Desired Quantity:</strong></p>
             <div class="quantity-controls">
-              <input v-model.number="chocolate.purchaseQuantity" type="number"  @change="validateQuantity(chocolate)"/>
               <button class="btn btn-quantity" @click="decreaseDesiredQuantity(chocolate)" >-</button>
-              
+              <input v-model.number="chocolate.purchaseQuantity" type="number"  @change="validateQuantity(chocolate)"/>
               <button class="btn btn-quantity" @click="increaseDesiredQuantity(chocolate)">+</button>
             </div>
-            <button class="btn btn-done" @click="confirmPurchase(chocolate)">✔ Add to Cart</button>
+            <button class="btn btn-done" @click="confirmPurchase(chocolate)">Add to Cart</button>
           </div>
         </div>
       </div>
@@ -102,7 +111,7 @@ function loadChocolates() {
       chocolates.value = response.data
         .filter(chocolate => !chocolate.deleted)
         .map(chocolate => {
-          chocolate.purchaseQuantity = 1; // Set purchaseQuantity to 1
+          chocolate.purchaseQuantity = 1;
           return chocolate;
         });
     })
@@ -191,6 +200,7 @@ function formatWorkingHours(workingHours) {
   return `${workingHours.startTime.slice(0, 5)} - ${workingHours.endTime.slice(0, 5)}`;
 }
 </script>
+
 
 <style>
 .container {
@@ -292,15 +302,38 @@ header {
   margin-bottom: 10px;
 }
 
-.chocolate-card p {
-  margin: 5px 0;
+.chocolate-card h3 {
+  margin: 10px 0 5px;
+}
+
+.chocolate-price {
+  color: #523F31;
+  margin: 0 0 5px;
+  font-size: 18px;
 }
 
 .chocolate-description {
-  flex-grow: 1;
-  margin-bottom: 10px;
-  font-family: "Poppins", sans-serif;
-  text-align: justify;
+  margin: 0 0 15px;
+  text-align: center;
+  font-size: 16px;
+}
+
+.chocolate-detail {
+  margin: 5px 0;
+}
+
+.quantity-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quantity-input {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 5px;
+  margin-left: 10px;
 }
 
 .btn {
@@ -328,12 +361,15 @@ header {
 .btn-edit {
   background-color: #523F31;
   font-family: "Poppins", sans-serif;
+  width: fit-content;
+  height: fit-content;
 }
 
 .buttons {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-direction: row;
+  justify-content: center;
+  gap: 10px;
 }
 
 .btn-edit-quantity {
@@ -344,16 +380,30 @@ header {
 
 .btn-done {
   background-color: #523F31;
-  font-family: "Poppins", sans-serif;
-  margin-top: 10px;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  margin-top: 15px;
+  margin-left: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-done:hover {
+  background-color: #796254;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 input[type="number"] {
-  margin-top: 10px;
-  padding: 10px;
   border: 1px solid #ddd;
   border-radius: 5px;
-  width: 100%;
+  width: 80px;
   box-sizing: border-box;
 }
 
@@ -362,35 +412,52 @@ input[type="number"] {
   width: 100%;
 }
 
-.purchase-section {
-  margin-top: 20px;
-}
-
 .quantity-controls {
   display: flex;
+  justify-content: center;
   align-items: center;
-  gap: 10px;
   margin-top: 10px;
 }
 
-.quantity-controls input {
+.quantity-controls input[type="number"] {
   width: 60px;
   text-align: center;
   border: 1px solid #ddd;
-  border-radius: 5px;
-  padding: 5px;
+  border-radius: 0;
+  margin-left: -10px;
+  margin-right: -10px;
+  height: 27px;
 }
 
 .btn-quantity {
-  background-color: #2c3e50;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+  color: #523F31;
+  border: 1px solid #ddd;
+  border-radius: 0;
   padding: 5px 10px;
   cursor: pointer;
 }
 
-.btn-quantity:hover {
-  background-color: #1a252f;
+.btn-quantity:first-of-type {
+  color: #523F31;
+  border-radius: 5px 0 0 5px;
+  border-right: none;
+  height: 27px;
 }
+
+.btn-quantity:last-of-type {
+  color: #523F31;
+  border-radius: 0 5px 5px 0;
+  border-left: none;
+  height: 27px;
+}
+
+.btn-quantity:hover {
+  background-color: #796254;
+  color: #fff;
+}
+
 </style>
