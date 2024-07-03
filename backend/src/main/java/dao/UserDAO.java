@@ -245,14 +245,12 @@ public class UserDAO {
 	            }
 	        }
 
-
-	        // Add user to result if all criteria match
 	        if (match) {
 	            result.add(user);
 	        }
 	    }
 
 	    return result;
-	}
+	}	
 
 }
