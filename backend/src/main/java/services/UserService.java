@@ -181,12 +181,10 @@ public class UserService {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
         
-        // Provera trenutne lozinke
         if (!user.getPassword().equals(passwordDto.getCurrentPassword())) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
         
-        // Promena lozinke
         user.setPassword(passwordDto.getNewPassword());
         userDao.update(userId, user);
         

@@ -252,5 +252,15 @@ public class UserDAO {
 
 	    return result;
 	}	
+	
+	public User getUserByRole(String role) {
+	    for (User user : users.values()) {
+	        if (user.getRole().name().equalsIgnoreCase(role)) {
+	            return user;
+	        }
+	    }
+	    return null;
+	}
+
 
 }

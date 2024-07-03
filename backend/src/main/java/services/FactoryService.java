@@ -20,6 +20,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import beans.Factory;
+import beans.User;
 import dao.FactoryDAO;
 import dao.UserDAO;
 import dto.FactoryWithChocolatesDto;
@@ -145,4 +146,18 @@ public class FactoryService {
 	public List<String> getChocolateKinds() {
 		return Arrays.stream(ChocolateKind.values()).map(Enum::name).collect(Collectors.toList());
 	}
+	
+	@GET
+    @Path("/manager/{managerId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Factory getFactoryForManager(@PathParam("managerId") int managerId) {
+        FactoryDAO factoryDao = (FactoryDAO) ctx.getAttribute("factoryDao");
+        if (factoryDao == null) {
+            factoryDao = new FactoryDAO();
+            ctx.setAttribute("factoryDao", factoryDao);
+        }
+        return factoryDao.getFactoryForManager(managerId);
+    }
+
+
 }

@@ -6,6 +6,7 @@ import java.util.Date;
 
 import beans.User;
 import enums.Gender;
+import enums.Role;
 
 public class EmployeeCreationDto {
 	private String username;
@@ -34,6 +35,7 @@ public class EmployeeCreationDto {
 			e.printStackTrace();
 		}
 		user.setDateOfBirth(date);
+		user.setRole(Role.EMPLOYEE);
 		
 		
 		return user;
