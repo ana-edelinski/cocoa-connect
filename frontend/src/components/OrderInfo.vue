@@ -3,10 +3,10 @@
     <h2>Order Information</h2>
     <div class="chocolates">
       <div class="chocolate-card" v-for="item in orderItems" :key="item.chocolate.id">
+        <div class="price-ribbon">{{ item.chocolate.price }} RSD</div>
         <img :src="item.chocolate.image" alt="Chocolate Image" class="chocolate-image">
         <div class="chocolate-details">
           <h3>{{ item.chocolate.name }}</h3>
-          <p class="chocolate-price"><strong>{{ item.chocolate.price }} RSD</strong></p>
           <p class="chocolate-detail"><strong>Type:</strong> {{ item.chocolate.type }}</p>
           <p class="chocolate-detail"><strong>Kind:</strong> {{ item.chocolate.kind }}</p>
           <p class="chocolate-detail"><strong>Weight:</strong> {{ item.chocolate.weight }} g</p>
@@ -98,4 +98,18 @@ function loadOrderItems() {
 .chocolate-detail {
   margin: 5px 0;
 }
+
+.price-ribbon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #523F31;
+  color: #fff;
+  padding: 5px 10px;
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 5px;
+  z-index: 1;
+}
+
 </style>

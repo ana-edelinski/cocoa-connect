@@ -44,7 +44,7 @@
           <div><strong>Order ID:</strong> {{ order.id }}</div>
           <div><strong>Date & Time:</strong> {{ formatDateTime(order.date) }}</div>
           <div><strong>Status:</strong> {{ order.status }}</div>
-          <div><strong>Total:</strong> {{ order.price }}</div>
+          <div><strong>Total Price:</strong> {{ order.price }} RSD</div>
         </div>
         <div class="button-column">
           <button @click="cancelOrder(order.id)" :disabled="order.status === 'CANCELLED'">
