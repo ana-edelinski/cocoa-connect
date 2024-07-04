@@ -30,26 +30,32 @@
         <div v-for="chocolate in chocolates" :key="chocolate.id" class="chocolate-card">
           <img :src="chocolate.image" alt="Chocolate Image" class="chocolate-image" />
           <h3>{{ chocolate.name }}</h3>
-          <p class="chocolate-price"><strong> {{ chocolate.price }} RSD </strong></p>
+          <p class="chocolate-price"><strong>{{ chocolate.price }} RSD</strong></p>
           <p class="chocolate-description">{{ chocolate.description }}</p>
           <p class="chocolate-detail"><strong>Type:</strong> {{ chocolate.type }}</p>
           <p class="chocolate-detail"><strong>Kind:</strong> {{ chocolate.kind }}</p>
           <p class="chocolate-detail"><strong>Weight:</strong> {{ chocolate.weight }} g</p>  
           <div class="quantity-row">
-          <template v-if="loggedUser && loggedUser.role !== 'EMPLOYEE'">
-            <p class="chocolate-detail"><strong>Quantity:</strong> {{ chocolate.quantity }}</p>
-          </template>
-          <span v-if="loggedUser && loggedUser.role === 'EMPLOYEE'" class="quantity-input">
-            <p class="chocolate-detail"><strong>Quantity:</strong></p>
-            <input v-model="chocolate.newQuantity" type="number" @blur="updateQuantity(chocolate.id)" />
-            <button class="btn btn-done" @click="updateQuantity(chocolate.id)">✔</button>
-          </span>
-        </div>
+            <template v-if="loggedUser && loggedUser.role !== 'EMPLOYEE'">
+              <p class="chocolate-detail"><strong>Quantity:</strong> {{ chocolate.quantity }}</p>
+            </template>
+            <span v-if="loggedUser && loggedUser.role === 'EMPLOYEE'" class="quantity-input">
+              <p class="chocolate-detail"><strong>Quantity:</strong></p>
+              <input v-model="chocolate.newQuantity" type="number" @blur="updateQuantity(chocolate.id)" />
+              <button class="btn btn-done" @click="updateQuantity(chocolate.id)">✔</button>
+            </span>
+          </div>
           <div class="buttons" v-if="loggedUser && (loggedUser.role === 'MANAGER' || loggedUser.role === 'EMPLOYEE')">
-            <button class="btn btn-delete" v-if="loggedUser.role === 'MANAGER'" @click="deleteChocolate(chocolate.id)">Delete</button>
-            <button class="btn btn-edit" v-if="loggedUser.role === 'MANAGER'" @click="editChocolate(chocolate.id)">Edit</button>
-
-            
+            <button class="btn btn-delete" 
+                    v-if="loggedUser.role === 'MANAGER' && isManagerOfFactory(chocolate.factoryId)"
+                    @click="deleteChocolate(chocolate.id)">
+              Delete
+            </button>
+            <button class="btn btn-edit" 
+                    v-if="loggedUser.role === 'MANAGER' && isManagerOfFactory(chocolate.factoryId)"
+                    @click="editChocolate(chocolate.id)">
+              Edit
+            </button>
             <div class="edit-quantity-section" v-if="loggedUser.role === 'EMPLOYEE'">
               <button class="btn btn-edit-quantity" @click="toggleEditQuantity(chocolate.id)">Edit quantity</button>
               <div v-if="chocolate.editQuantity">
@@ -61,8 +67,8 @@
           <div v-if="loggedUser && loggedUser.role === 'CUSTOMER'" class="purchase-section">
             <p><strong>Desired Quantity:</strong></p>
             <div class="quantity-controls">
-              <button class="btn btn-quantity" @click="decreaseDesiredQuantity(chocolate)" >-</button>
-              <input v-model.number="chocolate.purchaseQuantity" type="number"  @change="validateQuantity(chocolate)"/>
+              <button class="btn btn-quantity" @click="decreaseDesiredQuantity(chocolate)">-</button>
+              <input v-model.number="chocolate.purchaseQuantity" type="number" @change="validateQuantity(chocolate)" />
               <button class="btn btn-quantity" @click="increaseDesiredQuantity(chocolate)">+</button>
             </div>
             <button class="btn btn-done" @click="confirmPurchase(chocolate)">Add to Cart</button>
@@ -98,7 +104,7 @@ onMounted(() => {
 });
 
 function loadFactory() {
-  axios.get('http://localhost:8080/chocolate-factory/rest/factories/' + factoryId)
+  axios.get(`http://localhost:8080/chocolate-factory/rest/factories/${factoryId}`)
     .then(response => {
       factory.value = response.data;
     })
@@ -106,7 +112,7 @@ function loadFactory() {
 }
 
 function loadChocolates() {
-  axios.get('http://localhost:8080/chocolate-factory/rest/chocolates/getAllForFactory/' + factoryId)
+  axios.get(`http://localhost:8080/chocolate-factory/rest/chocolates/getAllForFactory/${factoryId}`)
     .then(response => {
       chocolates.value = response.data
         .filter(chocolate => !chocolate.deleted)
@@ -117,6 +123,7 @@ function loadChocolates() {
     })
     .catch(error => console.error(error));
 }
+
 function deleteChocolate(chocolateId) {
   axios.delete(`http://localhost:8080/chocolate-factory/rest/chocolates/${chocolateId}`)
     .then(() => {
@@ -141,17 +148,16 @@ function toggleEditQuantity(chocolateId) {
 
 function updateQuantity(chocolateId) {
   const chocolate = chocolates.value.find(choc => choc.id === chocolateId);
-  chocolate.quantity = chocolate.newQuantity;
   if (chocolate) {
     axios.put(`http://localhost:8080/chocolate-factory/rest/chocolates/${chocolateId}`, chocolate)
-      .then(response => {
+      .then(() => {
         chocolate.quantity = chocolate.newQuantity;
         chocolate.editQuantity = false;
       })
       .catch(error => console.error(error));
-     
   }
 }
+
 function increaseDesiredQuantity(chocolate) {
   if (chocolate.purchaseQuantity < chocolate.quantity) {
     chocolate.purchaseQuantity++;
@@ -165,10 +171,10 @@ function decreaseDesiredQuantity(chocolate) {
 }
 
 function confirmPurchase(chocolate) {
-    const cartItem = {'chocolate': chocolate, 'quantity': chocolate.purchaseQuantity};
+  const cartItem = { 'chocolate': chocolate, 'quantity': chocolate.purchaseQuantity };
 
-    let cartStr = localStorage.getItem('cart');
-    let cart = JSON.parse(cartStr);
+  let cartStr = localStorage.getItem('cart');
+  let cart = JSON.parse(cartStr);
 
     if (cart) {
         if(cart.factoryId !== factoryId){
@@ -186,11 +192,9 @@ function confirmPurchase(chocolate) {
         cart = { 'items': [cartItem], 'factoryId' : factoryId};
     }
 
-    const cartForSave = JSON.stringify(cart);
-    localStorage.setItem('cart', cartForSave);
+  const cartForSave = JSON.stringify(cart);
+  localStorage.setItem('cart', cartForSave);
 }
-
-
 
 function validateQuantity(chocolate) {
   if (chocolate.purchaseQuantity < 0) {
@@ -203,8 +207,11 @@ function validateQuantity(chocolate) {
 function formatWorkingHours(workingHours) {
   return `${workingHours.startTime.slice(0, 5)} - ${workingHours.endTime.slice(0, 5)}`;
 }
-</script>
 
+function isManagerOfFactory(factoryId) {
+  return factory.value && factory.value.managerId === loggedUser.value.id;
+}
+</script>
 
 <style>
 .container {

@@ -82,23 +82,35 @@ export default {
       factoryFill: true,
       imageFill: true,
       factories: [],
+      loggedUser: JSON.parse(localStorage.getItem('loggedUser')),
       preview: null
     };
   },
+  
   mounted() {
     this.loadFactories();
   },
   methods: {
     loadFactories() {
-      axios.get('http://localhost:8080/chocolate-factory/rest/factories/')
+    if (this.loggedUser && this.loggedUser.id) {
+      axios.get(`http://localhost:8080/chocolate-factory/rest/factories/manager/${this.loggedUser.id}`)
         .then(response => {
-          this.factories = response.data;
-          console.log(this.factories);
+          if (Array.isArray(response.data)) {
+            this.factories = response.data;
+          } else if (response.data && typeof response.data === 'object') {
+            this.factories = [response.data];
+          } else {
+            console.error("Unexpected response data format:", response.data);
+          }
         })
         .catch(error => {
           console.error('Error fetching factories:', error);
         });
-    },
+    } else {
+      console.error('No logged user found.');
+    }
+  },
+
     submitForm() {
       // TODO
       console.log('Form submitted:', this.chocolate);

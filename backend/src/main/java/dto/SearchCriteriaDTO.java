@@ -1,12 +1,9 @@
 package dto;
 
-import enums.Role;
-
 public class SearchCriteriaDTO {
     private String name;
     private String surname;
     private String username;
-    private Role role;
 
     // Getters and setters
     public String getName() {
@@ -31,13 +28,5 @@ public class SearchCriteriaDTO {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
     }
 }

@@ -4,15 +4,15 @@
     <form @submit.prevent="submitForm">
       <div class="form-group">
         <label for="name">Name: </label>
-        <input type="text" :style="{ backgroundColor: nameFill ? 'white' : 'red' }" v-model="chocolate.name" id="name"  />
+        <input type="text" :style="{ backgroundColor: nameFill ? 'white' : 'red' }" v-model="chocolate.name" id="name" />
       </div>
       <div class="form-group">
         <label for="price">Price: </label>
-        <input type="number" :style="{ backgroundColor: priceFill ? 'white' : 'red' }" v-model="chocolate.price" id="price"  />
+        <input type="number" :style="{ backgroundColor: priceFill ? 'white' : 'red' }" v-model="chocolate.price" id="price" />
       </div>
       <div class="form-group">
         <label for="kind">Kind: </label>
-        <select :style="{ backgroundColor: kindFill ? 'white' : 'red' }" v-model="chocolate.kind" id="kind" >
+        <select :style="{ backgroundColor: kindFill ? 'white' : 'red' }" v-model="chocolate.kind" id="kind">
           <option value="REGULAR">Regular</option>
           <option value="COOKING">Cooking</option>
           <option value="DRINKING">Drinking</option>
@@ -20,7 +20,7 @@
       </div>
       <div class="form-group">
         <label for="type">Type: </label>
-        <select :style="{ backgroundColor: typeFill ? 'white' : 'red' }" v-model="chocolate.type" id="type" >
+        <select :style="{ backgroundColor: typeFill ? 'white' : 'red' }" v-model="chocolate.type" id="type">
           <option value="MILK">Milk</option>
           <option value="DARK">Dark</option>
           <option value="WHITE">White</option>
@@ -28,23 +28,15 @@
       </div>
       <div class="form-group">
         <label for="weight">Weight [grams]:</label>
-        <input type="number" :style="{ backgroundColor: weightFill ? 'white' : 'red' }" v-model="chocolate.weight" id="weight"  />
+        <input type="number" :style="{ backgroundColor: weightFill ? 'white' : 'red' }" v-model="chocolate.weight" id="weight" />
       </div>
       <div class="form-group">
         <label for="description">Description: </label>
-        <textarea :style="{ backgroundColor: descriptionFill ? 'white' : 'red' }" v-model="chocolate.description" id="description" ></textarea>
-      </div>
-      <div class="form-group">
-        <label for="factory">Factory: </label>
-        <select v-model="chocolate.factory" id="factory" :style="{ backgroundColor: factoryFill ? 'white' : 'red' }" >
-          <option v-for="factory in factories" :key="factory.id" :value="factory.id">
-            {{ factory.name }}
-          </option>
-        </select>
+        <textarea :style="{ backgroundColor: descriptionFill ? 'white' : 'red' }" v-model="chocolate.description" id="description"></textarea>
       </div>
       <div class="form-group">
         <label for="image">Image URL: </label>
-        <input type="url" v-model="chocolate.image" @input="preview = chocolate.image" id="image" :style="{ backgroundColor: imageFill ? 'white' : 'red' }"  />
+        <input type="url" v-model="chocolate.image" @input="preview = chocolate.image" id="image" :style="{ backgroundColor: imageFill ? 'white' : 'red' }" />
       </div>
       <div class="form-group">
         <img v-if="preview" :src="preview" alt="Chocolate Image Preview" />
@@ -70,8 +62,7 @@ export default {
         weight: '',
         description: '',
         image: '',
-        quantity: 0,
-        factory: ''
+        quantity: 0
       },
       nameFill: true,
       priceFill: true,
@@ -79,41 +70,19 @@ export default {
       typeFill: true,
       weightFill: true,
       descriptionFill: true,
-      factoryFill: true,
       imageFill: true,
-      factories: [],
       preview: null
     };
   },
   mounted() {
-    this.loadFactories();
     this.loadChocolate();
   },
   methods: {
-    loadFactories() {
-      axios.get('http://localhost:8080/chocolate-factory/rest/factories/')
-        .then(response => {
-          this.factories = response.data;
-          console.log(this.factories);
-        })
-        .catch(error => {
-          console.error('Error fetching factories:', error);
-        });
-    },
     loadChocolate() {
       const chocolateId = this.$route.params.chocolateId;
       axios.get(`http://localhost:8080/chocolate-factory/rest/chocolates/${chocolateId}`)
         .then(response => {
           this.chocolate = response.data;
-          const factoryId = this.chocolate.factory;
-          axios.get(`http://localhost:8080/chocolate-factory/rest/factories/${factoryId}`)
-            .then(response => {
-              console.log('Factory details:', response.data);
-              this.chocolate.factory = response.data.id;
-            })
-            .catch(error => {
-              console.error('Error fetching factory:', error);
-            });
         })
         .catch(error => {
           console.error('Error fetching chocolate:', error);
@@ -121,18 +90,12 @@ export default {
     },
     submitForm() {
       this.checkFields();
-      if (!this.nameFill || !this.priceFill || !this.kindFill || !this.typeFill || !this.weightFill || !this.descriptionFill || !this.factoryFill || !this.imageFill) {
+      if (!this.nameFill || !this.priceFill || !this.kindFill || !this.typeFill || !this.weightFill || !this.descriptionFill || !this.imageFill) {
         return;
       }
-      this.factories.forEach((f) => {
-        if (f.name === this.chocolate.factory) {
-          this.chocolate.factory = f.id;
-        }
-      });
       axios.put(`http://localhost:8080/chocolate-factory/rest/chocolates/${this.chocolate.id}`, this.chocolate)
         .then(response => {
-          const factoryId = this.chocolate.factory;
-          this.$router.push({ name: 'chocolates', params: { factoryId } });
+          this.$router.push({ name: 'chocolates' });
         })
         .catch(error => {
           console.error('Error updating chocolate:', error);
@@ -145,7 +108,6 @@ export default {
       this.typeFill = this.chocolate.type !== '';
       this.weightFill = this.chocolate.weight > 0;
       this.descriptionFill = this.chocolate.description !== '';
-      this.factoryFill = this.chocolate.factory !== '';
       this.imageFill = this.chocolate.image !== '';
     }
   }

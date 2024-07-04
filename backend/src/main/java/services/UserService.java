@@ -11,16 +11,18 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import beans.User;
+import dao.FactoryDAO;
 import dao.UserDAO;
 import dto.ChangePasswordDto;
 import dto.EmployeeCreationDto;
+import dto.FactoryWithChocolatesDto;
 import dto.LoginDto;
-import dto.SearchCriteriaDTO;
 import dto.UserCreationDto;
 import dto.UserDto;
 import enums.Role;
@@ -137,14 +139,30 @@ public class UserService {
         }
     }
     
-    @POST
+    @GET
     @Path("/search")
-    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Collection<User> searchUsers(SearchCriteriaDTO criteria) {
+    public Collection<User> searchUsers(@QueryParam("name") String name, @QueryParam("surname") String surname, @QueryParam("username") String username) {
         UserDAO dao = (UserDAO) ctx.getAttribute("userDao");
-        return dao.searchUsers(criteria);
+        return dao.searchUsers(name, surname, username);
     }
+    
+    @GET
+    @Path("/sort")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Collection<User> sortUsers(@QueryParam("sortBy") String sortBy,
+			@QueryParam("order") String order) {
+    	UserDAO dao = (UserDAO) ctx.getAttribute("userDao");
+    	return dao.sortUsers(sortBy, order);
+    }
+    
+    @GET
+	@Path("/filter")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Collection<User> filterUsers(@QueryParam("role") String role) {
+    	UserDAO dao = (UserDAO) ctx.getAttribute("userDao");
+		return dao.filterUsers(role);
+	}
     
     @GET
     @Path("/{id}")

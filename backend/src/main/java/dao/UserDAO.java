@@ -12,9 +12,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 
+import javax.ws.rs.QueryParam;
+
 import beans.Factory;
 import beans.User;
-import dto.SearchCriteriaDTO;
 import enums.Gender;
 import enums.Role;
 
@@ -217,45 +218,60 @@ public class UserDAO {
 		}
 	}
 	
-	public Collection<User> searchUsers(SearchCriteriaDTO criteria) {
+	public Collection<User> searchUsers(String name, String surname, String username) {
 	    Collection<User> result = new ArrayList<>();
 
 	    for (User user : users.values()) {
-	        boolean match = true;
+	        boolean matchName = (name == null || name.isEmpty()) || user.getName().toLowerCase().contains(name.toLowerCase());
+	        boolean matchSurname = (surname == null || surname.isEmpty()) || user.getSurname().toLowerCase().contains(surname.toLowerCase());
+	        boolean matchUsername = (username == null || username.isEmpty()) || user.getUsername().toLowerCase().contains(username.toLowerCase());
 
-	        // Check each criterion if not null or empty
-	        if (criteria.getUsername() != null && !criteria.getUsername().isEmpty()) {
-	            if (!user.getUsername().toLowerCase().contains(criteria.getUsername().toLowerCase())) {
-	                match = false;
-	            }
-	        }
-
-	        if (criteria.getName() != null && !criteria.getName().isEmpty()) {
-	            if (!user.getName().toLowerCase().contains(criteria.getName().toLowerCase())) {
-	                match = false;
-	            }
-	        }
-
-	        if (criteria.getSurname() != null && !criteria.getSurname().isEmpty()) {
-	            if (!user.getSurname().toLowerCase().contains(criteria.getSurname().toLowerCase())) {
-	                match = false;
-	            }
-	        }
-
-	        if (criteria.getRole() != null) {
-	            if (user.getRole() != criteria.getRole()) {
-	                match = false;
-	            }
-	        }
-
-	        if (match) {
+	        if (matchName && matchSurname && matchUsername) {
 	            result.add(user);
 	        }
 	    }
 
 	    return result;
-	}	
+	}
 	
+	public Collection<User> sortUsers(String sortBy, String order) {
+        ArrayList<User> sortedUsers = new ArrayList<>(users.values());
+
+        sortedUsers.sort((a, b) -> {
+            int comparison = 0;
+            switch (sortBy.toLowerCase()) {
+                case "name":
+                    comparison = a.getName().compareToIgnoreCase(b.getName());
+                    break;
+                case "surname":
+                    comparison = a.getSurname().compareToIgnoreCase(b.getSurname());
+                    break;
+                case "username":
+                    comparison = a.getUsername().compareToIgnoreCase(b.getUsername());
+                    break;
+                //case "points":
+                  //  comparison = Integer.compare(a.getPoints(), b.getPoints());
+                   // break;
+            }
+            return "desc".equalsIgnoreCase(order) ? -comparison : comparison;
+        });
+
+        return sortedUsers;
+    }
+
+	public Collection<User> filterUsers(String role) {
+	    Collection<User> filteredUsers = new ArrayList<>();
+
+	    for (User user : users.values()) {
+	        if (user.getRole().name().equalsIgnoreCase(role)) {
+	            filteredUsers.add(user);
+	        }
+	    }
+
+	    return filteredUsers;
+	}
+
+
 	public User getUserByRole(String role) {
 	    for (User user : users.values()) {
 	        if (user.getRole().name().equalsIgnoreCase(role)) {
