@@ -83,9 +83,9 @@ const loadFactories = () => {
       .then(response => {
         console.log("Response data:", response.data);
         if (Array.isArray(response.data)) {
-          factories.value = response.data; // Ako je niz, koristi ga direktno
+          factories.value = response.data; 
         } else if (response.data && typeof response.data === 'object') {
-          factories.value = [response.data]; // Ako je objekat, stavi ga u niz
+          factories.value = [response.data]; 
         } else {
           console.error("Unexpected response data format:", response.data);
         }
