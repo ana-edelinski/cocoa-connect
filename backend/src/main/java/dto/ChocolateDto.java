@@ -1,13 +1,7 @@
 package dto;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import beans.Chocolate;
-import beans.User;
 import enums.ChocolateKind;
-import enums.ChocolateStatus;
 import enums.ChocolateType;
 
 public class ChocolateDto {
@@ -24,8 +18,21 @@ public class ChocolateDto {
     public ChocolateDto() {
 		super();
 	}
+    
+    public ChocolateDto(int id, String name, double price, ChocolateKind kind, ChocolateType type, int weight,
+			String description, int quantity) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.price = price;
+		this.kind = kind;
+		this.type = type;
+		this.weight = weight;
+		this.description = description;
+		this.quantity = quantity;
+	}
 
-    public Chocolate convertToChocolate() {
+	public Chocolate convertToChocolate() {
 		Chocolate chocolate = new Chocolate();
 		chocolate.setName(name);
 		chocolate.setPrice(price);

@@ -21,7 +21,6 @@
           <router-link to="/cart" class="nav-link cart-link">
             <img src="@/images/shopping-cart.png" alt="Shopping Cart" class="shopping-cart-icon" />
           </router-link>
-
         </div>
         <div v-if="!loggedUserRole">
           <router-link to="/signIn" class="nav-link">LOGIN / REGISTER</router-link>

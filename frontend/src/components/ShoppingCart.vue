@@ -1,8 +1,8 @@
 <template>
   <div class="cart-container">
     <h1>Shopping Cart</h1>
-    <div class="cart-items" v-if="cart.length">
-      <div class="cart-item" v-for="item in cart" :key="item.chocolate.id">
+    <div class="cart-items" v-if="cart.items.length">
+      <div class="cart-item" v-for="item in cart.items" :key="item.chocolate.id">
         <img :src="item.chocolate.image" alt="Chocolate Image" class="item-image" />
         <div class="item-details">
           <h3>{{ item.chocolate.name }}</h3>
@@ -20,6 +20,7 @@
       </div>
       <div class="cart-total">
         <h2>Total Price: {{ totalPrice }} RSD</h2>
+        <button class="buy-now-button" @click="buyNow">Buy Now</button>
       </div>
     </div>
     <div v-else>
@@ -29,21 +30,28 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: 'Cart',
   data() {
     return {
-      cart: []
+      cart: {
+        "items" : [],
+        factoryId: null
+      }
     }
   },
   computed: {
     totalPrice() {
-      return this.cart.reduce((total, item) => total + item.chocolate.price * item.quantity, 0);
+      return this.cart.items.reduce((total, item) => total + item.chocolate.price * item.quantity, 0);
     }
   },
   mounted() {
     let cartStr = localStorage.getItem('cart');
-    this.cart = JSON.parse(cartStr);
+    if(cartStr){
+      this.cart = JSON.parse(cartStr);
+    }
   },
   methods: {
     increaseQuantity(item) {
@@ -65,13 +73,31 @@ export default {
         item.quantity = item.chocolate.quantity;
       }
     },
-    saveCart(){
-        const cartForSave = JSON.stringify(this.cart);
-        localStorage.setItem('cart', cartForSave);
+    saveCart() {
+      const cartForSave = JSON.stringify(this.cart);
+      localStorage.setItem('cart', cartForSave);
     },
     removeItem(item) {
-      this.cart = this.cart.filter(cartItem => cartItem.chocolate.id !== item.chocolate.id);
+      this.cart.items = this.cart.items.filter(cartItem => cartItem.chocolate.id !== item.chocolate.id);
       this.saveCart();
+    },
+    buyNow() {
+      const storedUser = localStorage.getItem('loggedUser');  
+      const userId = JSON.parse(storedUser).id;
+
+      const cartDto = {"items" : this.cart.items, "loggedId": userId, "factoryId" : this.cart.factoryId};
+
+      axios.post('http://localhost:8080/chocolate-factory/rest/orders/', cartDto )
+        .then(response => {
+          localStorage.removeItem('cart');
+          this.cart = {"items" : []};
+          alert('Succesful order');
+        })
+        .catch(error => {
+          alert('error ordering');
+
+          console.error('Error fetching factories:', error);
+        });
     }
   }
 }
@@ -89,7 +115,6 @@ export default {
   justify-content: space-between;
   padding: 20px;
 }
-
 
 h1 {
   text-align: center;
@@ -199,4 +224,17 @@ h1 {
   font-size: 18px;
 }
 
+.buy-now-button {
+  background-color: #523F31;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.buy-now-button:hover {
+  background-color: #796254;
+}
 </style>

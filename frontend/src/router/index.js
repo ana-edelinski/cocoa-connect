@@ -11,6 +11,7 @@ import SignIn from '../components/SignIn.vue';
 import MyAccount from '../components/MyAccount.vue';
 import AddEmployee from '../components/AddEmployee.vue';
 import ShoppingCart from '../components/ShoppingCart.vue';
+import OrderInfo from '../components/OrderInfo.vue';
 
 const routes = [
   {
@@ -78,6 +79,10 @@ const routes = [
     path: "/cart",
     name: "cart",
     component: ShoppingCart
+  },{
+    path: "/orderInfo/:orderId",
+    name: "orderInfo",
+    component: OrderInfo
   },
   {
     path: "/signIn",

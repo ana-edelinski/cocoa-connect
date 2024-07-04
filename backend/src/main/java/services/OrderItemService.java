@@ -32,9 +32,11 @@ public class OrderItemService {
 	public void init() {
 		if (ctx.getAttribute("itemDao") == null) {
 			String contextPath = ctx.getRealPath("");
-			ctx.setAttribute("itemDao", new FactoryDAO(contextPath));
+			ctx.setAttribute("itemDao", new OrderItemDAO(contextPath));
 		}
 	}
+
+	
 
 	@GET
 	@Path("/")
@@ -43,8 +45,6 @@ public class OrderItemService {
 		OrderItemDAO dao = (OrderItemDAO) ctx.getAttribute("itemDao");
 		return dao.findAll();
 	}
-
-	
 
 	@GET
 	@Path("/{id}")
@@ -73,6 +73,14 @@ public class OrderItemService {
 		
 		return dao.save(item);
 	}
-
+	
+	@GET
+	@Path("/forOrder/{orderId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Collection<OrderItem> getItemsForOrder(@PathParam("orderId") Integer orderId) {
+	    OrderItemDAO dao = (OrderItemDAO) ctx.getAttribute("itemDao");
+	    return dao.getItemsForOrder(orderId);
+	}
 	
 }

@@ -5,14 +5,24 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.StringTokenizer;
 
+import javax.persistence.criteria.CriteriaBuilder.In;
+
+import beans.Chocolate;
+import beans.Factory;
 import beans.Order;
+import beans.OrderItem;
 import beans.User;
-import enums.ChocolateKind;
+import dto.CartDto;
+import dto.CartItemDto;
+import dto.ChocolateDto;
 import enums.OrderStatus;
 
 public class OrderDAO {
@@ -40,19 +50,38 @@ public class OrderDAO {
 		return orders.containsKey(id) ? orders.get(id) : null;
 	}
 
-	public Order update(int id, Order order) {
-		Order o = orders.containsKey(id) ? orders.get(id) : null;
-		if (o == null) {
-			return save(order);
-		} else {
-			o.setUser(order.getUser());
-			o.setPrice(order.getPrice());
+	public Collection<Order> findAllByUser(Integer userId) {
+		List<Order> result = new ArrayList<>();
+		for (Order order : findAll()) {
+			if (order.getUser().getId() == userId) {
+				result.add(order);
+			}
 		}
-		saveToFile(contextPath);
-		return o;
+		return result;
 	}
 
-	public Order save(Order order) {
+	public Collection<Order> findAllByFactory(Integer factoryId) {
+		List<Order> result = new ArrayList<>();
+		for (Order order : findAll()) {
+			if (order.getFactory().getId() == factoryId) {
+				result.add(order);
+			}
+		}
+		return result;
+	}
+//	public Order update(int id, Order order) {
+//		Order o = orders.containsKey(id) ? orders.get(id) : null;
+//		if (o == null) {
+//			return save(order);
+//		} else {
+//			o.setUser(order.getUser());
+//			o.setPrice(order.getPrice());
+//		}
+//		saveToFile(contextPath);
+//		return o;
+//	}
+
+	public int generateNextId() {
 		Integer maxId = -1;
 		for (Integer id : orders.keySet()) {
 			int idNum = id;
@@ -61,9 +90,72 @@ public class OrderDAO {
 			}
 		}
 		maxId++;
-		order.setId(maxId);
+		return maxId;
+	}
+	
+	public Order cancel(int id) {
+		Order order = findById(id);
+		order.setStatus(OrderStatus.CANCELED);
+		saveToFile(contextPath);
+		
+		User user = order.getUser();
+		double lostPoints = order.getPrice() / 1000 * 133 * 4;
+		user.setPoints(user.getPoints() - (int)lostPoints);
+		
+		UserDAO userDAO = new UserDAO(contextPath);
+		userDAO.update(user.getId(), user);
+		return order;
+	}
+	public Order aprove(int id) {
+		Order order = findById(id);
+		order.setStatus(OrderStatus.APPROVED);
+		saveToFile(contextPath);
+		return order;
+	}	
+	public Order reject(int id) {
+		Order order = findById(id);
+		order.setStatus(OrderStatus.REJECTED);
+		saveToFile(contextPath);
+		return order;
+	}
+	public Order saveCart(CartDto cartDto) {
+		UserDAO userDAO = new UserDAO(contextPath);
+		FactoryDAO factoryDAO = new FactoryDAO(contextPath);
+		ChocolateDAO chocolateDAO = new ChocolateDAO(contextPath);
+		OrderItemDAO orderItemDAO = new OrderItemDAO(contextPath);
+
+		int userId = cartDto.getLoggedId();
+		User user = userDAO.findById(userId);
+		Factory factory = factoryDAO.findById(cartDto.getFactoryId());
+
+		Order order = new Order();
+		order.setDate(LocalDateTime.now());
+		order.setId(generateNextId());
+		order.setUser(user);
+		order.setStatus(OrderStatus.PROCESSING);
+		order.setFactory(factory);
+
+		double ukupnaCena = 0;
+		for (CartItemDto cartItemDto : cartDto.getItems()) {
+			OrderItem orderItem = new OrderItem();
+			orderItem.setQuantity(cartItemDto.getQuantity());
+			orderItem.setOrder(order);
+			int chocolateId = cartItemDto.getChocolate().getId();
+			Chocolate chocolate = chocolateDAO.findById(chocolateId);
+
+			orderItem.setChocolate(chocolate);
+			orderItemDAO.save(orderItem);
+			ukupnaCena += cartItemDto.getQuantity() * chocolate.getPrice();
+		}
+
+		order.setPrice(ukupnaCena);
 		orders.put(order.getId(), order);
 		saveToFile(contextPath);
+		
+		double points = order.getPrice() / 1000 * 133;
+		user.setPoints(user.getPoints() + (int)points);
+		
+		userDAO.update(user.getId(), user);
 		return order;
 	}
 
@@ -71,11 +163,12 @@ public class OrderDAO {
 		BufferedReader in = null;
 
 		UserDAO userDAO = new UserDAO(contextPath);
+		FactoryDAO factoryDAO = new FactoryDAO(contextPath);
 		try {
 			File file = new File(contextPath + "/orders.csv");
 			System.out.println(file.getCanonicalPath());
 			in = new BufferedReader(new FileReader(file));
-			String line, id = "", userId = "", price = "", status = "";
+			String line, id = "", userId = "", price = "", status = "", date = "", factoryId = "";
 			StringTokenizer st;
 			while ((line = in.readLine()) != null) {
 				line = line.trim();
@@ -87,14 +180,20 @@ public class OrderDAO {
 					userId = st.nextToken().trim();
 					price = st.nextToken().trim();
 					status = st.nextToken().trim();
-
+					date = st.nextToken().trim();
+					factoryId = st.nextToken().trim();
 				}
-				
+
 				int idO = Integer.parseInt(id);
 				int userIdInt = Integer.parseInt(userId);
+				int factoryIdInt = Integer.parseInt(factoryId);
 				User user = userDAO.findById(userIdInt);
+				Factory factory = factoryDAO.findById(factoryIdInt);
 				double pricee = Double.parseDouble(price);
-				orders.put(Integer.parseInt(id), new Order(idO, user, pricee, OrderStatus.valueOf(status.toUpperCase())));
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+				LocalDateTime dateNow = LocalDateTime.parse(date, formatter);
+				orders.put(Integer.parseInt(id),
+						new Order(idO, user, pricee, OrderStatus.valueOf(status.toUpperCase()), dateNow, factory));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -111,6 +210,8 @@ public class OrderDAO {
 
 	private boolean saveToFile(String path) {
 		BufferedWriter out = null;
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
 		try {
 			File file = new File(path + "/orders.csv");
 			out = new BufferedWriter(new FileWriter(file));
@@ -118,9 +219,11 @@ public class OrderDAO {
 			for (Order order : orders.values()) {
 				StringBuilder line = new StringBuilder();
 				line.append(order.getId()).append(";");
-				line.append(order.getUser()).append(";");
+				line.append(order.getUser().getId()).append(";");
 				line.append(order.getPrice()).append(";");
 				line.append(order.getStatus()).append(";");
+				line.append(order.getDate().format(formatter)).append(";");
+				line.append(order.getFactory().getId()).append(";");
 				out.write(line.toString());
 				out.newLine();
 			}
@@ -147,5 +250,8 @@ public class OrderDAO {
 		// order.setDeleted(true);
 		return saveToFile(contextPath) ? order : null;
 	}
-
+	
+	
+	
+	 
 }

@@ -37,6 +37,16 @@ public class OrderItemDAO {
 		}
 		return result;
 	}
+	
+	public Collection<OrderItem> getItemsForOrder(int orderId) {
+		Collection<OrderItem> result = new ArrayList<>();
+		for (var c : items.values()) {
+			if(c.getOrder().getId() == orderId) {
+				result.add(c);				
+			}
+		}
+		return result;
+	}
 
 	public OrderItem findById(int id) {
 		return items.containsKey(id) ? items.get(id) : null;
@@ -124,9 +134,9 @@ public class OrderItemDAO {
 			for (OrderItem item : items.values()) {
 				StringBuilder line = new StringBuilder();
 				line.append(item.getId()).append(";");
-				line.append(item.getChocolate()).append(";");
+				line.append(item.getChocolate().getId()).append(";");
 				line.append(item.getQuantity()).append(";");
-				line.append(item.getOrder()).append(";");
+				line.append(item.getOrder().getId()).append(";");
 				out.write(line.toString());
 				out.newLine();
 			}

@@ -19,13 +19,14 @@ public class User {
 	private Role role;
 	private boolean isAssigned;
 	private int factoryWorkingId;
+	private int points;
 
 	public User() {
 		super();
 	}
 
 	public User(int id, String username, String password, String name, String surname, Gender gender, Date dateOfBirth,
-			Role role, boolean isAssigned) {
+			Role role, boolean isAssigned, int points) {
 		super();
 		this.id = id;
 		this.username = username;
@@ -36,6 +37,7 @@ public class User {
 		this.dateOfBirth = dateOfBirth;
 		this.role = role;
 		this.isAssigned = isAssigned;
+		this.points = points;
 	}
 
 	public int getId() {
@@ -121,6 +123,13 @@ public class User {
 	public void setAssigned(boolean isAssigned) {
 		this.isAssigned = isAssigned;
 	}
-	
-	
+
+	public int getPoints() {
+		return points;
+	}
+
+	public void setPoints(int points) {
+		this.points = points;
+	}
+
 }

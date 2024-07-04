@@ -1,6 +1,4 @@
-/beans/
-/dao/
-/dto/
-/enums/
 /services/
-/utils/
+/dao/
+/beans/
+/enums/
