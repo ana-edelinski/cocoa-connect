@@ -39,21 +39,23 @@
       </form>
     </div>
     <div class="tab-content" v-if="currentTab === 'orders'">
-      <h2>My Orders</h2>
       <div class="order" v-for="order in orders" :key="order.id">
-        <div class="order-header">
+        <div class="order-details">
           <div><strong>Order ID:</strong> {{ order.id }}</div>
           <div><strong>Date & Time:</strong> {{ formatDateTime(order.date) }}</div>
           <div><strong>Status:</strong> {{ order.status }}</div>
           <div><strong>Total:</strong> {{ order.price }}</div>
         </div>
-        <button @click="cancelOrder(order.id)" :disabled="order.status === 'CANCELLED' ">
-          Cancel
-        </button>
-        <button @click="goToOrderInfo(order.id)">
-          Info
-        </button>
+        <div class="button-column">
+          <button @click="cancelOrder(order.id)" :disabled="order.status === 'CANCELLED'">
+            Cancel
+          </button>
+          <button @click="goToOrderInfo(order.id)">
+            Info
+          </button>
+        </div>
       </div>
+
     </div>
     <div class="tab-content" v-if="currentTab === 'cancelRequests'">
       <h2>Cancel Requests</h2>
@@ -73,31 +75,32 @@
       </table>
     </div>
     <div class="tab-content" v-if="currentTab === 'factoryOrders'">
-      <h2>Factory Orders</h2>
-      <div v-if="factoryOrders.length === 0">No orders found for your factory.</div>
-      <div class="order" v-for="order in factoryOrders" :key="order.id">
-        <div class="order-header">
-          <div><strong>Order ID:</strong> {{ order.id }}</div>
-          <div><strong>Date & Time:</strong> {{ formatDateTime(order.date) }}</div>
-          <div><strong>Status:</strong> {{ order.status }}</div>
-          <div><strong>Total:</strong> {{ order.price }}</div>
-        </div>
-        <div class="order-items">
-          <div class="order-item" v-for="item in order.items" :key="item.id">
-            <img :src="item.chocolate.image" alt="Chocolate Image" class="chocolate-logo">
-            <div class="chocolate-info">
-              <div><strong>{{ item.chocolate.name }}</strong></div>
-              <div>Quantity: {{ item.quantity }}</div>
-              <div>Price: {{ item.price }}</div>
-            </div>
-          </div>
-        </div>
-        <div class="order-actions">
-          <button @click="approveOrder(order.id)" :disabled="order.status === 'APPROVED'">Approve</button>
-          <button @click="rejectOrder(order.id)" :disabled="order.status === 'REJECTED'">Reject</button>
+  <h2>Factory Orders</h2>
+  <div v-if="factoryOrders.length === 0">No orders found for your factory.</div>
+  <div class="order" v-for="order in factoryOrders" :key="order.id">
+    <div class="order-details">
+      <div><strong>Order ID:</strong> {{ order.id }}</div>
+      <div><strong>Date & Time:</strong> {{ formatDateTime(order.date) }}</div>
+      <div><strong>Status:</strong> {{ order.status }}</div>
+      <div><strong>Total:</strong> {{ order.price }}</div>
+    </div>
+    <div class="order-items">
+      <div class="order-item" v-for="item in order.items" :key="item.id">
+        <img :src="item.chocolate.image" alt="Chocolate Image" class="chocolate-logo">
+        <div class="chocolate-info">
+          <div><strong>{{ item.chocolate.name }}</strong></div>
+          <div>Quantity: {{ item.quantity }}</div>
+          <div>Price: {{ item.price }}</div>
         </div>
       </div>
     </div>
+    <div class="order-actions">
+      <button @click="approveOrder(order.id)" :disabled="order.status === 'APPROVED'">Approve</button>
+      <button @click="openRejectModal(order)">Reject</button>
+    </div>
+  </div>
+</div>
+
   </div>
 
   <div class="modal" v-if="changePasswordModalVisible">
@@ -416,6 +419,10 @@ button[type="button"] {
   margin-bottom: 10px;
 }
 
+.order:hover {
+  transform: scale(1.01);
+}
+
 .order-header {
   display: flex;
   flex-wrap: wrap;
@@ -433,6 +440,62 @@ button[type="button"] {
   align-items: center;
   margin-bottom: 10px;
   width: 100%;
+}
+
+.order-actions button {
+  background-color: #523F31;
+  color: white;
+  width: fit-content;
+  font-size: small;
+  font-weight: 600;
+  font-family: "Poppins", sans-serif;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  padding: 10px 20px;
+  margin: 5px;
+}
+
+.order-actions button:disabled {
+  background-color: lightgray;
+  cursor: not-allowed;
+}
+
+.order-actions button:hover {
+  background-color: #634a38;
+}
+
+.order {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 15px;
+  margin-bottom: 10px;
+}
+
+.order:hover {
+  transform: scale(1.01);
+}
+
+
+
+.button-column button {
+  background-color: #523F31;
+  color: white;
+  width: fit-content;
+  font-size: small;
+  font-weight: 600;
+  font-family: "Poppins", sans-serif;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  padding: 10px 20px;
+  margin: 5px;
+}
+
+.button-column button:hover {
+  transform: scale(1.05);
+  background-color: #634a38;
 }
 
 .chocolate-logo {

@@ -33,7 +33,6 @@
 
     <!-- User list -->
     <div class="main-content">
-      <h1>Registered Users</h1>
       <div class="table-container">
         <table>
           <!-- Table headers -->
