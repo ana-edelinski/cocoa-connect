@@ -28,13 +28,13 @@
       <h2 class="section-title">Our products</h2>
       <div class="chocolates-grid">
         <div v-for="chocolate in chocolates" :key="chocolate.id" class="chocolate-card">
+          <div class="price-ribbon">{{ chocolate.price }} RSD</div>
           <img :src="chocolate.image" alt="Chocolate Image" class="chocolate-image" />
           <h3>{{ chocolate.name }}</h3>
-          <p class="chocolate-price"><strong>{{ chocolate.price }} RSD</strong></p>
           <p class="chocolate-description">{{ chocolate.description }}</p>
           <p class="chocolate-detail"><strong>Type:</strong> {{ chocolate.type }}</p>
           <p class="chocolate-detail"><strong>Kind:</strong> {{ chocolate.kind }}</p>
-          <p class="chocolate-detail"><strong>Weight:</strong> {{ chocolate.weight }} g</p>  
+          <p class="chocolate-detail"><strong>Weight:</strong> {{ chocolate.weight }} g</p>
           <div class="quantity-row">
             <template v-if="loggedUser && loggedUser.role !== 'EMPLOYEE'">
               <p class="chocolate-detail"><strong>Quantity:</strong> {{ chocolate.quantity }}</p>
@@ -46,16 +46,8 @@
             </span>
           </div>
           <div class="buttons" v-if="loggedUser && (loggedUser.role === 'MANAGER' || loggedUser.role === 'EMPLOYEE')">
-            <button class="btn btn-delete" 
-                    v-if="loggedUser.role === 'MANAGER' && isManagerOfFactory(chocolate.factoryId)"
-                    @click="deleteChocolate(chocolate.id)">
-              Delete
-            </button>
-            <button class="btn btn-edit" 
-                    v-if="loggedUser.role === 'MANAGER' && isManagerOfFactory(chocolate.factoryId)"
-                    @click="editChocolate(chocolate.id)">
-              Edit
-            </button>
+            <button class="btn btn-delete" v-if="loggedUser.role === 'MANAGER'" @click="deleteChocolate(chocolate.id)">Delete</button>
+            <button class="btn btn-edit" v-if="loggedUser.role === 'MANAGER'" @click="editChocolate(chocolate.id)">Edit</button>
             <div class="edit-quantity-section" v-if="loggedUser.role === 'EMPLOYEE'">
               <button class="btn btn-edit-quantity" @click="toggleEditQuantity(chocolate.id)">Edit quantity</button>
               <div v-if="chocolate.editQuantity">
@@ -78,6 +70,7 @@
     </section>
   </div>
 </template>
+
 
 <script setup>
 import { ref, onMounted } from 'vue';
@@ -104,7 +97,7 @@ onMounted(() => {
 });
 
 function loadFactory() {
-  axios.get(`http://localhost:8080/chocolate-factory/rest/factories/${factoryId}`)
+  axios.get('http://localhost:8080/chocolate-factory/rest/factories/' + factoryId)
     .then(response => {
       factory.value = response.data;
     })
@@ -112,7 +105,7 @@ function loadFactory() {
 }
 
 function loadChocolates() {
-  axios.get(`http://localhost:8080/chocolate-factory/rest/chocolates/getAllForFactory/${factoryId}`)
+  axios.get('http://localhost:8080/chocolate-factory/rest/chocolates/getAllForFactory/' + factoryId)
     .then(response => {
       chocolates.value = response.data
         .filter(chocolate => !chocolate.deleted)
@@ -123,7 +116,6 @@ function loadChocolates() {
     })
     .catch(error => console.error(error));
 }
-
 function deleteChocolate(chocolateId) {
   axios.delete(`http://localhost:8080/chocolate-factory/rest/chocolates/${chocolateId}`)
     .then(() => {
@@ -148,16 +140,17 @@ function toggleEditQuantity(chocolateId) {
 
 function updateQuantity(chocolateId) {
   const chocolate = chocolates.value.find(choc => choc.id === chocolateId);
+  chocolate.quantity = chocolate.newQuantity;
   if (chocolate) {
     axios.put(`http://localhost:8080/chocolate-factory/rest/chocolates/${chocolateId}`, chocolate)
-      .then(() => {
+      .then(response => {
         chocolate.quantity = chocolate.newQuantity;
         chocolate.editQuantity = false;
       })
       .catch(error => console.error(error));
+     
   }
 }
-
 function increaseDesiredQuantity(chocolate) {
   if (chocolate.purchaseQuantity < chocolate.quantity) {
     chocolate.purchaseQuantity++;
@@ -171,30 +164,28 @@ function decreaseDesiredQuantity(chocolate) {
 }
 
 function confirmPurchase(chocolate) {
-  const cartItem = { 'chocolate': chocolate, 'quantity': chocolate.purchaseQuantity };
+    const cartItem = {'chocolate': chocolate, 'quantity': chocolate.purchaseQuantity};
 
-  let cartStr = localStorage.getItem('cart');
-  let cart = JSON.parse(cartStr);
+    let cartStr = localStorage.getItem('cart');
+    let cart = JSON.parse(cartStr);
 
     if (cart) {
-        if(cart.factoryId !== factoryId){
-          alert('cant order from different factories');
-          return;
-        }
 
-        const existingItemIndex = cart.items.findIndex(item => item.chocolate.id === chocolate.id);
+        const existingItemIndex = cart.findIndex(item => item.chocolate.id === chocolate.id);
         if (existingItemIndex === -1) {
-            cart.items.push(cartItem);
+            cart.push(cartItem);
         } else {
-            cart.items[existingItemIndex].quantity += chocolate.purchaseQuantity;
+            cart[existingItemIndex].quantity += chocolate.purchaseQuantity;
         }
     } else {
-        cart = { 'items': [cartItem], 'factoryId' : factoryId};
+        cart = [cartItem];
     }
 
-  const cartForSave = JSON.stringify(cart);
-  localStorage.setItem('cart', cartForSave);
+    const cartForSave = JSON.stringify(cart);
+    localStorage.setItem('cart', cartForSave);
 }
+
+
 
 function validateQuantity(chocolate) {
   if (chocolate.purchaseQuantity < 0) {
@@ -207,11 +198,8 @@ function validateQuantity(chocolate) {
 function formatWorkingHours(workingHours) {
   return `${workingHours.startTime.slice(0, 5)} - ${workingHours.endTime.slice(0, 5)}`;
 }
-
-function isManagerOfFactory(factoryId) {
-  return factory.value && factory.value.managerId === loggedUser.value.id;
-}
 </script>
+
 
 <style>
 .container {
@@ -297,11 +285,25 @@ header {
   flex-direction: column;
   justify-content: space-between;
   padding: 20px;
+  position: relative;
   transition: transform 0.2s;
 }
 
 .chocolate-card:hover {
   transform: scale(1.05);
+}
+
+.price-ribbon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #523F31;
+  color: #fff;
+  padding: 5px 10px;
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 5px;
+  z-index: 1;
 }
 
 .chocolate-image {
@@ -315,12 +317,6 @@ header {
 
 .chocolate-card h3 {
   margin: 10px 0 5px;
-}
-
-.chocolate-price {
-  color: #523F31;
-  margin: 0 0 5px;
-  font-size: 18px;
 }
 
 .chocolate-description {

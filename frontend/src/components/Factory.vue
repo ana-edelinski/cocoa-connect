@@ -19,9 +19,7 @@
             <button class="btn btn-clear" @click="clearSearch">RESET</button>
           </div>
         </div>
-        <div class="separator">
-
-        </div>
+        <div class="separator"></div>
         <div class="filter-container">
           <div class="filter-bar">
             <h4>FILTER BY CHOCOLATE TYPES</h4>
@@ -72,9 +70,9 @@
         <div class="factories-grid">
           <div v-for="factory in sortedFactories" :key="factory.id" class="factory-card">
             <img :src="factory.logo" alt="Logo" class="factory-logo" />
+            <div class="rating-badge">{{ factory.averageRating }} ★</div>
             <h3>{{ factory.name }}</h3>
-            <p>{{ factory.city }}, {{ factory.country }}</p>
-            <p>Average Rating: {{ factory.averageRating }}</p>
+            <p>📍 {{ factory.city }}, {{ factory.country }}</p>
             <p class="status" :class="{'open': factory.factoryStatus === 'OPENED', 'closed': factory.factoryStatus === 'CLOSED'}">{{ formatStatus(factory.factoryStatus) }}</p>
             <button class="btn btn-view" @click="viewChocolates(factory.id)">PREVIEW</button>
           </div>
@@ -455,6 +453,7 @@ header h2 {
 }
 
 .factory-card {
+  position: relative;
   background: #fff;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -476,6 +475,18 @@ header h2 {
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis; 
+}
+
+.factory-card .rating-badge {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  background-color: #523F31;
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight:600;
 }
 
 .factory-logo {
