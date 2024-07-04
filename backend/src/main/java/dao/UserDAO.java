@@ -249,9 +249,9 @@ public class UserDAO {
                 case "username":
                     comparison = a.getUsername().compareToIgnoreCase(b.getUsername());
                     break;
-                //case "points":
-                  //  comparison = Integer.compare(a.getPoints(), b.getPoints());
-                   // break;
+                case "points":
+                    comparison = Integer.compare(a.getPoints(), b.getPoints());
+                    break;
             }
             return "desc".equalsIgnoreCase(order) ? -comparison : comparison;
         });
