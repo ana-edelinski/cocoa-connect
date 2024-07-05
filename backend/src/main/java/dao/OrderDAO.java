@@ -185,7 +185,7 @@ public class OrderDAO {
 					status = st.nextToken().trim();
 					date = st.nextToken().trim();
 					factoryId = st.nextToken().trim();
-					comment = st.nextToken().trim();
+					comment = st.hasMoreTokens() ? st.nextToken().trim() : "";
 				}
 
 				int idO = Integer.parseInt(id);
@@ -228,7 +228,7 @@ public class OrderDAO {
 				line.append(order.getStatus()).append(";");
 				line.append(order.getDate().format(formatter)).append(";");
 				line.append(order.getFactory().getId()).append(";");
-				line.append(order.getComment() != null ? order.getComment() : "").append(";");
+				line.append(order.getComment() != null ? order.getComment() : "");
 				out.write(line.toString());
 				out.newLine();
 			}

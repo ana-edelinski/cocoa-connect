@@ -95,9 +95,10 @@
           </div>
         </div>
         <div class="order-actions">
-          <button @click="approveOrder(order.id)" :disabled="order.status === 'APPROVED'">Approve</button>
-          <button @click="openRejectModal(order)"  :disabled="order.status === 'REJECTED'">Reject</button>
-        </div>
+              <button @click="approveOrder(order.id)" :disabled="order.status === 'APPROVED' || order.status === 'REJECTED'">Approve</button>
+              <button @click="openRejectModal(order)" :disabled="order.status === 'REJECTED' || order.status === 'APPROVED'">Reject</button>
+      </div>
+
       </div>
     </div>
   </div>
