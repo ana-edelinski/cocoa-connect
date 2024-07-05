@@ -48,8 +48,16 @@
             </template>
           </div>
           <div class="buttons" v-if="loggedUser && (loggedUser.role === 'MANAGER' || loggedUser.role === 'EMPLOYEE')">
-            <button class="btn btn-delete" v-if="loggedUser.role === 'MANAGER'" @click="deleteChocolate(chocolate.id)">Delete</button>
-            <button class="btn btn-edit" v-if="loggedUser.role === 'MANAGER'" @click="editChocolate(chocolate.id)">Edit</button>
+            <button class="btn btn-delete" 
+                    v-if="loggedUser.role === 'MANAGER' && isManagerOfFactory(chocolate.factoryId)"
+                    @click="deleteChocolate(chocolate.id)">
+              Delete
+            </button>
+            <button class="btn btn-edit" 
+                    v-if="loggedUser.role === 'MANAGER' && isManagerOfFactory(chocolate.factoryId)"
+                    @click="editChocolate(chocolate.id)">
+              Edit
+            </button>
           </div>
           <div v-if="loggedUser && loggedUser.role === 'CUSTOMER'" class="purchase-section">
             <p><strong>Desired Quantity:</strong></p>
@@ -189,6 +197,12 @@ function validateQuantity(chocolate) {
 function formatWorkingHours(workingHours) {
   return `${workingHours.startTime.slice(0, 5)} - ${workingHours.endTime.slice(0, 5)}`;
 }
+
+function isManagerOfFactory(factoryId) {
+  return factory.value && factory.value.managerId === loggedUser.value.id;
+}
+
+
 </script>
 
 
