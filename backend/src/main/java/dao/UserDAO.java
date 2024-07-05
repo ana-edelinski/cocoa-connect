@@ -141,7 +141,7 @@ public class UserDAO {
 				boolean isAssigned = Boolean.parseBoolean(st.nextToken().trim());
 
 				users.put(Integer.parseInt(id), new User(Integer.parseInt(id), username, password, name, surname,
-						gender, dateOfBirth, role, factoryWorkingId, isAssigned,points));
+						gender, dateOfBirth, role, factoryWorkingId,points, isAssigned));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -173,8 +173,9 @@ public class UserDAO {
 				line.append(sdf.format(user.getDateOfBirth())).append(";");
 				line.append(user.getRole().toString()).append(";");
 				line.append(user.getFactoryWorkingId()).append(";");
-				line.append(user.getIsAssigned());
 				line.append(user.getPoints()).append(";");
+				line.append(user.getIsAssigned()).append(";");
+				
 				out.write(line.toString());
 				out.newLine();
 			}

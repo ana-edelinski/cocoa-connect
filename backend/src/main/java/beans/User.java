@@ -26,7 +26,7 @@ public class User {
 	}
 
 	public User(int id, String username, String password, String name, String surname, Gender gender, Date dateOfBirth,
-			Role role, int factoryWorkingId, boolean isAssigned, int points) {
+			Role role, int factoryWorkingId, int points, boolean isAssigned) {
 		super();
 		this.id = id;
 		this.username = username;
