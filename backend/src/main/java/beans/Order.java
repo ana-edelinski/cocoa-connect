@@ -11,12 +11,13 @@ public class Order {
 	private OrderStatus status;
 	private LocalDateTime date;
 	private Factory factory;
+	private String comment;
 	
 	public Order() {
 		super();
 	}
 
-	public Order(int id, User user, double price, OrderStatus status, LocalDateTime date, Factory factory) {
+	public Order(int id, User user, double price, OrderStatus status, LocalDateTime date, Factory factory, String comment) {
 		super();
 		this.id = id;
 		this.user = user;
@@ -24,6 +25,15 @@ public class Order {
 		this.status = status;
 		this.date = date;
 		this.factory = factory;
+		this.comment = comment;
+	}
+
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
 	}
 
 	public int getId() {

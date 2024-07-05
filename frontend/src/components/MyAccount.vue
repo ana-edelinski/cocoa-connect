@@ -75,33 +75,48 @@
       </table>
     </div>
     <div class="tab-content" v-if="currentTab === 'factoryOrders'">
-  <h2>Factory Orders</h2>
-  <div v-if="factoryOrders.length === 0">No orders found for your factory.</div>
-  <div class="order" v-for="order in factoryOrders" :key="order.id">
-    <div class="order-details">
-      <div><strong>Order ID:</strong> {{ order.id }}</div>
-      <div><strong>Date & Time:</strong> {{ formatDateTime(order.date) }}</div>
-      <div><strong>Status:</strong> {{ order.status }}</div>
-      <div><strong>Total:</strong> {{ order.price }}</div>
-    </div>
-    <div class="order-items">
-      <div class="order-item" v-for="item in order.items" :key="item.id">
-        <img :src="item.chocolate.image" alt="Chocolate Image" class="chocolate-logo">
-        <div class="chocolate-info">
-          <div><strong>{{ item.chocolate.name }}</strong></div>
-          <div>Quantity: {{ item.quantity }}</div>
-          <div>Price: {{ item.price }}</div>
+      <h2>Factory Orders</h2>
+      <div v-if="factoryOrders.length === 0">No orders found for your factory.</div>
+      <div class="order" v-for="order in factoryOrders" :key="order.id">
+        <div class="order-details">
+          <div><strong>Order ID:</strong> {{ order.id }}</div>
+          <div><strong>Date & Time:</strong> {{ formatDateTime(order.date) }}</div>
+          <div><strong>Status:</strong> {{ order.status }}</div>
+          <div><strong>Total:</strong> {{ order.price }}</div>
+        </div>
+        <div class="order-items">
+          <div class="order-item" v-for="item in order.items" :key="item.id">
+            <img :src="item.chocolate.image" alt="Chocolate Image" class="chocolate-logo">
+            <div class="chocolate-info">
+              <div><strong>{{ item.chocolate.name }}</strong></div>
+              <div>Quantity: {{ item.quantity }}</div>
+              <div>Price: {{ item.price }}</div>
+            </div>
+          </div>
+        </div>
+        <div class="order-actions">
+          <button @click="approveOrder(order.id)" :disabled="order.status === 'APPROVED'">Approve</button>
+          <button @click="openRejectModal(order)"  :disabled="order.status === 'REJECTED'">Reject</button>
         </div>
       </div>
     </div>
-    <div class="order-actions">
-      <button @click="approveOrder(order.id)" :disabled="order.status === 'APPROVED'">Approve</button>
-      <button @click="openRejectModal(order)">Reject</button>
+  </div>
+
+  <!-- Modal za reject -->
+  <div class="modal" v-if="rejectModalVisible">
+    <div class="modal-content">
+      <span class="close" @click="rejectModalVisible = false">&times;</span>
+      <h2>Reject Order</h2>
+      <form @submit.prevent="rejectOrder(currentOrder, comment)" >
+        <label>
+          Reason for rejection:
+          <textarea v-model="comment" required></textarea>
+        </label>
+        <button type="submit">Done</button>
+      </form>
     </div>
   </div>
-</div>
 
-  </div>
 
   <div class="modal" v-if="changePasswordModalVisible">
     <div class="modal-content">
@@ -132,24 +147,11 @@
       </form>
     </div>
   </div>
-<div class="modal" v-if="rejectModalVisible">
-    <div class="modal-content">
-      <span class="close" @click="rejectModalVisible = false">&times;</span>
-      <h2>Reject Order</h2>
-      <form @submit.prevent="rejectOrder(currentOrder, rejectionReason)">
-        <label>
-          Reason for rejection:
-          <textarea v-model="rejectionReason" required></textarea>
-        </label>
-        <button type="submit">Reject</button>
-      </form>
-    </div>
-  </div>
-  
+
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted , watch} from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 
@@ -166,8 +168,8 @@ let currentPassword = ref('');
 let newPassword = ref('');
 let confirmPassword = ref('');
 let passwordChangeError = ref('');
-let rejectionReason = ref('');
-let currentOrderId = ref('');
+let comment = ref('');
+let currentOrder = ref(null);
 
 onMounted(() => {
   const storedUser = localStorage.getItem('loggedUser');
@@ -285,28 +287,22 @@ const loadOrders = async (userId) => {
     console.error("Failed to load orders:", error);
   }
 };
-const loadFactoryOrders =  () => {
+
+const loadFactoryOrders = () => {
   try {
     const managerId = loggedUser.value.id;
 
-     axios.get(`http://localhost:8080/chocolate-factory/rest/orders/forManagersFactory/${managerId}`)
-    .then(response => {
-      factoryOrders.value = response.data;
-    })
-    .catch(error => console.error(error));
-
-   
+    axios.get(`http://localhost:8080/chocolate-factory/rest/orders/forManagersFactory/${managerId}`)
+      .then(response => {
+        factoryOrders.value = response.data;
+      })
+      .catch(error => console.error(error));
   } catch (error) {
     console.error("Failed to load factory orders:", error);
   }
 };
 
-
-
-
-
-
-function approveOrder(orderId) {
+const approveOrder = (orderId) => {
   axios.put(`http://localhost:8080/chocolate-factory/rest/orders/aprove/${orderId}`)
     .then(response => {
       console.log("Order approved successfully:", response.data);
@@ -318,37 +314,44 @@ function approveOrder(orderId) {
     });
 };
 
-function rejectOrder(orderId) {
-  axios.put(`http://localhost:8080/chocolate-factory/rest/orders/reject/${orderId}` )
+const rejectOrder = () => {
+  const storedComment = localStorage.getItem('rejectionComment');
+  axios.put(`http://localhost:8080/chocolate-factory/rest/orders/reject/${currentOrder.value.id}`, {
+    comment: storedComment // Pass the comment from local storage to the backend
+  })
     .then(response => {
       console.log("Order rejected successfully:", response.data);
-      loadFactoryOrders();
       rejectModalVisible.value = false;
-      rejectionReason.value = '';
+      comment.value = ''; // Clear the rejection reason after submission
+      localStorage.removeItem('rejectionComment'); // Clear the local storage item
+      loadFactoryOrders();
       window.alert("Order rejected successfully.");
-      
     })
     .catch(error => {
       console.error("Failed to reject order:", error);
     });
 };
 
-
 const openRejectModal = (order) => {
   currentOrder.value = order;
   rejectModalVisible.value = true;
+  const storedComment = localStorage.getItem('rejectionComment');
+  if (storedComment) {
+    comment.value = storedComment; // Load the comment from local storage if it exists
+  }
 };
+
+// Update the comment in local storage whenever it changes
+watch(comment, (newValue) => {
+  localStorage.setItem('rejectionComment', newValue);
+});
 
 
 const formatDateTime = (dateString) => {
   const date = new Date(dateString);
   return date.toLocaleString();
 };
-
-
-
 </script>
-
 
 <style>
 .my-account {

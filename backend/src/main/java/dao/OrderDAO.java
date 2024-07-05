@@ -112,11 +112,14 @@ public class OrderDAO {
 		saveToFile(contextPath);
 		return order;
 	}	
-	public Order reject(int id) {
-		Order order = findById(id);
-		order.setStatus(OrderStatus.REJECTED);
-		saveToFile(contextPath);
-		return order;
+	public Order reject(int id, String comment) {
+	    Order order = findById(id);
+	    if (order != null) {
+	        order.setStatus(OrderStatus.REJECTED);
+	        order.setComment(comment);
+	        saveToFile(contextPath);
+	    }
+	    return order;
 	}
 	public Order saveCart(CartDto cartDto) {
 		UserDAO userDAO = new UserDAO(contextPath);
@@ -168,7 +171,7 @@ public class OrderDAO {
 			File file = new File(contextPath + "/orders.csv");
 			System.out.println(file.getCanonicalPath());
 			in = new BufferedReader(new FileReader(file));
-			String line, id = "", userId = "", price = "", status = "", date = "", factoryId = "";
+			String line, id = "", userId = "", price = "", status = "", date = "", factoryId = "", comment = "";
 			StringTokenizer st;
 			while ((line = in.readLine()) != null) {
 				line = line.trim();
@@ -182,6 +185,7 @@ public class OrderDAO {
 					status = st.nextToken().trim();
 					date = st.nextToken().trim();
 					factoryId = st.nextToken().trim();
+					comment = st.nextToken().trim();
 				}
 
 				int idO = Integer.parseInt(id);
@@ -193,7 +197,7 @@ public class OrderDAO {
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 				LocalDateTime dateNow = LocalDateTime.parse(date, formatter);
 				orders.put(Integer.parseInt(id),
-						new Order(idO, user, pricee, OrderStatus.valueOf(status.toUpperCase()), dateNow, factory));
+						new Order(idO, user, pricee, OrderStatus.valueOf(status.toUpperCase()), dateNow, factory, comment));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -224,6 +228,7 @@ public class OrderDAO {
 				line.append(order.getStatus()).append(";");
 				line.append(order.getDate().format(formatter)).append(";");
 				line.append(order.getFactory().getId()).append(";");
+				line.append(order.getComment() != null ? order.getComment() : "").append(";");
 				out.write(line.toString());
 				out.newLine();
 			}
@@ -242,6 +247,8 @@ public class OrderDAO {
 		}
 		return true;
 	}
+	
+	
 
 	public Order deleteOrder(int id) {
 		Order order = findById(id);

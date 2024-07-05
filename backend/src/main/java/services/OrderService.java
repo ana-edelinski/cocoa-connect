@@ -1,6 +1,7 @@
 package services;
 
 import java.util.Collection;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
@@ -103,10 +104,11 @@ public class OrderService {
 	@Path("/reject/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Order reject(@PathParam("id") Integer id, Order updatedOrder) {
-		OrderDAO dao = (OrderDAO) ctx.getAttribute("orderDao");
-		Order order = dao.reject(id);
-		return order;
+	public Order reject(@PathParam("id") Integer id, Map<String, String> data) {
+	    String comment = data.get("comment");
+	    OrderDAO dao = (OrderDAO) ctx.getAttribute("orderDao");
+	    Order order = dao.reject(id, comment);
+	    return order;
 	}
 	@POST
 	@Path("/")
