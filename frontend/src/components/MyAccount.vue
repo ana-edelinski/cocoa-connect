@@ -1,113 +1,140 @@
 <template>
   <div class="my-account">
-    <div class="tabs">
-      <button :class="{ active: currentTab === 'profile' }" @click="currentTab = 'profile'">MY PROFILE</button>
-      <button v-if="loggedUser && loggedUser.role === 'CUSTOMER'" :class="{ active: currentTab === 'orders' }" @click="currentTab = 'orders'">MY ORDERS</button>
-      <button v-if="loggedUser && loggedUser.role === 'MANAGER'" :class="{ active: currentTab === 'cancelRequests' }" @click="currentTab = 'cancelRequests'">CANCEL REQUESTS</button>
-      <button v-if="loggedUser && loggedUser.role === 'MANAGER'" :class="{ active: currentTab === 'factoryOrders' }" @click="currentTab = 'factoryOrders'">FACTORY ORDERS</button>
-    </div>
-    <div class="tab-content" v-if="currentTab === 'profile'">
-      <h2>Profile Information</h2>
-      <form @submit.prevent="saveProfile">
-        <label>
-          Username:
-          <input type="text" v-model="profile.username" required>
-        </label>
-        <label>
-          First Name:
-          <input type="text" v-model="profile.firstName" required>
-        </label>
-        <label>
-          Last Name:
-          <input type="text" v-model="profile.lastName" required>
-        </label>
-        <label>
-          Gender:
-          <select v-model="profile.gender" required>
-            <option value="MALE">MALE</option>
-            <option value="FEMALE">FEMALE</option>
+    <div class="content">
+      <div class="sidebar" v-if="currentTab === 'orders'">
+        <div class="search-container">
+          <h4>SEARCH ORDERS</h4>
+          <div class="search-bar">
+            <input v-model="searchCriteria.factoryName" type="text" placeholder="Factory Name" />
+            <div class="inline-inputs">
+              <input v-model="searchCriteria.minPrice" type="number" placeholder="Min Price" />
+              <input v-model="searchCriteria.maxPrice" type="number" placeholder="Max Price" />
+            </div>
+            <div class="inline-inputs">
+              <input v-model="searchCriteria.startDate" type="date" placeholder="Start Date" />
+              <input v-model="searchCriteria.endDate" type="date" placeholder="End Date" />
+            </div>
+          </div>
+          <div class="buttons">
+            <button class="btn btn-search" @click="searchOrders">Search</button>
+            <button class="btn btn-clear" @click="clearSearch">Clear</button>
+          </div>
+        </div>
+        <div class="separator"></div>
+        <div class="sort-container">
+          <h4>SORT ORDERS</h4>
+          <select v-model="sortCriteria.sortBy" @change="applySorting">
+            <option value="">Default Sorting</option>
+            <option value="name-asc">Sort by Factory Name: Ascending</option>
+            <option value="name-desc">Sort by Factory Name: Descending</option>
+            <option value="price-asc">Sort by Price: Ascending</option>
+            <option value="price-desc">Sort by Price: Descending</option>
+            <option value="date-asc">Sort by Date: Ascending</option>
+            <option value="date-desc">Sort by Date: Descending</option>
           </select>
-        </label>
-        <label>
-          Birthday:
-          <input type="date" v-model="profile.birthday" required>
-        </label>
-        <div class="buttons">
-          <button type="submit">Save</button>
-          <button type="button" @click="changePasswordModalVisible = true">Change Password</button>
-        </div>
-      </form>
-    </div>
-    <div class="tab-content" v-if="currentTab === 'orders'">
-      <div class="order-search">
-        <h4>Search Orders</h4>
-        <input v-model="searchCriteria.factoryName" type="text" placeholder="Factory Name" />
-        <input v-model="searchCriteria.minPrice" type="number" placeholder="Min Price" />
-        <input v-model="searchCriteria.maxPrice" type="number" placeholder="Max Price" />
-        <input v-model="searchCriteria.startDate" type="date" placeholder="Start Date" />
-        <input v-model="searchCriteria.endDate" type="date" placeholder="End Date" />
-        <div class="buttons">
-          <button @click="searchOrders">Search</button>
-          <button @click="clearSearch">Clear</button>
         </div>
       </div>
-      <div class="order" v-for="order in orders" :key="order.id">
-        <div class="order-details">
-          <div><strong>Factory:</strong> {{ order.factory.name }}</div>
-          <div><strong>Date & Time:</strong> {{ formatDateTime(order.date) }}</div>
-          <div><strong>Status:</strong> {{ order.status }}</div>
-          <div><strong>Total Price:</strong> {{ order.price }} RSD</div>
+      <div class="main-content">
+        <div class="tabs">
+          <button :class="{ active: currentTab === 'profile' }" @click="currentTab = 'profile'">MY PROFILE</button>
+          <button v-if="loggedUser && loggedUser.role === 'CUSTOMER'" :class="{ active: currentTab === 'orders' }" @click="currentTab = 'orders'">MY ORDERS</button>
+          <button v-if="loggedUser && loggedUser.role === 'MANAGER'" :class="{ active: currentTab === 'cancelRequests' }" @click="currentTab = 'cancelRequests'">CANCEL REQUESTS</button>
+          <button v-if="loggedUser && loggedUser.role === 'MANAGER'" :class="{ active: currentTab === 'factoryOrders' }" @click="currentTab = 'factoryOrders'">FACTORY ORDERS</button>
         </div>
-        <div class="button-column">
-          <button @click="cancelOrder(order.id)" :disabled="order.status === 'CANCELLED'">
-            Cancel
-          </button>
-          <button @click="goToOrderInfo(order.id)">
-            Info
-          </button>
+        <div v-if="currentTab === 'profile'">
+          <h2>Profile Information</h2>
+          <form @submit.prevent="saveProfile">
+            <label>
+              Username:
+              <input type="text" v-model="profile.username" required>
+            </label>
+            <label>
+              First Name:
+              <input type="text" v-model="profile.firstName" required>
+            </label>
+            <label>
+              Last Name:
+              <input type="text" v-model="profile.lastName" required>
+            </label>
+            <label>
+              Gender:
+              <select v-model="profile.gender" required>
+                <option value="MALE">MALE</option>
+                <option value="FEMALE">FEMALE</option>
+              </select>
+            </label>
+            <label>
+              Birthday:
+              <input type="date" v-model="profile.birthday" required>
+            </label>
+            <div class="buttons">
+              <button type="submit">Save</button>
+              <button type="button" @click="changePasswordModalVisible = true">Change Password</button>
+            </div>
+          </form>
         </div>
-      </div>
-    </div>
-    <div class="tab-content" v-if="currentTab === 'cancelRequests'">
-      <h2>Cancel Requests</h2>
-      <table>
-        <tr>
-          <th>Request ID</th>
-          <th>Order ID</th>
-          <th>Date</th>
-          <th>Status</th>
-        </tr>
-        <tr v-for="request in cancelRequests" :key="request.id">
-          <td>{{ request.id }}</td>
-          <td>{{ request.orderId }}</td>
-          <td>{{ request.date }}</td>
-          <td>{{ request.status }}</td>
-        </tr>
-      </table>
-    </div>
-    <div class="tab-content" v-if="currentTab === 'factoryOrders'">
-      <h2>Factory Orders</h2>‚
-      <div v-if="factoryOrders.length === 0">No orders found for your factory.</div>
-      <div class="order" v-for="order in factoryOrders" :key="order.id">
-        <div class="order-details">
-          <div><strong>Order ID:</strong> {{ order.id }}</div>
-          <div><strong>Date & Time:</strong> {{ formatDateTime(order.date) }}</div>
-          <div><strong>Status:</strong> {{ order.status }}</div>
-          <div><strong>Total:</strong> {{ order.price }}</div>
-        </div>
-        <div class="order-items">
-          <div class="order-item" v-for="item in order.items" :key="item.id">
-            <img :src="item.chocolate.image" alt="Chocolate Image" class="chocolate-logo">
-            <div class="chocolate-info">
-              <div><strong>{{ item.chocolate.name }}</strong></div>
-              <div>Quantity: {{ item.quantity }}</div>
-              <div>Price: {{ item.price }}</div>
+        <div class="tab-content" v-if="currentTab === 'orders'">
+          <div class="orders-list">
+            <div class="order" v-for="order in sortedOrders" :key="order.id">
+              <div class="order-details">
+                <div><strong>Factory:</strong> {{ order.factory.name }}</div>
+                <div><strong>Date & Time:</strong> {{ formatDateTime(order.date) }}</div>
+                <div><strong>Status:</strong> {{ order.status }}</div>
+                <div><strong>Total Price:</strong> {{ order.price }} RSD</div>
+              </div>
+              <div class="button-column">
+                <button @click="cancelOrder(order.id)" :disabled="order.status === 'CANCELLED'">
+                  Cancel
+                </button>
+                <button @click="goToOrderInfo(order.id)">
+                  Info
+                </button>
+              </div>
             </div>
           </div>
         </div>
-        <div class="order-actions">
-          <button @click="approveOrder(order.id)" :disabled="order.status === 'APPROVED' || order.status === 'REJECTED'">Approve</button>
-          <button @click="openRejectModal(order)" :disabled="order.status === 'REJECTED' || order.status === 'APPROVED'">Reject</button>
+        <div class="tab-content" v-if="currentTab === 'cancelRequests'">
+          <h2>Cancel Requests</h2>
+          <table>
+            <tr>
+              <th>Request ID</th>
+              <th>Order ID</th>
+              <th>Date</th>
+              <th>Status</th>
+            </tr>
+            <tr v-for="request in cancelRequests" :key="request.id">
+              <td>{{ request.id }}</td>
+              <td>{{ request.orderId }}</td>
+              <td>{{ request.date }}</td>
+              <td>{{ request.status }}</td>
+            </tr>
+          </table>
+        </div>
+        <div class="tab-content" v-if="currentTab === 'factoryOrders'">
+          <h2>Factory Orders</h2>
+          <div v-if="factoryOrders.length === 0">No orders found for your factory.</div>
+          <div class="order" v-for="order in factoryOrders" :key="order.id">
+            <div class="order-details">
+              <div><strong>Order ID:</strong> {{ order.id }}</div>
+              <div><strong>Date & Time:</strong> {{ formatDateTime(order.date) }}</div>
+              <div><strong>Status:</strong> {{ order.status }}</div>
+              <div><strong>Total:</strong> {{ order.price }}</div>
+            </div>
+            <div class="order-items">
+              <div class="order-item" v-for="item in order.items" :key="item.id">
+                <img :src="item.chocolate.image" alt="Chocolate Image" class="chocolate-logo">
+                <div class="chocolate-info">
+                  <div><strong>{{ item.chocolate.name }}</strong></div>
+                  <div>Quantity: {{ item.quantity }}</div>
+                  <div>Price: {{ item.price }}</div>
+                </div>
+              </div>
+            </div>
+            <div class="order-actions">
+              <button @click="approveOrder(order.id)" :disabled="order.status === 'APPROVED' || order.status === 'REJECTED'">Approve</button>
+              <button @click="openRejectModal(order)" :disabled="order.status === 'REJECTED' || order.status === 'APPROVED'">Reject</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -184,6 +211,10 @@ const searchCriteria = ref({
   maxPrice: '',
   startDate: '',
   endDate: ''
+});
+
+const sortCriteria = ref({
+  sortBy: '',
 });
 
 onMounted(() => {
@@ -377,7 +408,6 @@ const searchOrders = async () => {
   }
 };
 
-
 const clearSearch = () => {
   searchCriteria.value = {
     factoryName: '',
@@ -393,12 +423,56 @@ const formatDateTime = (dateString) => {
   const date = new Date(dateString);
   return date.toLocaleString();
 };
+
+const applySorting = async () => {
+  try {
+    const sortBy = sortCriteria.value.sortBy;
+    let order = 'asc';
+    if (sortBy.includes('-desc')) {
+      order = 'desc';
+    }
+    const response = await axios.get('http://localhost:8080/chocolate-factory/rest/orders/sort', {
+      params: {
+        sortBy: sortBy.replace('-asc', '').replace('-desc', ''),
+        order: order
+      }
+    });
+    orders.value = response.data;
+  } catch (error) {
+    console.error("Failed to sort orders:", error);
+  }
+};
+
+const sortedOrders = computed(() => {
+  if (!sortCriteria.value.sortBy) {
+    return orders.value;
+  }
+  const [sortBy, order] = sortCriteria.value.sortBy.split('-');
+  return [...orders.value].sort((a, b) => {
+    let compareA, compareB;
+    if (sortBy === 'name') {
+      compareA = a.factory.name.toLowerCase();
+      compareB = b.factory.name.toLowerCase();
+    } else if (sortBy === 'price') {
+      compareA = a.price;
+      compareB = b.price;
+    } else if (sortBy === 'date') {
+      compareA = new Date(a.date);
+      compareB = new Date(b.date);
+    }
+    if (compareA < compareB) return order === 'asc' ? -1 : 1;
+    if (compareA > compareB) return order === 'asc' ? 1 : -1;
+    return 0;
+  });
+});
 </script>
 
 <style>
 .my-account {
-  width: 800px;
+  width: 1000px;
   margin: 50px auto;
+  display: flex;
+  justify-content: center;
 }
 
 .tabs {
@@ -424,8 +498,74 @@ const formatDateTime = (dateString) => {
   color: white;
 }
 
-.tab-content {
+.content {
+  display: flex;
+  width: 100%;
+}
+
+.sidebar {
+  width: 250px;
   padding: 20px;
+  margin-right: 10px;
+  margin-left: -100px; 
+}
+
+.search-container {
+  margin-bottom: 20px;
+  width: 100%;
+  margin-left: -30px;
+}
+
+.search-bar {
+  display: flex;
+  flex-direction: column;
+}
+
+.inline-inputs {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.inline-inputs input {
+  flex: 1;
+}
+
+.search-bar input {
+  width: calc(100% - 16px);
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.buttons {
+  display: flex;
+  justify-content: center;
+}
+
+.buttons .btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  font-family: "Poppins", sans-serif;
+}
+
+.buttons .btn-search {
+  background-color: #523F31;
+  color: white;
+}
+
+.buttons .btn-clear {
+  background-color: #523F31;
+  color: white;
+}
+
+.main-content {
+  flex: 1;
+  max-width: 1000px; 
 }
 
 form label {
@@ -634,4 +774,32 @@ th, td {
   border-radius: 5px;
   text-align: center;
 }
+
+.sort-container h4 {
+  text-align: left;
+  margin-bottom: 5px;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.sort-container select {
+  font-size: 1rem;
+  padding: 8px;
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+.sort-container {
+  margin-left: -30px;
+}
+
+.separator {
+  border-bottom: 1px solid #ddd; 
+  padding-bottom: 10px; 
+  margin-bottom: 10px; 
+  margin-left: -30px;
+}
+
 </style>

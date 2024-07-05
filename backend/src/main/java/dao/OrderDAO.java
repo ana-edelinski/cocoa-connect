@@ -91,6 +91,29 @@ public class OrderDAO {
 	    }
 	    return result;
 	}
+	
+	public Collection<Order> sortOrders(String sortBy, String order) {
+		ArrayList<Order> sortedOrders = new ArrayList<>(orders.values());
+		
+		sortedOrders.sort((a, b) -> {
+			int comparison = 0;
+            switch (sortBy.toLowerCase()) {
+                case "factoryName":
+                    comparison = a.getFactory().getName().compareToIgnoreCase(b.getFactory().getName());
+                    break;
+                case "price":
+                    comparison = Double.compare(a.getPrice(), b.getPrice());
+                    break;
+                case "date":
+                    comparison = a.getDate().compareTo(b.getDate());
+                    break;
+
+            }
+            return "desc".equalsIgnoreCase(order) ? -comparison : comparison;
+		});
+		
+		return sortedOrders;
+	}
 
 
 

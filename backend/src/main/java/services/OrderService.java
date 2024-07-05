@@ -14,6 +14,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
@@ -22,6 +23,7 @@ import beans.Order;
 import dao.FactoryDAO;
 import dao.OrderDAO;
 import dto.CartDto;
+import dto.FactoryWithChocolatesDto;
 @Path("/orders")
 public class OrderService {
 	@Context
@@ -141,6 +143,15 @@ public class OrderService {
 
 	    OrderDAO dao = (OrderDAO) ctx.getAttribute("orderDao");
 	    return dao.searchOrders(factoryName, minPrice, maxPrice, startDate, endDate);
+	}
+	
+	@GET
+	@Path("/sort")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Collection<Order> sortOrders(@QueryParam("sortBy") String sortBy,
+			@QueryParam("order") String order) {
+		OrderDAO dao = (OrderDAO) ctx.getAttribute("orderDao");
+		return dao.sortOrders(sortBy, order);
 	}
 
 
