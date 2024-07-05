@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -13,8 +14,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import javax.persistence.criteria.CriteriaBuilder.In;
-
 import beans.Chocolate;
 import beans.Factory;
 import beans.Order;
@@ -22,7 +21,6 @@ import beans.OrderItem;
 import beans.User;
 import dto.CartDto;
 import dto.CartItemDto;
-import dto.ChocolateDto;
 import enums.OrderStatus;
 
 public class OrderDAO {
@@ -80,6 +78,21 @@ public class OrderDAO {
 //		saveToFile(contextPath);
 //		return o;
 //	}
+	
+	public Collection<Order> searchOrders(String factoryName, double minPrice, double maxPrice, LocalDate startDate, LocalDate endDate) {
+	    List<Order> result = new ArrayList<>();
+	    for (Order order : findAll()) {
+	        boolean matchesFactory = factoryName.isEmpty() || order.getFactory().getName().toLowerCase().contains(factoryName.toLowerCase());
+	        boolean matchesPrice = (minPrice == 0 || order.getPrice() >= minPrice) && (maxPrice == 0 || order.getPrice() <= maxPrice);
+	        boolean matchesDate = (startDate == null || !order.getDate().toLocalDate().isBefore(startDate)) && (endDate == null || !order.getDate().toLocalDate().isAfter(endDate));
+	        if (matchesFactory && matchesPrice && matchesDate) {
+	            result.add(order);
+	        }
+	    }
+	    return result;
+	}
+
+
 
 	public int generateNextId() {
 		Integer maxId = -1;

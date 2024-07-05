@@ -1,5 +1,6 @@
 package services;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Map;
 
@@ -16,16 +17,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import beans.Chocolate;
 import beans.Factory;
 import beans.Order;
-import dao.ChocolateDAO;
 import dao.FactoryDAO;
 import dao.OrderDAO;
-import dao.UserDAO;
 import dto.CartDto;
-import dto.ChocolateDto;
-import enums.OrderStatus;
 @Path("/orders")
 public class OrderService {
 	@Context
@@ -130,7 +126,24 @@ public class OrderService {
 		OrderDAO dao = (OrderDAO) ctx.getAttribute("orderDao");
 	}
 
-	
+	@GET
+	@Path("/search")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Collection<Order> searchOrders(@Context javax.ws.rs.core.UriInfo uriInfo) {
+	    Map<String, String> queryParams = uriInfo.getQueryParameters().keySet().stream()
+	            .collect(java.util.stream.Collectors.toMap(key -> key, key -> uriInfo.getQueryParameters().getFirst(key)));
+
+	    String factoryName = queryParams.getOrDefault("factoryName", "");
+	    double minPrice = queryParams.containsKey("minPrice") ? Double.parseDouble(queryParams.get("minPrice")) : 0;
+	    double maxPrice = queryParams.containsKey("maxPrice") ? Double.parseDouble(queryParams.get("maxPrice")) : 0;
+	    LocalDate startDate = queryParams.containsKey("startDate") ? LocalDate.parse(queryParams.get("startDate")) : null;
+	    LocalDate endDate = queryParams.containsKey("endDate") ? LocalDate.parse(queryParams.get("endDate")) : null;
+
+	    OrderDAO dao = (OrderDAO) ctx.getAttribute("orderDao");
+	    return dao.searchOrders(factoryName, minPrice, maxPrice, startDate, endDate);
+	}
+
+
 	
 	
 	

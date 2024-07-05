@@ -39,9 +39,21 @@
       </form>
     </div>
     <div class="tab-content" v-if="currentTab === 'orders'">
+      <div class="order-search">
+        <h4>Search Orders</h4>
+        <input v-model="searchCriteria.factoryName" type="text" placeholder="Factory Name" />
+        <input v-model="searchCriteria.minPrice" type="number" placeholder="Min Price" />
+        <input v-model="searchCriteria.maxPrice" type="number" placeholder="Max Price" />
+        <input v-model="searchCriteria.startDate" type="date" placeholder="Start Date" />
+        <input v-model="searchCriteria.endDate" type="date" placeholder="End Date" />
+        <div class="buttons">
+          <button @click="searchOrders">Search</button>
+          <button @click="clearSearch">Clear</button>
+        </div>
+      </div>
       <div class="order" v-for="order in orders" :key="order.id">
         <div class="order-details">
-          <div><strong>Order ID:</strong> {{ order.id }}</div>
+          <div><strong>Factory:</strong> {{ order.factory.name }}</div>
           <div><strong>Date & Time:</strong> {{ formatDateTime(order.date) }}</div>
           <div><strong>Status:</strong> {{ order.status }}</div>
           <div><strong>Total Price:</strong> {{ order.price }} RSD</div>
@@ -55,7 +67,6 @@
           </button>
         </div>
       </div>
-
     </div>
     <div class="tab-content" v-if="currentTab === 'cancelRequests'">
       <h2>Cancel Requests</h2>
@@ -75,7 +86,7 @@
       </table>
     </div>
     <div class="tab-content" v-if="currentTab === 'factoryOrders'">
-      <h2>Factory Orders</h2>
+      <h2>Factory Orders</h2>‚
       <div v-if="factoryOrders.length === 0">No orders found for your factory.</div>
       <div class="order" v-for="order in factoryOrders" :key="order.id">
         <div class="order-details">
@@ -95,10 +106,9 @@
           </div>
         </div>
         <div class="order-actions">
-              <button @click="approveOrder(order.id)" :disabled="order.status === 'APPROVED' || order.status === 'REJECTED'">Approve</button>
-              <button @click="openRejectModal(order)" :disabled="order.status === 'REJECTED' || order.status === 'APPROVED'">Reject</button>
-      </div>
-
+          <button @click="approveOrder(order.id)" :disabled="order.status === 'APPROVED' || order.status === 'REJECTED'">Approve</button>
+          <button @click="openRejectModal(order)" :disabled="order.status === 'REJECTED' || order.status === 'APPROVED'">Reject</button>
+        </div>
       </div>
     </div>
   </div>
@@ -108,7 +118,7 @@
     <div class="modal-content">
       <span class="close" @click="rejectModalVisible = false">&times;</span>
       <h2>Reject Order</h2>
-      <form @submit.prevent="rejectOrder(currentOrder, comment)" >
+      <form @submit.prevent="rejectOrder(currentOrder, comment)">
         <label>
           Reason for rejection:
           <textarea v-model="comment" required></textarea>
@@ -117,7 +127,6 @@
       </form>
     </div>
   </div>
-
 
   <div class="modal" v-if="changePasswordModalVisible">
     <div class="modal-content">
@@ -139,20 +148,17 @@
           Re-Type New Password:
           <input type="password" v-model="confirmPassword" required>
         </label>
-        
         <div v-if="newPassword !== confirmPassword">
           <span style="color: red;">Passwords do not match.</span>
         </div>
-        
         <button type="submit">Save</button>
       </form>
     </div>
   </div>
-
 </template>
 
 <script setup>
-import { ref, onMounted , watch} from 'vue';
+import { ref, onMounted, watch, computed } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 
@@ -171,6 +177,14 @@ let confirmPassword = ref('');
 let passwordChangeError = ref('');
 let comment = ref('');
 let currentOrder = ref(null);
+
+const searchCriteria = ref({
+  factoryName: '',
+  minPrice: '',
+  maxPrice: '',
+  startDate: '',
+  endDate: ''
+});
 
 onMounted(() => {
   const storedUser = localStorage.getItem('loggedUser');
@@ -275,7 +289,7 @@ const loadOrders = async (userId) => {
     orders.value = response.data;
 
     for (const order of orders.value) {
-      const itemsResponse = await axios.get(`http://localhost:8080/chocolate-factory/rest/order/${order.id}`);
+      const itemsResponse = await axios.get(`http://localhost:8080/chocolate-factory/rest/orders/${order.id}`);
       order.items = itemsResponse.data;
 
       for (const item of order.items) {
@@ -304,7 +318,7 @@ const loadFactoryOrders = () => {
 };
 
 const approveOrder = (orderId) => {
-  axios.put(`http://localhost:8080/chocolate-factory/rest/orders/aprove/${orderId}`)
+  axios.put(`http://localhost:8080/chocolate-factory/rest/orders/approve/${orderId}`)
     .then(response => {
       console.log("Order approved successfully:", response.data);
       loadFactoryOrders();
@@ -347,6 +361,33 @@ watch(comment, (newValue) => {
   localStorage.setItem('rejectionComment', newValue);
 });
 
+const searchOrders = async () => {
+  try {
+    const params = new URLSearchParams();
+    if (searchCriteria.value.factoryName) params.append('factoryName', searchCriteria.value.factoryName);
+    if (searchCriteria.value.minPrice) params.append('minPrice', searchCriteria.value.minPrice);
+    if (searchCriteria.value.maxPrice) params.append('maxPrice', searchCriteria.value.maxPrice);
+    if (searchCriteria.value.startDate) params.append('startDate', searchCriteria.value.startDate);
+    if (searchCriteria.value.endDate) params.append('endDate', searchCriteria.value.endDate);
+
+    const response = await axios.get(`http://localhost:8080/chocolate-factory/rest/orders/search`, { params });
+    orders.value = response.data;
+  } catch (error) {
+    console.error("Failed to search orders:", error);
+  }
+};
+
+
+const clearSearch = () => {
+  searchCriteria.value = {
+    factoryName: '',
+    minPrice: '',
+    maxPrice: '',
+    startDate: '',
+    endDate: ''
+  };
+  loadOrders(loggedUser.value.id);
+};
 
 const formatDateTime = (dateString) => {
   const date = new Date(dateString);
@@ -480,8 +521,6 @@ button[type="button"] {
 .order:hover {
   transform: scale(1.01);
 }
-
-
 
 .button-column button {
   background-color: #523F31;
