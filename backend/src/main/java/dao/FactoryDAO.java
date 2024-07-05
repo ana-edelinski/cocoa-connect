@@ -176,7 +176,7 @@ public class FactoryDAO {
 				line.append(factory.getLogo()).append(";");
 				line.append(factory.getWorkingHours().getStartTime().toString()).append("-");
 				line.append(factory.getWorkingHours().getEndTime().toString()).append(";");
-				line.append(factory.getComment());
+				line.append(factory.getComment()).append(";");
 				line.append(factory.getManagerId());
 				out.write(line.toString());
 				out.newLine();

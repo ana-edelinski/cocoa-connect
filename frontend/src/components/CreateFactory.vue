@@ -46,6 +46,10 @@
           <input type="text" :style="{ backgroundColor: usernameFill ? 'white' : 'red' }" v-model="newManager.username" id="username" />
         </div>
         <div class="form-group">
+          <label for="password">Password:</label>
+          <input type="text" :style="{ backgroundColor: passwordFill ? 'white' : 'red' }" v-model="newManager.password" id="password" />
+        </div>
+        <div class="form-group">
           <label for="managerName">Name:</label>
           <input type="text" :style="{ backgroundColor: managerNameFill ? 'white' : 'red' }" v-model="newManager.name" id="managerName" />
         </div>
@@ -94,6 +98,7 @@ export default {
       },
       newManager: {
         username: '',
+        password: '',
         name: '',
         surname: '',
         gender: '',
@@ -109,6 +114,7 @@ export default {
       logoFill: true,
       managerFill: true,
       usernameFill: true,
+      passwordFill: true,
       managerNameFill: true,
       surnameFill: true,
       availableManagers: [],
@@ -170,6 +176,7 @@ export default {
     },
     checkManagerFields() {
       this.usernameFill = this.newManager.username !== '';
+      this.passwordFill = this.newManager.password !== '';
       this.managerNameFill = this.newManager.name !== '';
       this.surnameFill = this.newManager.surname !== '';
     },
