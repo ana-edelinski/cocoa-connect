@@ -170,20 +170,25 @@ function confirmPurchase(chocolate) {
     let cart = JSON.parse(cartStr);
 
     if (cart) {
+        if(cart.factoryId !== factoryId){
+          alert('cant order from different factories');
+          return;
+        }
 
-        const existingItemIndex = cart.findIndex(item => item.chocolate.id === chocolate.id);
+        const existingItemIndex = cart.items.findIndex(item => item.chocolate.id === chocolate.id);
         if (existingItemIndex === -1) {
-            cart.push(cartItem);
+            cart.items.push(cartItem);
         } else {
-            cart[existingItemIndex].quantity += chocolate.purchaseQuantity;
+            cart.items[existingItemIndex].quantity += chocolate.purchaseQuantity;
         }
     } else {
-        cart = [cartItem];
+        cart = { 'items': [cartItem], 'factoryId' : factoryId};
     }
 
     const cartForSave = JSON.stringify(cart);
     localStorage.setItem('cart', cartForSave);
 }
+
 
 
 

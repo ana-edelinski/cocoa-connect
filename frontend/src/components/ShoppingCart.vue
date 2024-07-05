@@ -1,7 +1,7 @@
 <template>
   <div class="cart-container">
     <h1>Shopping Cart</h1>
-    <div class="cart-items" v-if="cart.items.length">
+    <div class="cart-items" v-if="cart && cart.items && cart.items.length">
       <div class="cart-item" v-for="item in cart.items" :key="item.chocolate.id">
         <img :src="item.chocolate.image" alt="Chocolate Image" class="item-image" />
         <div class="item-details">
@@ -37,7 +37,7 @@ export default {
   data() {
     return {
       cart: {
-        "items" : [],
+        "items": [],
         factoryId: null
       }
     }
@@ -82,23 +82,33 @@ export default {
       this.saveCart();
     },
     buyNow() {
-      const storedUser = localStorage.getItem('loggedUser');  
+      const storedUser = localStorage.getItem('loggedUser');
+      if (!storedUser) {
+        alert('No user logged in.');
+        return;
+      }
+
       const userId = JSON.parse(storedUser).id;
 
-      const cartDto = {"items" : this.cart.items, "loggedId": userId, "factoryId" : this.cart.factoryId};
+      const cartDto = { "items": this.cart.items, "loggedId": userId, "factoryId": this.cart.factoryId };
 
-      axios.post('http://localhost:8080/chocolate-factory/rest/orders/', cartDto )
+      axios.post('http://localhost:8080/chocolate-factory/rest/orders/', cartDto)
         .then(response => {
           localStorage.removeItem('cart');
-          this.cart = {"items" : []};
-          alert('Succesful order');
+          this.cart = { "items": [] };
+          alert('Successful order');
         })
         .catch(error => {
-          alert('error ordering');
+          alert('Error ordering');
+          console.error('Error ordering:', error);
+          if (error.response) {
+            console.error('Error response data:', error.response.data);
+            console.error('Error response status:', error.response.status);
+            console.error('Error response headers:', error.response.headers);
+          }
+    });
+}
 
-          console.error('Error fetching factories:', error);
-        });
-    }
   }
 }
 </script>
