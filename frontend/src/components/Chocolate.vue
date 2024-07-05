@@ -36,25 +36,20 @@
           <p class="chocolate-detail"><strong>Kind:</strong> {{ chocolate.kind }}</p>
           <p class="chocolate-detail"><strong>Weight:</strong> {{ chocolate.weight }} g</p>
           <div class="quantity-row">
-            <template v-if="loggedUser && loggedUser.role !== 'EMPLOYEE'">
-              <p class="chocolate-detail"><strong>Quantity:</strong> {{ chocolate.quantity }}</p>
+            <p class="chocolate-detail" v-if="loggedUser && loggedUser.role !== 'EMPLOYEE'">
+              <strong>Quantity:</strong> {{ chocolate.quantity }}
+            </p>
+            <template v-if="loggedUser && loggedUser.role === 'EMPLOYEE'">
+              <div class="quantity-input">
+                <p class="chocolate-detail"><strong>Quantity:</strong></p>
+                <input v-model="chocolate.newQuantity" type="number" />
+                <button class="btn btn-done" @click="updateQuantity(chocolate.id)">Done</button>
+              </div>
             </template>
-            <span v-if="loggedUser && loggedUser.role === 'EMPLOYEE'" class="quantity-input">
-              <p class="chocolate-detail"><strong>Quantity:</strong></p>
-              <input v-model="chocolate.newQuantity" type="number" @blur="updateQuantity(chocolate.id)" />
-              <button class="btn btn-done" @click="updateQuantity(chocolate.id)">✔</button>
-            </span>
           </div>
           <div class="buttons" v-if="loggedUser && (loggedUser.role === 'MANAGER' || loggedUser.role === 'EMPLOYEE')">
             <button class="btn btn-delete" v-if="loggedUser.role === 'MANAGER'" @click="deleteChocolate(chocolate.id)">Delete</button>
             <button class="btn btn-edit" v-if="loggedUser.role === 'MANAGER'" @click="editChocolate(chocolate.id)">Edit</button>
-            <div class="edit-quantity-section" v-if="loggedUser.role === 'EMPLOYEE'">
-              <button class="btn btn-edit-quantity" @click="toggleEditQuantity(chocolate.id)">Edit quantity</button>
-              <div v-if="chocolate.editQuantity">
-                <input v-model="chocolate.newQuantity" type="number" />
-                <button class="btn btn-done" @click="updateQuantity(chocolate.id)">Done</button>
-              </div>
-            </div>
           </div>
           <div v-if="loggedUser && loggedUser.role === 'CUSTOMER'" class="purchase-section">
             <p><strong>Desired Quantity:</strong></p>
@@ -111,6 +106,7 @@ function loadChocolates() {
         .filter(chocolate => !chocolate.deleted)
         .map(chocolate => {
           chocolate.purchaseQuantity = 1;
+          chocolate.newQuantity = chocolate.quantity; //
           return chocolate;
         });
     })
@@ -126,16 +122,6 @@ function deleteChocolate(chocolateId) {
 
 function editChocolate(chocolateId) {
   router.push({ name: 'editChocolate', params: { chocolateId } });
-}
-
-function toggleEditQuantity(chocolateId) {
-  const chocolate = chocolates.value.find(choc => choc.id === chocolateId);
-  if (chocolate) {
-    chocolate.editQuantity = !chocolate.editQuantity;
-    if (chocolate.editQuantity) {
-      chocolate.newQuantity = chocolate.quantity;
-    }
-  }
 }
 
 function updateQuantity(chocolateId) {
