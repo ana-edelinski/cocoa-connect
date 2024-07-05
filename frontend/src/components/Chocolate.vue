@@ -39,7 +39,7 @@
             <p class="chocolate-detail" v-if="loggedUser && loggedUser.role !== 'EMPLOYEE'">
               <strong>Quantity:</strong> {{ chocolate.quantity }}
             </p>
-            <template v-if="loggedUser && loggedUser.role === 'EMPLOYEE'">
+            <template v-if="loggedUser && loggedUser.role === 'EMPLOYEE'"> <!-- && isFactoryEmployee(chocolate.factoryId) -->
               <div class="quantity-input">
                 <p class="chocolate-detail"><strong>Quantity:</strong></p>
                 <input v-model="chocolate.newQuantity" type="number" />
@@ -94,6 +94,7 @@ onMounted(() => {
   const storedUser = localStorage.getItem('loggedUser');
   if (storedUser) {
     loggedUser.value = JSON.parse(storedUser);
+    console.log("Logged user:", loggedUser.value);
   }
   loadFactory();
   loadChocolates();
@@ -114,7 +115,7 @@ function loadChocolates() {
         .filter(chocolate => !chocolate.deleted)
         .map(chocolate => {
           chocolate.purchaseQuantity = 1;
-          chocolate.newQuantity = chocolate.quantity; //
+          chocolate.newQuantity = chocolate.quantity; 
           return chocolate;
         });
     })
@@ -202,7 +203,10 @@ function isManagerOfFactory(factoryId) {
   return factory.value && factory.value.managerId === loggedUser.value.id;
 }
 
-
+function isFactoryEmployee(factoryId) {
+  console.log("Checking factory employee:", factory.value, loggedUser.value);
+  return factory.value && factory.value.id === loggedUser.value.factoryWorkingId;
+}
 </script>
 
 
