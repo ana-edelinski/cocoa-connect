@@ -128,7 +128,7 @@ const handleSubmit = () => {
       router.push('/'); 
     })
     .catch(error => {
-      console.error('Error adding employee:', error);
+     alert('Username already exists', error);
     });
 };
 

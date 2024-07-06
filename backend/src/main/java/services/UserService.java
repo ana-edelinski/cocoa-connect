@@ -66,6 +66,10 @@ public class UserService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createUser(UserCreationDto userDto) {
 		UserDAO dao = (UserDAO) ctx.getAttribute("userDao");
+		User foundUser = dao.findByUsername(userDto.getUsername());
+		if(foundUser != null) {
+			return Response.status(Response.Status.BAD_REQUEST).entity(foundUser).build();
+		}
 		try {
 			User user = userDto.convertToUser();
 			user.setRole(Role.CUSTOMER);
@@ -108,6 +112,10 @@ public class UserService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response registerManager(UserCreationDto userDto) {
 		UserDAO dao = (UserDAO) ctx.getAttribute("userDao");
+		User foundUser = dao.findByUsername(userDto.getUsername());
+		if(foundUser != null) {
+			return Response.status(Response.Status.BAD_REQUEST).entity(foundUser).build();
+		}
 		try {
 			User user = userDto.convertToUser();
 			user.setRole(Role.MANAGER);
@@ -131,6 +139,10 @@ public class UserService {
 	public Response addEmployee(EmployeeCreationDto employeDto) {
 		UserDAO dao = (UserDAO) ctx.getAttribute("userDao");
 		FactoryDAO factoryDAO = new FactoryDAO(ctx.getRealPath(""));
+		User foundUser = dao.findByUsername(employeDto.getUsername());
+		if(foundUser != null) {
+			return Response.status(Response.Status.BAD_REQUEST).entity(foundUser).build();
+		}
 		try {
 			Factory factory = factoryDAO.findByManagerId(employeDto.getManagerId());
 			

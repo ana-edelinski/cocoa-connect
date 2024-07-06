@@ -156,7 +156,7 @@ export default {
           this.loadAvailableManagers();
         })
         .catch(error => {
-          console.error('Error registering manager:', error);
+          alert('Username already exists', error);
         });
     },
     submitForm() {

@@ -86,7 +86,7 @@ export default {
           this.$router.push('/signIn');
         })
         .catch(error => {
-          console.error('Error registering:', error);
+          alert('Username already existst:');
         });
     },
     checkFields() {
