@@ -10,7 +10,6 @@
           <p><strong>❔ Status:</strong> {{ factory.factoryStatus }}</p>
           <p><strong>📍 Location:</strong> {{ factory.city }}, {{ factory.country }}</p>
           <p v-if="factory.averageRating"><strong>⭐ Rating:</strong> {{ factory.averageRating }}</p>
-          <p v-if="factory.comment"><strong>Comment:</strong> {{ factory.comment }}</p>
           <div v-if="factory.comments && factory.comments.length">
             <strong>Comments:</strong>
             <ul>

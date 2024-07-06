@@ -17,7 +17,6 @@ public class FactoryWithChocolatesDto {
 	private boolean deleted;
 	private String logo;
 	private WorkingHours workingHours;
-	private String comment;
 	private int managerId;
 	private ArrayList<Chocolate> chocolates;
 
@@ -36,7 +35,6 @@ public class FactoryWithChocolatesDto {
 		deleted = factory.isDeleted();
 		logo = factory.getLogo();
 		workingHours = factory.getWorkingHours();
-		comment = factory.getComment();
 		managerId = factory.getManagerId();
 		
 	}
@@ -111,14 +109,6 @@ public class FactoryWithChocolatesDto {
 
 	public void setWorkingHours(WorkingHours workingHours) {
 		this.workingHours = workingHours;
-	}
-
-	public String getComment() {
-		return comment;
-	}
-
-	public void setComment(String comment) {
-		this.comment = comment;
 	}
 
 	public int getManagerId() {

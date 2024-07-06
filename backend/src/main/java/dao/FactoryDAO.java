@@ -93,7 +93,6 @@ public class FactoryDAO {
 			f.setAverageRating(factory.getAverageRating());
 			f.setLogo(factory.getLogo());
 			f.setWorkingHours(factory.getWorkingHours());
-			f.setComment(factory.getComment());
 			f.setManagerId(factory.getManagerId());
 		}
 		saveToFile(contextPath);
@@ -139,14 +138,13 @@ public class FactoryDAO {
 					deleted = st.nextToken().trim();
 					logo = st.nextToken().trim();
 					workingHours = st.nextToken().trim();
-					comment = st.nextToken().trim();
 					managerId = st.nextToken().trim();
 				}
 				String[] hours = workingHours.split("-");
 				WorkingHours wh = new WorkingHours(LocalTime.parse(hours[0]), LocalTime.parse(hours[1]));
 				factories.put(Integer.parseInt(id),
 						new Factory(Integer.parseInt(id), name, factoryStatus, city, country,
-								Double.parseDouble(averageRating), Boolean.parseBoolean(deleted), logo, wh, comment,
+								Double.parseDouble(averageRating), Boolean.parseBoolean(deleted), logo, wh, 
 								Integer.parseInt(managerId)));
 			}
 		} catch (Exception e) {
@@ -180,7 +178,6 @@ public class FactoryDAO {
 				line.append(factory.getLogo()).append(";");
 				line.append(factory.getWorkingHours().getStartTime().toString()).append("-");
 				line.append(factory.getWorkingHours().getEndTime().toString()).append(";");
-				line.append(factory.getComment()).append(";");
 				line.append(factory.getManagerId());
 				out.write(line.toString());
 				out.newLine();
