@@ -36,39 +36,39 @@
       </div>
       <div class="sidebar" v-if="currentTab === 'factoryOrders'">
         <div class="search-container">
-            <h4>SEARCH FACTORY ORDERS</h4>
-            <div class="search-bar">
-              <div class="inline-inputs">
-                <input v-model="factoryOrderSearchCriteria.minPrice" type="number" placeholder="Min Price" />
-                <input v-model="factoryOrderSearchCriteria.maxPrice" type="number" placeholder="Max Price" />
-              </div>
-              <div class="inline-inputs">
-                <input v-model="factoryOrderSearchCriteria.startDate" type="date" placeholder="Start Date" />
-                <input v-model="factoryOrderSearchCriteria.endDate" type="date" placeholder="End Date" />
-              </div>
+          <h4>SEARCH FACTORY ORDERS</h4>
+          <div class="search-bar">
+            <div class="inline-inputs">
+              <input v-model="factoryOrderSearchCriteria.minPrice" type="number" placeholder="Min Price" />
+              <input v-model="factoryOrderSearchCriteria.maxPrice" type="number" placeholder="Max Price" />
             </div>
-            <div class="buttons">
-              <button class="btn btn-search" @click="searchFactoryOrders">Search</button>
-              <button class="btn btn-clear" @click="clearFactoryOrderSearch">Clear</button>
+            <div class="inline-inputs">
+              <input v-model="factoryOrderSearchCriteria.startDate" type="date" placeholder="Start Date" />
+              <input v-model="factoryOrderSearchCriteria.endDate" type="date" placeholder="End Date" />
             </div>
           </div>
-          <div class="separator"></div>
-          <div class="sort-container">
-            <h4>SORT FACTORY ORDERS</h4>
-            <select v-model="factoryOrderSortCriteria.sortBy" @change="sortFactoryOrders">
-              <option value="">Default Sorting</option>
-              <option value="price-asc">Sort by Price: Ascending</option>
-              <option value="price-desc">Sort by Price: Descending</option>
-              <option value="date-asc">Sort by Date: Ascending</option>
-              <option value="date-desc">Sort by Date: Descending</option>
-            </select>
+          <div class="buttons">
+            <button class="btn btn-search" @click="searchFactoryOrders">Search</button>
+            <button class="btn btn-clear" @click="clearFactoryOrderSearch">Clear</button>
           </div>
+        </div>
+        <div class="separator"></div>
+        <div class="sort-container">
+          <h4>SORT FACTORY ORDERS</h4>
+          <select v-model="factoryOrderSortCriteria.sortBy" @change="sortFactoryOrders">
+            <option value="">Default Sorting</option>
+            <option value="price-asc">Sort by Price: Ascending</option>
+            <option value="price-desc">Sort by Price: Descending</option>
+            <option value="date-asc">Sort by Date: Ascending</option>
+            <option value="date-desc">Sort by Date: Descending</option>
+          </select>
+        </div>
       </div>
       <div class="main-content">
         <div class="tabs">
           <button :class="{ active: currentTab === 'profile' }" @click="currentTab = 'profile'">MY PROFILE</button>
           <button v-if="loggedUser && loggedUser.role === 'CUSTOMER'" :class="{ active: currentTab === 'orders' }" @click="currentTab = 'orders'">MY ORDERS</button>
-          <button v-if="loggedUser && loggedUser.role === 'MANAGER'" :class="{ active: currentTab === 'cancelRequests' }" @click="currentTab = 'cancelRequests'">CANCEL REQUESTS</button>
+          <button v-if="loggedUser && loggedUser.role === 'MANAGER'" :class="{ active: currentTab === 'factoryCustomers' }" @click="currentTab = 'factoryCustomers'">FACTORY CUSTOMERS</button>
           <button v-if="loggedUser && loggedUser.role === 'MANAGER'" :class="{ active: currentTab === 'factoryOrders' }" @click="currentTab = 'factoryOrders'">FACTORY ORDERS</button>
         </div>
         <div v-if="currentTab === 'profile'">
@@ -123,26 +123,22 @@
             </div>
           </div>
         </div>
-        <div class="tab-content" v-if="currentTab === 'cancelRequests'">
-          <h2>Cancel Requests</h2>
-          <table>
+        <div class="tab-content" v-if="currentTab === 'factoryCustomers'">
+          <div v-if="factoryCustomers.length === 0">No customers found for your factory.</div>
+          <table v-else>
             <tr>
-              <th>Request ID</th>
-              <th>Order ID</th>
-              <th>Date</th>
-              <th>Status</th>
+              <th>Username</th>
+              <th>Name</th>
+              <th>Surname</th>
             </tr>
-            <tr v-for="request in cancelRequests" :key="request.id">
-              <td>{{ request.id }}</td>
-              <td>{{ request.orderId }}</td>
-              <td>{{ request.date }}</td>
-              <td>{{ request.status }}</td>
+            <tr v-for="customer in factoryCustomers" :key="customer.id">
+              <td>{{ customer.username }}</td>
+              <td>{{ customer.name }}</td>
+              <td>{{ customer.surname }}</td>
             </tr>
           </table>
         </div>
         <div class="tab-content" v-if="currentTab === 'factoryOrders'">
-          
-
           <div v-if="factoryOrders.length === 0">No orders found for your factory.</div>
           <div class="order" v-for="order in sortedFactoryOrders" :key="order.id">
             <div class="order-details">
@@ -226,6 +222,7 @@ const profile = ref({});
 const orders = ref([]);
 const cancelRequests = ref([]);
 const factoryOrders = ref([]);
+const factoryCustomers = ref([]);
 const currentTab = ref('profile');
 const changePasswordModalVisible = ref(false);
 const rejectModalVisible = ref(false);
@@ -260,28 +257,27 @@ const factoryOrderSortCriteria = ref({
 });
 
 onMounted(() => {
-  const storedUser = localStorage.getItem('loggedUser');
-  if (storedUser) {
-    loggedUser.value = JSON.parse(storedUser);
-    console.log("Logged user:", loggedUser.value);
+    const storedUser = localStorage.getItem('loggedUser');
+    if (storedUser) {
+        loggedUser.value = JSON.parse(storedUser);
+        console.log("Logged user:", loggedUser.value);
 
-    // Proverite da li je korisnik menadžer i da li `factoryId` postoji
-    if (loggedUser.value.role === 'MANAGER') {
-      loadFactoryOrders();
-      if (!loggedUser.value.factoryId) {
-        // Ako `factoryId` nije postavljen, učitajte ga sa servera
-        loadFactoryIdForManager(loggedUser.value.id);
-      }
+        if (loggedUser.value.role === 'MANAGER') {
+            loadFactoryOrders();
+            loadFactoryCustomers();
+            if (!loggedUser.value.factoryId) {
+                loadFactoryIdForManager(loggedUser.value.id);
+            }
+        }
+
+        loadOrders(loggedUser.value.id);
+
+        if (currentTab.value === 'profile') {
+            loadProfileData();
+        }
+    } else {
+        console.error("No logged user found in localStorage.");
     }
-
-    loadOrders(loggedUser.value.id);
-
-    if (currentTab.value === 'profile') {
-      loadProfileData();
-    }
-  } else {
-    console.error("No logged user found in localStorage.");
-  }
 });
 
 const loadFactoryIdForManager = async (managerId) => {
@@ -293,8 +289,6 @@ const loadFactoryIdForManager = async (managerId) => {
     console.error("Failed to load factory ID for manager:", error);
   }
 };
-
-
 
 const loadProfileData = async () => {
   if (!loggedUser.value) {
@@ -407,6 +401,16 @@ const loadFactoryOrders = () => {
   }
 };
 
+const loadFactoryCustomers = async () => {
+    try {
+        const response = await axios.get(`http://localhost:8080/chocolate-factory/rest/orders/factoryCustomers/${loggedUser.value.id}`);
+        factoryCustomers.value = response.data;
+        console.log("Loaded factory customers:", factoryCustomers.value);
+    } catch (error) {
+        console.error("Failed to load factory customers:", error);
+    }
+};
+
 const approveOrder = (orderId) => {
   axios.put(`http://localhost:8080/chocolate-factory/rest/orders/approve/${orderId}`)
     .then(response => {
@@ -422,13 +426,13 @@ const approveOrder = (orderId) => {
 const rejectOrder = () => {
   const storedComment = localStorage.getItem('rejectionComment');
   axios.put(`http://localhost:8080/chocolate-factory/rest/orders/reject/${currentOrder.value.id}`, {
-    comment: storedComment // Pass the comment from local storage to the backend
+    comment: storedComment
   })
     .then(response => {
       console.log("Order rejected successfully:", response.data);
       rejectModalVisible.value = false;
-      comment.value = ''; // Clear the rejection reason after submission
-      localStorage.removeItem('rejectionComment'); // Clear the local storage item
+      comment.value = '';
+      localStorage.removeItem('rejectionComment');
       loadFactoryOrders();
       window.alert("Order rejected successfully.");
     })
@@ -442,11 +446,10 @@ const openRejectModal = (order) => {
   rejectModalVisible.value = true;
   const storedComment = localStorage.getItem('rejectionComment');
   if (storedComment) {
-    comment.value = storedComment; // Load the comment from local storage if it exists
+    comment.value = storedComment;
   }
 };
 
-// Update the comment in local storage whenever it changes
 watch(comment, (newValue) => {
   localStorage.setItem('rejectionComment', newValue);
 });
@@ -498,8 +501,6 @@ const searchFactoryOrders = async () => {
     console.error("Failed to search factory orders:", error);
   }
 };
-
-
 
 const clearFactoryOrderSearch = () => {
   factoryOrderSearchCriteria.value = {
@@ -563,15 +564,9 @@ const sortFactoryOrders = async () => {
     factoryOrders.value = response.data;
   } catch (error) {
     console.error("Failed to sort factory orders:", error);
-    factoryOrders.value = []; // Clear orders in case of error
+    factoryOrders.value = [];
   }
 };
-
-
-
-
-
-
 
 const sortedOrders = computed(() => {
   if (!sortCriteria.value.sortBy) {
@@ -854,6 +849,12 @@ table, th, td {
 th, td {
   padding: 10px;
   text-align: left;
+}
+
+table th {
+  background-color: #523F31;
+  color: white;
+  font-weight: bold;
 }
 
 .modal {

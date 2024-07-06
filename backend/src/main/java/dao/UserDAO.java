@@ -11,8 +11,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.StringTokenizer;
-
-import javax.ws.rs.QueryParam;
+import java.util.stream.Collectors;
 
 import beans.Factory;
 import beans.User;
@@ -283,6 +282,5 @@ public class UserDAO {
 	    }
 	    return null;
 	}
-
 
 }

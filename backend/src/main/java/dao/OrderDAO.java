@@ -11,7 +11,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import beans.Chocolate;
@@ -22,6 +24,7 @@ import beans.User;
 import dto.CartDto;
 import dto.CartItemDto;
 import enums.OrderStatus;
+import enums.Role;
 
 public class OrderDAO {
 	private HashMap<Integer, Order> orders = new HashMap<>();
@@ -325,6 +328,18 @@ public class OrderDAO {
 	    return sortedOrders;
 	}
 
+	public Collection<User> getCustomersByFactoryId(int factoryId, UserDAO userDao) {
+        Set<User> customers = new HashSet<>();
+        for (Order order : orders.values()) {
+            if (order.getFactory().getId() == factoryId) {
+                User customer = userDao.findById(order.getUser().getId());
+                if (customer.getRole() == Role.CUSTOMER) {
+                    customers.add(customer);
+                }
+            }
+        }
+        return customers;
+    }
 	
 	 
 }

@@ -17,13 +17,15 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import beans.Factory;
 import beans.Order;
+import beans.User;
 import dao.FactoryDAO;
 import dao.OrderDAO;
+import dao.UserDAO;
 import dto.CartDto;
-import dto.FactoryWithChocolatesDto;
 @Path("/orders")
 public class OrderService {
 	@Context
@@ -179,7 +181,19 @@ public class OrderService {
 	}
 
 
+	@GET
+    @Path("/factoryCustomers/{managerId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getFactoryCustomers(@PathParam("managerId") int managerId) {
+        UserDAO userDao = (UserDAO) ctx.getAttribute("userDao");
+        OrderDAO orderDao = (OrderDAO) ctx.getAttribute("orderDao");
+        FactoryDAO factoryDao = (FactoryDAO) ctx.getAttribute("factoryDao");
 
+        int factoryId = factoryDao.findByManagerId(managerId).getId();
+        Collection<User> customers = orderDao.getCustomersByFactoryId(factoryId, userDao);
+
+        return Response.ok(customers).build();
+    }
 	
 	
 	

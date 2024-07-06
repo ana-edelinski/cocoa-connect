@@ -16,12 +16,12 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import beans.Factory;
 import beans.User;
 import dao.FactoryDAO;
 import dao.UserDAO;
 import dto.ChangePasswordDto;
 import dto.EmployeeCreationDto;
-import dto.FactoryWithChocolatesDto;
 import dto.LoginDto;
 import dto.UserCreationDto;
 import dto.UserDto;
@@ -208,6 +208,5 @@ public class UserService {
         
         return Response.ok().build();
     }
-
 
 }
