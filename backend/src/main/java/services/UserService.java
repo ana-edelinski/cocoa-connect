@@ -25,6 +25,7 @@ import dto.EmployeeCreationDto;
 import dto.LoginDto;
 import dto.UserCreationDto;
 import dto.UserDto;
+import dto.UserUpdateDto;
 import enums.Role;
 
 @Path("/users")
@@ -189,10 +190,11 @@ public class UserService {
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public User update(@PathParam("id") Integer id, User updatedUser) {
+	public User update(@PathParam("id") Integer id, UserUpdateDto updatedUser) {
 		UserDAO dao = (UserDAO) ctx.getAttribute("userDao");
 		// todo: Validacija
-		return dao.update(id, updatedUser);
+		User user = updatedUser.convertToUser();
+		return dao.updateUserInfo(id, user);
 	}
 
 	@PUT

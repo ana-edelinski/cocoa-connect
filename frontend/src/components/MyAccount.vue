@@ -84,11 +84,11 @@
             </label>
             <label>
               First Name:
-              <input type="text" v-model="profile.firstName" required>
+              <input type="text" v-model="profile.name" required>
             </label>
             <label>
               Last Name:
-              <input type="text" v-model="profile.lastName" required>
+              <input type="text" v-model="profile.surname" required>
             </label>
             <label>
               Gender:
@@ -99,7 +99,7 @@
             </label>
             <label>
               Birthday:
-              <input type="date" v-model="profile.birthday" required>
+              <input type="date" v-model="profile.dateOfBirth" required>
             </label>
             <div class="buttons">
               <button type="submit">Save</button>
@@ -225,10 +225,10 @@ const loggedUser = ref(null);
 const profile = ref({
   username: '',
   password: '',
-  firstName: '',
-  lastName: '',
+  name: '',
+  surname: '',
   gender: '',
-  birthday: '',
+  dateOfBirth: '',
   points: ''  
 });
 const orders = ref([]);
@@ -314,10 +314,10 @@ const loadProfileData = async () => {
     profile.value = {
       username: response.data.username,
       password: response.data.password,
-      firstName: response.data.name,
-      lastName: response.data.surname,
+      name: response.data.name,
+      surname: response.data.surname,
       gender: response.data.gender,
-      birthday: response.data.dateOfBirth,
+      dateOfBirth: response.data.dateOfBirth,
       points: response.data.points  
     };
   } catch (error) {

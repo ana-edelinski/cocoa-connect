@@ -66,6 +66,20 @@ public class UserDAO {
 		saveToFile(contextPath);
 		return u;
 	}
+	public User updateUserInfo(int id, User user) {
+		User u = users.containsKey(id) ? users.get(id) : null;
+		if (u == null) {
+			return save(user);
+		} else {
+			u.setUsername(user.getUsername());
+			u.setName(user.getName());
+			u.setSurname(user.getSurname());
+			u.setGender(user.getGender());
+			u.setDateOfBirth(user.getDateOfBirth());
+		}
+		saveToFile(contextPath);
+		return u;
+	}
 
 	public User save(User user) {
 		int maxId = -1;
@@ -170,7 +184,7 @@ public class UserDAO {
 				line.append(user.getSurname()).append(";");
 				line.append(user.getGender().toString()).append(";");
 				line.append(sdf.format(user.getDateOfBirth())).append(";");
-				line.append(user.getRole().toString()).append(";");
+				line.append(user.getRole()).append(";");
 				line.append(user.getFactoryWorkingId()).append(";");
 				line.append(user.getPoints()).append(";");
 				line.append(user.getIsAssigned()).append(";");
