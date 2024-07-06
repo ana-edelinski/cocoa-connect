@@ -229,7 +229,7 @@ const profile = ref({
   lastName: '',
   gender: '',
   birthday: '',
-  points: ''  // Dodali smo polje za poene
+  points: ''  
 });
 const orders = ref([]);
 const cancelRequests = ref([]);
