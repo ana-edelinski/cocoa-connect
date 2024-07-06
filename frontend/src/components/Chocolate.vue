@@ -58,7 +58,7 @@
               Edit
             </button>
           </div>
-          <div v-if="loggedUser && loggedUser.role === 'CUSTOMER'" class="purchase-section">
+          <div v-if="loggedUser && loggedUser.role === 'CUSTOMER' && isFactoryOpen()" class="purchase-section">
             <p><strong>Desired Quantity:</strong></p>
             <div class="quantity-controls">
               <button class="btn btn-quantity" @click="decreaseDesiredQuantity(chocolate)">-</button>
@@ -67,6 +67,9 @@
             </div>
             <button class="btn btn-done" @click="confirmPurchase(chocolate)">Add to Cart</button>
           </div>
+          <p v-if="loggedUser && loggedUser.role === 'CUSTOMER' && !isFactoryOpen()" style="color: red;">
+            Factory is closed. Orders cannot be placed at this time.
+          </p>
         </div>
       </div>
     </section>
@@ -284,6 +287,11 @@ function declineComment(commentId) {
     })
     .catch(error => alert("Comment is not rejected"));
 }
+
+function isFactoryOpen() {
+  return factory.value.factoryStatus === 'OPENED';
+}
+
 
 </script>
 
