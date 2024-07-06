@@ -846,6 +846,14 @@ button[type="button"] {
   background-color: #634a38;
 }
 
+.button-column {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+
 .chocolate-logo {
   width: 50px;
   height: 50px;

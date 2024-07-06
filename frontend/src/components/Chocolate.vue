@@ -73,25 +73,20 @@
     </section>
 
     <section class="chocolates-section">
-      <h2 class="section-title">Factory comments</h2>
-      <div class="chocolates-grid">
+      <div class="comments-grid">
         
         <div class="tab-content" v-if="loggedUser.role === 'MANAGER' || loggedUser.role === 'ADMINISTRATOR'">
           <div class="comment-list">
+            <div class="comment-header"> Comments:</div>
             <div class="comment" v-for="comment in managersComments" :key="comment.id">
               <div class="comment-details">
-                <div><strong>User:</strong> {{ comment.user.name }} {{ comment.user.surname }}</div>
-                <div><strong>Comment:</strong> {{ comment.text }}</div>
-                <div><strong>Rate:</strong> {{ comment.grade }}</div>
-                <div><strong>Status:</strong> {{ comment.status }}</div>
+                <div class="comment-author"><strong> {{ comment.user.name }} {{ comment.user.surname }} </strong> </div>
+                <div class="comment-text"> {{ comment.grade }} ⭐ {{ comment.text }}</div>
+                <div class="comment-status"><strong>Status:</strong> {{ comment.status }}</div>
               </div>
               <div class="button-column" v-if="comment.status === 'PROCESSING'">
-                <button @click="aproveComment(comment.id)" >
-                  Aprove
-                </button>
-                <button @click="declineComment(comment.id)">
-                  Reject
-                </button>
+                <button @click="aproveComment(comment.id)" class="btn-approve">Approve</button>
+                <button @click="declineComment(comment.id)" class="btn-reject">Reject</button>
               </div>
             </div>
           </div>
@@ -99,32 +94,22 @@
        
         <div class="tab-content" v-if="loggedUser.role === 'CUSTOMER'">
           <div class="comment-list">
+            <div class="comment-header"> Comments:</div>
             <div class="comment" v-for="comment in usersComments" :key="comment.id">
               <div class="comment-details">
-                <div><strong>User:</strong> {{ comment.user.name }} {{ comment.user.surname }}</div>
-                <div><strong>Comment:</strong> {{ comment.text }}</div>
-                <div><strong>Rate:</strong> {{ comment.grade }}</div>
-                <div><strong>Status:</strong> {{ comment.status }}</div>
+                <div class="comment-author"><strong> {{ comment.user.name }} {{ comment.user.surname }} </strong> </div>
+                <div class="comment-text"> {{ comment.grade }} ⭐ {{ comment.text }}</div>
+                <div class="comment-status"><strong>Status:</strong> {{ comment.status }}</div>
               </div>
-              
             </div>
           </div>
         </div>
-        
 
       </div>
-
-
-
-
     </section>
-
-
-
-
-
   </div>
 </template>
+
 
 
 <script setup>
@@ -570,4 +555,74 @@ input[type="number"] {
   color: #fff;
 }
 
+.comment-list {
+  width: 90%;
+  margin-left: 45px;
+}
+
+.comment {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.comment-header {
+  display: flex;
+  align-items: left;
+  margin-bottom: 5px;
+}
+
+.comment-rating {
+  background-color: #523F31;
+  color: #fff;
+  padding: 5px 10px;
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 5px;
+}
+
+.comment-text {
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+.comment-status {
+  font-size: 14px;
+  color: #666;
+}
+
+.button-column {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.btn-approve {
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-approve:hover {
+  background-color: #218838;
+}
+
+.btn-reject {
+  background-color: #dc3545;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-reject:hover {
+  background-color: #c82333;
+}
 </style>

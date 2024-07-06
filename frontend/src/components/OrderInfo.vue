@@ -17,8 +17,12 @@
     <div class="feedback-section" v-if="order.status === 'APPROVED'">
       <h3>Leave Your Feedback</h3>
       <div class="rating">
-        <label for="rating">Rating:</label>
-        <input type="number" v-model="rating" min="1" max="5">
+        <label>Rating:</label>
+        <div class="rating-options">
+          <label v-for="n in 5" :key="n">
+            <input type="radio" v-model="rating" :value="n"> {{ n }}
+          </label>
+        </div>
       </div>
       <div class="comment">
         <label for="comment">Comment:</label>
@@ -151,10 +155,18 @@ function submitFeedback() {
 .feedback-section {
   margin-top: 30px;
   text-align: center;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .feedback-section h3 {
   margin-bottom: 20px;
+  font-size: 24px;
 }
 
 .rating, .comment {
@@ -165,20 +177,31 @@ function submitFeedback() {
 .rating label, .comment label {
   display: block;
   font-weight: bold;
+  margin-bottom: 5px;
 }
 
-.rating input {
-  width: 100%;
-  padding: 5px;
-  margin-top: 5px;
+.rating-options {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.rating-options label {
+  display: flex;
+  align-items: center;
+}
+
+.rating-options input[type="radio"] {
+  margin-right: 5px;
 }
 
 .comment textarea {
-  width: 100%;
+  width: calc(100% - 20px);
   padding: 10px;
   margin-top: 5px;
   border-radius: 5px;
-  border: 1px solid #ccc;
+  border: 1px solid #ddd;
+  box-sizing: border-box;
 }
 
 button {
@@ -190,6 +213,7 @@ button {
   border-radius: 5px;
   cursor: pointer;
   font-size: 16px;
+  font-weight: bold;
 }
 
 button:hover {
