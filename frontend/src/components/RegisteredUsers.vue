@@ -65,6 +65,10 @@
                 <span v-if="sortCriteria.pointsAsc"><i class="fas fa-sort-up"></i></span>
                 <span v-if="sortCriteria.pointsDesc"><i class="fas fa-sort-down"></i></span>
               </th>
+              <th >
+                Type
+                
+              </th>
             </tr>
           </thead>
 
@@ -78,6 +82,7 @@
               <td>{{ formatDate(user.dateOfBirth) }}</td>
               <td>{{ user.role }}</td>
               <td>{{ user.points }}</td>
+              <td>{{ user.type }}</td>
             </tr>
           </tbody>
         </table>

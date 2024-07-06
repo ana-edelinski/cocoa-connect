@@ -144,7 +144,7 @@ public class OrderDAO {
 		User user = order.getUser();
 		double lostPoints = order.getPrice() / 1000 * 133 * 4;
 		user.setPoints(user.getPoints() - (int)lostPoints);
-		
+		user.updateUserType();
 		UserDAO userDAO =  UserDAO.getInstance();
 		userDAO.update(user.getId(), user);
 		return order;
@@ -196,14 +196,15 @@ public class OrderDAO {
 			chocolate.setQuantity(chocolate.getQuantity() - cartItemDto.getQuantity());
 			chocolateDAO.update(chocolate.getId(), chocolate);
 		}
-
+		ukupnaCena = user.calcSalePrice(ukupnaCena);
 		order.setPrice(ukupnaCena);
 		orders.put(order.getId(), order);
 		saveToFile(contextPath);
 		
 		double points = order.getPrice() / 1000 * 133;
 		user.setPoints(user.getPoints() + (int)points);
-		
+		user.updateUserType();
+
 		userDAO.update(user.getId(), user);
 		return order;
 	}

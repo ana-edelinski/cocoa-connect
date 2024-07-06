@@ -20,6 +20,10 @@
       </div>
       <div class="cart-total">
         <h2>Total Price: {{ totalPrice }} RSD</h2>
+        <div v-if="loggedUser.type !== 'NONE'">
+          <h2>Sale: {{ percentage }} % RSD</h2>
+           <h2>Sale Price: {{ salePrice }} RSD</h2>
+        </div>
         <button class="buy-now-button" @click="buyNow">Buy Now</button>
       </div>
     </div>
@@ -38,13 +42,19 @@ export default {
     return {
       cart: {
         "items": [],
-        factoryId: null
+        factoryId: null,
+        loggedUser: {},
+        percentage: 0
       }
     }
   },
   computed: {
     totalPrice() {
       return this.cart.items.reduce((total, item) => total + item.chocolate.price * item.quantity, 0);
+    },
+     salePrice() {
+      const totalP = this.cart.items.reduce((total, item) => total + item.chocolate.price * item.quantity, 0);
+      return totalP * (1 - this.percentage / 100.0);
     }
   },
   mounted() {
@@ -52,6 +62,16 @@ export default {
     if(cartStr){
       this.cart = JSON.parse(cartStr);
     }
+
+      const storedUser = localStorage.getItem('loggedUser');
+      this.loggedUser = JSON.parse(storedUser);
+      if(this.loggedUser.type === 'BRONZE'){
+        this.percentage = 5;
+      }else  if(this.loggedUser.type === 'SILVER'){
+        this.percentage = 10;
+      }else{
+        this.percentage = 15;
+      }
   },
   methods: {
     increaseQuantity(item) {

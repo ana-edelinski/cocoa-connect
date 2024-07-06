@@ -6,6 +6,7 @@ import javax.json.bind.annotation.JsonbDateFormat;
 
 import enums.Gender;
 import enums.Role;
+import enums.UserType;
 
 public class User {
 	private int id;
@@ -20,13 +21,14 @@ public class User {
 	private boolean isAssigned;
 	private int factoryWorkingId;
 	private int points;
+	private UserType type;
 
 	public User() {
 		super();
 	}
 
 	public User(int id, String username, String password, String name, String surname, Gender gender, Date dateOfBirth,
-			Role role, int factoryWorkingId, int points, boolean isAssigned) {
+			Role role, int factoryWorkingId, int points, boolean isAssigned, UserType type) {
 		super();
 		this.id = id;
 		this.username = username;
@@ -39,6 +41,15 @@ public class User {
 		this.factoryWorkingId = factoryWorkingId;
 		this.isAssigned = isAssigned;
 		this.points = points;
+		this.type = type;
+	}
+
+	public UserType getType() {
+		return type;
+	}
+
+	public void setType(UserType type) {
+		this.type = type;
 	}
 
 	public int getId() {
@@ -131,6 +142,33 @@ public class User {
 
 	public void setPoints(int points) {
 		this.points = points;
+	}
+
+	public void updateUserType() {
+		if (points < 1000) {
+			type = UserType.NONE;
+		} else if (points < 2000) {
+			type = UserType.BRONZE;
+		} else if (points < 4000) {
+			type = UserType.SILVER;
+		} else {
+			type = UserType.GOLD;
+		}
+	}
+
+	public double calcSalePrice(double price) {
+		if (type == UserType.NONE) {
+			return price;
+		}
+		int popust = 0;
+		if (type == UserType.BRONZE) {
+			popust = 5;
+		} else if (type == UserType.SILVER) {
+			popust = 10;
+		} else {
+			popust = 20;
+		}
+		return price * (1.0 - popust / 100.0);
 	}
 
 }

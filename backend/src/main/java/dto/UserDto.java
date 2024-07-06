@@ -7,6 +7,7 @@ import javax.json.bind.annotation.JsonbDateFormat;
 import beans.User;
 import enums.Gender;
 import enums.Role;
+import enums.UserType;
 
 public class UserDto {
 	private int id;
@@ -21,6 +22,7 @@ public class UserDto {
 	private boolean isAssigned;
 	private int points;
 	private int factoryWorkingId;
+	private UserType type;
 
 	public UserDto() {
 		super();
@@ -38,6 +40,7 @@ public class UserDto {
 		isAssigned = user.getIsAssigned();
 		points = user.getPoints();
 		factoryWorkingId = user.getFactoryWorkingId();
+		type = user.getType();
 	}
 
 	public int getId() {
@@ -127,5 +130,14 @@ public class UserDto {
 	public void setFactoryWorkingId(int factoryWorkingId) {
 		this.factoryWorkingId = factoryWorkingId;
 	}
+
+	public UserType getType() {
+		return type;
+	}
+
+	public void setType(UserType type) {
+		this.type = type;
+	}
+	
 
 }

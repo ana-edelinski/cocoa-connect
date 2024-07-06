@@ -17,6 +17,7 @@ import beans.Factory;
 import beans.User;
 import enums.Gender;
 import enums.Role;
+import enums.UserType;
 
 public class UserDAO {
 	private HashMap<Integer, User> users = new HashMap<>();
@@ -67,6 +68,7 @@ public class UserDAO {
 			u.setRole(user.getRole());
 			u.setIsAssigned(user.getIsAssigned());
 			u.setPoints(user.getPoints());
+			u.setType(user.getType());
 		}
 		saveToFile(contextPath);
 		return u;
@@ -157,9 +159,9 @@ public class UserDAO {
 				int factoryWorkingId = Integer.parseInt(st.nextToken().trim());
 				int points = Integer.parseInt(st.nextToken().trim());
 				boolean isAssigned = Boolean.parseBoolean(st.nextToken().trim());
-
+				UserType type = UserType.valueOf(st.nextToken().trim());
 				users.put(Integer.parseInt(id), new User(Integer.parseInt(id), username, password, name, surname,
-						gender, dateOfBirth, role, factoryWorkingId,points, isAssigned));
+						gender, dateOfBirth, role, factoryWorkingId,points, isAssigned, type));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -193,7 +195,7 @@ public class UserDAO {
 				line.append(user.getFactoryWorkingId()).append(";");
 				line.append(user.getPoints()).append(";");
 				line.append(user.getIsAssigned()).append(";");
-				
+				line.append(user.getType()).append(";");
 				out.write(line.toString());
 				out.newLine();
 			}

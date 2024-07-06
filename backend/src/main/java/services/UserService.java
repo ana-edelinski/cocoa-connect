@@ -28,6 +28,7 @@ import dto.UserCreationDto;
 import dto.UserDto;
 import dto.UserUpdateDto;
 import enums.Role;
+import enums.UserType;
 
 @Path("/users")
 public class UserService {
@@ -75,6 +76,7 @@ public class UserService {
 		try {
 			User user = userDto.convertToUser();
 			user.setRole(Role.CUSTOMER);
+			user.setType(UserType.NONE);
 			user.setIsAssigned(false);
 			user = dao.save(user);
 
