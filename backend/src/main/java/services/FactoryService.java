@@ -91,7 +91,7 @@ public class FactoryService {
 		Factory savedFactory = dao.save(factory);
 
 		// Set manager as assigned
-		userDao.setManagerAssigned(factory.getManagerId());
+		userDao.setManagerAssigned(factory.getManagerId(), savedFactory.getId());
 
 		return savedFactory;
 	}

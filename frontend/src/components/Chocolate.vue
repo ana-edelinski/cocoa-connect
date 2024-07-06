@@ -39,7 +39,7 @@
             <p class="chocolate-detail" v-if="loggedUser && loggedUser.role !== 'EMPLOYEE'">
               <strong>Quantity:</strong> {{ chocolate.quantity }}
             </p>
-            <template v-if="loggedUser && loggedUser.role === 'EMPLOYEE'"> <!-- && isFactoryEmployee(chocolate.factoryId) -->
+            <template v-if="loggedUser && loggedUser.role === 'EMPLOYEE' && loggedUser.factoryWorkingId === factory.id"> <!-- && isFactoryEmployee(chocolate.factoryId) -->
               <div class="quantity-input">
                 <p class="chocolate-detail"><strong>Quantity:</strong></p>
                 <input v-model="chocolate.newQuantity" type="number" />
@@ -87,7 +87,7 @@ const factoryId = route.params.factoryId;
 
 const loggedUser = ref(null);
 
-const factory = ref(null);
+const factory = ref({});
 const chocolates = ref([]);
 
 onMounted(() => {

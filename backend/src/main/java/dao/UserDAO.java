@@ -212,11 +212,13 @@ public class UserDAO {
 		return availableManagers;
 	}
 
-	public void setManagerAssigned(int managerId) {
+	public void setManagerAssigned(int managerId, int factoryId) {
 		User manager = users.get(managerId);
 		if (manager != null) {
+			manager.setFactoryWorkingId(factoryId);
 			manager.setIsAssigned(true);
 			users.put(managerId, manager);
+			saveToFile(contextPath);
 		}
 	}
 	

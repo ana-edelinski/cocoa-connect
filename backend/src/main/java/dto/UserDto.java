@@ -20,11 +20,12 @@ public class UserDto {
 	private Role role;
 	private boolean isAssigned;
 	private int points;
+	private int factoryWorkingId;
 
 	public UserDto() {
 		super();
 	}
-	
+
 	public UserDto(User user) {
 		id = user.getId();
 		username = user.getUsername();
@@ -36,6 +37,7 @@ public class UserDto {
 		role = user.getRole();
 		isAssigned = user.getIsAssigned();
 		points = user.getPoints();
+		factoryWorkingId = user.getFactoryWorkingId();
 	}
 
 	public int getId() {
@@ -116,6 +118,14 @@ public class UserDto {
 
 	public void setAssigned(boolean isAssigned) {
 		this.isAssigned = isAssigned;
+	}
+
+	public int getFactoryWorkingId() {
+		return factoryWorkingId;
+	}
+
+	public void setFactoryWorkingId(int factoryWorkingId) {
+		this.factoryWorkingId = factoryWorkingId;
 	}
 
 }

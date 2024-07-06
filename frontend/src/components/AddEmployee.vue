@@ -63,7 +63,8 @@ const form = ref({
   surname: '',
   gender: '',
   dateOfBirth: '',
-  role: 'EMPLOYEE'
+  role: 'EMPLOYEE',
+  managerId: -1
 });
 const factories = ref([]);
 const factoryFill = ref(true);
@@ -113,6 +114,11 @@ const handleSubmit = () => {
   }
 
   form.value.role = 'EMPLOYEE';
+
+  const storedUser = localStorage.getItem('loggedUser');
+  const managerId = JSON.parse(storedUser).id;
+
+  form.value.managerId = managerId;
 
   console.log('Submitting form:', form.value);
 
