@@ -184,10 +184,11 @@ public class UserService {
 	@GET
 	@Path("/filter")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Collection<User> filterUsers(@QueryParam("role") String role) {
-		UserDAO dao = (UserDAO) ctx.getAttribute("userDao");
-		return dao.filterUsers(role);
+	public Collection<User> filterUsers(@QueryParam("role") String role, @QueryParam("type") UserType type) {
+	    UserDAO dao = (UserDAO) ctx.getAttribute("userDao");
+	    return dao.filterUsers(role, type);
 	}
+
 
 	@GET
 	@Path("/{id}")

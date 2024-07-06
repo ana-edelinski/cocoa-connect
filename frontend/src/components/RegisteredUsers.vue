@@ -21,12 +21,25 @@
       <div class="filter-container">
         <h4>FILTER BY ROLE:</h4>
         <label>
-          <input type="radio" v-model="selectedRole" value="" @change="filterByRole">
+          <input type="radio" v-model="selectedRole" value="" @change="filterUsers">
           All Roles
         </label>
         <label v-for="role in roles" :key="role">
-          <input type="radio" v-model="selectedRole" :value="role" @change="filterByRole">
+          <input type="radio" v-model="selectedRole" :value="role" @change="filterUsers">
           {{ role }}
+        </label>
+      </div>
+
+      <!-- Filter by type -->
+      <div class="filter-container">
+        <h4>FILTER BY TYPE:</h4>
+        <label>
+          <input type="radio" v-model="selectedType" value="" @change="filterUsers">
+          All Types
+        </label>
+        <label v-for="type in userTypes" :key="type">
+          <input type="radio" v-model="selectedType" :value="type" @change="filterUsers">
+          {{ type }}
         </label>
       </div>
     </div>
@@ -65,9 +78,8 @@
                 <span v-if="sortCriteria.pointsAsc"><i class="fas fa-sort-up"></i></span>
                 <span v-if="sortCriteria.pointsDesc"><i class="fas fa-sort-down"></i></span>
               </th>
-              <th >
+              <th>
                 Type
-                
               </th>
             </tr>
           </thead>
@@ -115,8 +127,10 @@ const sortCriteria = ref({
   pointsDesc: false
 });
 const roles = ['CUSTOMER', 'MANAGER', 'EMPLOYEE']; 
-
 const selectedRole = ref(''); 
+
+const userTypes = ['NONE', 'SILVER', 'GOLD', 'BRONZE'];
+const selectedType = ref('');
 
 onMounted(() => {
   fetchUsers();
@@ -230,22 +244,19 @@ function formatDate(date) {
   return d.toLocaleDateString();
 }
 
-function filterByRole() {
-  if (selectedRole.value === '') {
-    filteredUsers.value = users.value; 
-  } else {
-    axios.get(`http://localhost:8080/chocolate-factory/rest/users/filter`, {
-      params: {
-        role: selectedRole.value
-      }
-    })
-    .then(response => {
-      filteredUsers.value = response.data;
-    })
-    .catch(error => {
-      console.error('Error filtering users by role:', error);
-    });
-  }
+function filterUsers() {
+  axios.get(`http://localhost:8080/chocolate-factory/rest/users/filter`, {
+    params: {
+      role: selectedRole.value,
+      type: selectedType.value
+    }
+  })
+  .then(response => {
+    filteredUsers.value = response.data;
+  })
+  .catch(error => {
+    console.error('Error filtering users:', error);
+  });
 }
 
 </script>

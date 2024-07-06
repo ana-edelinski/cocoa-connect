@@ -284,17 +284,21 @@ public class UserDAO {
         return sortedUsers;
     }
 
-	public Collection<User> filterUsers(String role) {
+	public Collection<User> filterUsers(String role, UserType type) {
 	    Collection<User> filteredUsers = new ArrayList<>();
 
 	    for (User user : users.values()) {
-	        if (user.getRole().name().equalsIgnoreCase(role)) {
+	        boolean matchesRole = (role == null || role.isEmpty()) || user.getRole().name().equalsIgnoreCase(role);
+	        boolean matchesType = (type == null) || user.getType().equals(type);
+
+	        if (matchesRole && matchesType) {
 	            filteredUsers.add(user);
 	        }
 	    }
 
 	    return filteredUsers;
 	}
+
 
 
 	public User getUserByRole(String role) {
