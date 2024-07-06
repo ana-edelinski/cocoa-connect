@@ -19,6 +19,7 @@ import javax.ws.rs.core.Response;
 import beans.Factory;
 import beans.User;
 import dao.FactoryDAO;
+import dao.OrderDAO;
 import dao.UserDAO;
 import dto.ChangePasswordDto;
 import dto.EmployeeCreationDto;
@@ -40,7 +41,8 @@ public class UserService {
 	public void init() {
 		if (ctx.getAttribute("userDao") == null) {
 			String contextPath = ctx.getRealPath("");
-			ctx.setAttribute("userDao", new UserDAO(contextPath));
+			DaosStartUp.initDaos(contextPath);
+            ctx.setAttribute("userDao", UserDAO.getInstance());
 		}
 	}
 
@@ -138,7 +140,7 @@ public class UserService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addEmployee(EmployeeCreationDto employeDto) {
 		UserDAO dao = (UserDAO) ctx.getAttribute("userDao");
-		FactoryDAO factoryDAO = new FactoryDAO(ctx.getRealPath(""));
+		FactoryDAO factoryDAO = FactoryDAO.getInstance();
 		User foundUser = dao.findByUsername(employeDto.getUsername());
 		if(foundUser != null) {
 			return Response.status(Response.Status.BAD_REQUEST).entity(foundUser).build();

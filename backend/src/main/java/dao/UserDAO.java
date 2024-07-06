@@ -20,15 +20,20 @@ import enums.Role;
 
 public class UserDAO {
 	private HashMap<Integer, User> users = new HashMap<>();
-	private String contextPath;
-
-	public UserDAO() {
-	}
-
-	public UserDAO(String contextPath) {
-		this.contextPath = contextPath;
+	public static String contextPath;
+    
+    private static UserDAO instance;
+    
+    private UserDAO(String contextPath) {
 		loadUsers(contextPath);
-	}
+    }
+    
+    public static UserDAO getInstance() {
+    	if(instance == null) {
+    		instance = new UserDAO(contextPath);
+    	}
+    	return instance;
+    }
 
 	public Collection<User> findAll() {
 		return users.values();
@@ -112,7 +117,7 @@ public class UserDAO {
 		user.setRole(Role.EMPLOYEE);
 		user.setAssigned(true);
 		
-		FactoryDAO factoryDAO = new FactoryDAO(this.contextPath);
+		FactoryDAO factoryDAO =  FactoryDAO.getInstance();
 		Factory factory = factoryDAO.getFactoryForManager(managerId);
 		if(factory == null) {
 			return null;

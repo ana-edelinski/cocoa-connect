@@ -16,6 +16,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import beans.Comment;
+import dao.ChocolateDAO;
 import dao.CommentDAO;
 @Path("/comments")
 public class CommentService {
@@ -28,7 +29,8 @@ public class CommentService {
     public void init() {
         if (ctx.getAttribute("commentDAO") == null) {
             String contextPath = ctx.getRealPath("");
-            ctx.setAttribute("commentDAO", new CommentDAO(contextPath));
+            DaosStartUp.initDaos(contextPath);
+            ctx.setAttribute("commentDAO", CommentDAO.getInstance());
         }
     }
 

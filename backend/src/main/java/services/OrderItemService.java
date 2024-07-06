@@ -20,6 +20,7 @@ import beans.OrderItem;
 import dao.FactoryDAO;
 import dao.OrderDAO;
 import dao.OrderItemDAO;
+import dao.UserDAO;
 @Path("/items")
 public class OrderItemService {
 	@Context
@@ -32,7 +33,8 @@ public class OrderItemService {
 	public void init() {
 		if (ctx.getAttribute("itemDao") == null) {
 			String contextPath = ctx.getRealPath("");
-			ctx.setAttribute("itemDao", new OrderItemDAO(contextPath));
+			DaosStartUp.initDaos(contextPath);
+            ctx.setAttribute("itemDao", OrderItemDAO.getInstance());
 		}
 	}
 

@@ -23,13 +23,19 @@ import enums.Role;
 
 public class CommentDAO {
 	private HashMap<Integer, Comment> comments = new HashMap<Integer, Comment>();
-    public String contextPath;
+	public static String contextPath;
     
-    public CommentDAO() {}
+    private static CommentDAO instance;
     
-    public CommentDAO(String contextPath) {
+    private CommentDAO(String contextPath) {
 		loadComments(contextPath);
-		this.contextPath = contextPath;
+    }
+    
+    public static CommentDAO getInstance() {
+    	if(instance == null) {
+    		instance = new CommentDAO(contextPath);
+    	}
+    	return instance;
     }
     
     public Collection<Comment> findAll() {
@@ -84,9 +90,9 @@ public class CommentDAO {
     private void loadComments(String contextPath) {
 		BufferedReader in = null;
 		
-		UserDAO userDAO = new UserDAO(contextPath);
-		FactoryDAO factoryDAO = new FactoryDAO(contextPath);
-		OrderDAO orderDao = new OrderDAO(contextPath);
+		UserDAO userDAO = UserDAO.getInstance();
+		FactoryDAO factoryDAO = FactoryDAO.getInstance();
+		OrderDAO orderDao = OrderDAO.getInstance();
 		try {
 			File file = new File(contextPath + "/chocolates.csv");
 			System.out.println(file.getCanonicalPath());

@@ -29,7 +29,8 @@ public class ChocolateService {
     public void init() {
         if (ctx.getAttribute("chocolateDAO") == null) {
             String contextPath = ctx.getRealPath("");
-            ctx.setAttribute("chocolateDAO", new ChocolateDAO(contextPath));
+            DaosStartUp.initDaos(contextPath);
+            ctx.setAttribute("chocolateDAO", ChocolateDAO.getInstance());
         }
     }
 
@@ -88,6 +89,7 @@ public class ChocolateService {
     @Consumes(MediaType.APPLICATION_JSON)
     public Collection<Chocolate> getAllForFactory(@PathParam("factoryId") Integer factoryId) {
         ChocolateDAO dao = (ChocolateDAO) ctx.getAttribute("chocolateDAO");
+        dao.loadProducts(ctx.getRealPath(""));
         return dao.getAllForFactory(factoryId);
     }
 }

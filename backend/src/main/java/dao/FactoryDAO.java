@@ -20,16 +20,20 @@ import enums.FactoryStatus;
 
 public class FactoryDAO {
 	private HashMap<Integer, Factory> factories = new HashMap<>();
-	private String contextPath;
-
-	public FactoryDAO() {
-	}
-
-	public FactoryDAO(String contextPath) {
-		this.contextPath = contextPath;
+    public static String contextPath;
+    
+    private static FactoryDAO instance;
+    
+    private FactoryDAO(String contextPath) {
 		loadFactories(contextPath);
-	}
-
+    }
+    
+    public static FactoryDAO getInstance() {
+    	if(instance == null) {
+    		instance = new FactoryDAO(contextPath);
+    	}
+    	return instance;
+    }
 	public Collection<Factory> findAll() {
 		Collection<Factory> result = new ArrayList<>();
 		for (var c : factories.values()) {
@@ -50,7 +54,7 @@ public class FactoryDAO {
 	public Collection<FactoryWithChocolatesDto> findAllWithChocolates() {
 		ArrayList<FactoryWithChocolatesDto> allFactoriesWith = new ArrayList<FactoryWithChocolatesDto>();
 
-		ChocolateDAO chocolateDAO = new ChocolateDAO(this.contextPath);
+		ChocolateDAO chocolateDAO = ChocolateDAO.getInstance();
 
 		for (Factory factory : findAll()) {
 			ArrayList<Chocolate> chocolates = new ArrayList<Chocolate>(chocolateDAO.getAllForFactory(factory.getId()));
@@ -209,7 +213,7 @@ public class FactoryDAO {
 			Double minRating, Double maxRating) {
 		ArrayList<FactoryWithChocolatesDto> allFactoriesWith = new ArrayList<>();
 
-		ChocolateDAO chocolateDAO = new ChocolateDAO(this.contextPath);
+		ChocolateDAO chocolateDAO = ChocolateDAO.getInstance();
 
 		for (Factory factory : findAll()) {
 
@@ -240,7 +244,7 @@ public class FactoryDAO {
 			Boolean openOnly) {
 		ArrayList<FactoryWithChocolatesDto> allFactoriesWith = new ArrayList<>();
 
-		ChocolateDAO chocolateDAO = new ChocolateDAO(this.contextPath);
+		ChocolateDAO chocolateDAO = ChocolateDAO.getInstance();
 
 		for (Factory factory : findAll()) {
 			boolean matchesOpenStatus;

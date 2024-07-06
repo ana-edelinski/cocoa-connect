@@ -21,6 +21,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import beans.Factory;
+import dao.CommentDAO;
 import dao.FactoryDAO;
 import dao.UserDAO;
 import dto.FactoryWithChocolatesDto;
@@ -39,11 +40,13 @@ public class FactoryService {
 	public void init() {
 		if (ctx.getAttribute("factoryDao") == null) {
 			String contextPath = ctx.getRealPath("");
-			ctx.setAttribute("factoryDao", new FactoryDAO(contextPath));
+			DaosStartUp.initDaos(contextPath);
+            ctx.setAttribute("factoryDao", FactoryDAO.getInstance());
 		}
 		if (ctx.getAttribute("userDao") == null) {
 			String contextPath = ctx.getRealPath("");
-			ctx.setAttribute("userDao", new UserDAO(contextPath));
+			DaosStartUp.initDaos(contextPath);
+            ctx.setAttribute("userDao", UserDAO.getInstance());
 		}
 	}
 
@@ -153,7 +156,7 @@ public class FactoryService {
     public Factory getFactoryForManager(@PathParam("managerId") int managerId) {
         FactoryDAO factoryDao = (FactoryDAO) ctx.getAttribute("factoryDao");
         if (factoryDao == null) {
-            factoryDao = new FactoryDAO();
+            factoryDao = FactoryDAO.getInstance();
             ctx.setAttribute("factoryDao", factoryDao);
         }
         return factoryDao.getFactoryForManager(managerId);
@@ -163,7 +166,7 @@ public class FactoryService {
     @Path("/byManager/{managerId}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getFactoryByManager(@PathParam("managerId") Integer managerId) {
-        FactoryDAO factoryDAO = new FactoryDAO(ctx.getRealPath(""));
+        FactoryDAO factoryDAO = FactoryDAO.getInstance();
         Factory factory = factoryDAO.findByManagerId(managerId);
         if (factory != null) {
             return Response.ok(factory).build();

@@ -28,16 +28,20 @@ import enums.Role;
 
 public class OrderDAO {
 	private HashMap<Integer, Order> orders = new HashMap<>();
-	private String contextPath;
-
-	public OrderDAO() {
-	}
-
-	public OrderDAO(String contextPath) {
-		this.contextPath = contextPath;
+	public static String contextPath;
+    
+    private static OrderDAO instance;
+    
+    private OrderDAO(String contextPath) {
 		loadOrders(contextPath);
-	}
-
+    }
+    
+    public static OrderDAO getInstance() {
+    	if(instance == null) {
+    		instance = new OrderDAO(contextPath);
+    	}
+    	return instance;
+    }
 	public Collection<Order> findAll() {
 		Collection<Order> result = new ArrayList<>();
 		for (var c : orders.values()) {
@@ -141,7 +145,7 @@ public class OrderDAO {
 		double lostPoints = order.getPrice() / 1000 * 133 * 4;
 		user.setPoints(user.getPoints() - (int)lostPoints);
 		
-		UserDAO userDAO = new UserDAO(contextPath);
+		UserDAO userDAO =  UserDAO.getInstance();
 		userDAO.update(user.getId(), user);
 		return order;
 	}
@@ -161,10 +165,10 @@ public class OrderDAO {
 	    return order;
 	}
 	public Order saveCart(CartDto cartDto) {
-		UserDAO userDAO = new UserDAO(contextPath);
-		FactoryDAO factoryDAO = new FactoryDAO(contextPath);
-		ChocolateDAO chocolateDAO = new ChocolateDAO(contextPath);
-		OrderItemDAO orderItemDAO = new OrderItemDAO(contextPath);
+		UserDAO userDAO =  UserDAO.getInstance();
+		FactoryDAO factoryDAO =  FactoryDAO.getInstance();
+		ChocolateDAO chocolateDAO =  ChocolateDAO.getInstance();
+		OrderItemDAO orderItemDAO =  OrderItemDAO.getInstance();
 
 		int userId = cartDto.getLoggedId();
 		User user = userDAO.findById(userId);
@@ -188,6 +192,9 @@ public class OrderDAO {
 			orderItem.setChocolate(chocolate);
 			orderItemDAO.save(orderItem);
 			ukupnaCena += cartItemDto.getQuantity() * chocolate.getPrice();
+			
+			chocolate.setQuantity(chocolate.getQuantity() - cartItemDto.getQuantity());
+			chocolateDAO.update(chocolate.getId(), chocolate);
 		}
 
 		order.setPrice(ukupnaCena);
@@ -204,8 +211,8 @@ public class OrderDAO {
 	private void loadOrders(String contextPath) {
 		BufferedReader in = null;
 
-		UserDAO userDAO = new UserDAO(contextPath);
-		FactoryDAO factoryDAO = new FactoryDAO(contextPath);
+		UserDAO userDAO = UserDAO.getInstance();
+		FactoryDAO factoryDAO = FactoryDAO.getInstance();
 		try {
 			File file = new File(contextPath + "/orders.csv");
 			System.out.println(file.getCanonicalPath());

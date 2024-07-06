@@ -24,6 +24,7 @@ import beans.Order;
 import beans.User;
 import dao.FactoryDAO;
 import dao.OrderDAO;
+import dao.OrderItemDAO;
 import dao.UserDAO;
 import dto.CartDto;
 @Path("/orders")
@@ -38,7 +39,8 @@ public class OrderService {
 	public void init() {
 		if (ctx.getAttribute("orderDao") == null) {
 			String contextPath = ctx.getRealPath("");
-			ctx.setAttribute("orderDao", new OrderDAO(contextPath));
+			DaosStartUp.initDaos(contextPath);
+            ctx.setAttribute("orderDao", OrderDAO.getInstance());
 		}
 	}
 
@@ -54,7 +56,7 @@ public class OrderService {
 	@Path("/forManagersFactory/{managerId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Collection<Order> getforManagersFacotry(@PathParam("managerId") Integer id) {
-		FactoryDAO factoryDAO = new FactoryDAO(ctx.getRealPath(""));
+		FactoryDAO factoryDAO =  FactoryDAO.getInstance();
 		Factory factory = factoryDAO.findByManagerId(id);
 		
 		OrderDAO dao = (OrderDAO) ctx.getAttribute("orderDao");

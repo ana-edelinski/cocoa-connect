@@ -5,28 +5,30 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import javax.ws.rs.Path;
-
 import beans.Chocolate;
-import beans.Factory;
-import enums.ChocolateStatus;
 
 public class ChocolateDAO {
     private HashMap<Integer, Chocolate> chocolates = new HashMap<Integer, Chocolate>();
-    public String contextPath;
+    public static String contextPath;
     
-    public ChocolateDAO() {}
     
-    public ChocolateDAO(String contextPath) {
+    private static ChocolateDAO instance;
+    
+    private ChocolateDAO(String contextPath) {
 		loadProducts(contextPath);
-		this.contextPath = contextPath;
+    }
+    
+    public static ChocolateDAO getInstance() {
+    	if(instance == null) {
+    		instance = new ChocolateDAO(contextPath);
+    	}
+    	return instance;
     }
     
     public Collection<Chocolate> findAll() {
@@ -116,7 +118,7 @@ public class ChocolateDAO {
     	return true;
     }
     
-    private void loadProducts(String contextPath) {
+    public void loadProducts(String contextPath) {
 		BufferedReader in = null;
 		try {
 			File file = new File(contextPath + "/chocolates.csv");

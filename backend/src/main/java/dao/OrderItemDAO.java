@@ -19,15 +19,20 @@ import beans.User;
 public class OrderItemDAO {
 	private HashMap<Integer, OrderItem> items = new HashMap<>();
 
-	private String contextPath;
-
-	public OrderItemDAO() {
-	}
-
-	public OrderItemDAO(String contextPath) {
-		this.contextPath = contextPath;
+	public static String contextPath;
+    
+    private static OrderItemDAO instance;
+    
+    private OrderItemDAO(String contextPath) {
 		loadOrderItems(contextPath);
-	}
+    }
+    
+    public static OrderItemDAO getInstance() {
+    	if(instance == null) {
+    		instance = new OrderItemDAO(contextPath);
+    	}
+    	return instance;
+    }
 
 	public Collection<OrderItem> findAll() {
 		Collection<OrderItem> result = new ArrayList<>();
@@ -83,8 +88,8 @@ public class OrderItemDAO {
 	private void loadOrderItems(String contextPath) {
 		BufferedReader in = null;
 
-		ChocolateDAO chocolateDAO = new ChocolateDAO(contextPath);
-		OrderDAO orderDAO = new OrderDAO(contextPath);
+		ChocolateDAO chocolateDAO = ChocolateDAO.getInstance();
+		OrderDAO orderDAO =  OrderDAO.getInstance();
 
 		try {
 			File file = new File(contextPath + "/items.csv");

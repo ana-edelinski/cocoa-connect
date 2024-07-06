@@ -5,22 +5,24 @@ import enums.ChocolateStatus;
 import enums.ChocolateType;
 
 public class Chocolate {
-		private int id;
-	 	private String name;
-	    private double price;
-	    private ChocolateKind kind;
-	    private Integer factory;
-	    private ChocolateType type;
-	    private int weight;
-	    private String description;
-	    private String image;
-	    private ChocolateStatus status;
-	    private int quantity;
-	    private boolean deleted;
-	public Chocolate() {}
+	private int id;
+	private String name;
+	private double price;
+	private ChocolateKind kind;
+	private Integer factory;
+	private ChocolateType type;
+	private int weight;
+	private String description;
+	private String image;
+	private ChocolateStatus status;
+	private int quantity;
+	private boolean deleted;
+
+	public Chocolate() {
+	}
 
 	public Chocolate(int id, String name, double price, String kind, Integer factory, String type, int weight,
-            String description, String image, int quantity, boolean deleted) {
+			String description, String image, int quantity, boolean deleted) {
 		this.id = id;
 		this.name = name;
 		this.price = price;
@@ -34,12 +36,15 @@ public class Chocolate {
 		this.quantity = quantity;
 		this.deleted = deleted;
 	}
+
 	public boolean isDeleted() {
 		return deleted;
 	}
+
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
 	}
+
 	public int getId() {
 		return id;
 	}
