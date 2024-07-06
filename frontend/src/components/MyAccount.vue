@@ -34,6 +34,36 @@
           </select>
         </div>
       </div>
+      <div class="sidebar" v-if="currentTab === 'factoryOrders'">
+        <div class="search-container">
+            <h4>SEARCH FACTORY ORDERS</h4>
+            <div class="search-bar">
+              <div class="inline-inputs">
+                <input v-model="factoryOrderSearchCriteria.minPrice" type="number" placeholder="Min Price" />
+                <input v-model="factoryOrderSearchCriteria.maxPrice" type="number" placeholder="Max Price" />
+              </div>
+              <div class="inline-inputs">
+                <input v-model="factoryOrderSearchCriteria.startDate" type="date" placeholder="Start Date" />
+                <input v-model="factoryOrderSearchCriteria.endDate" type="date" placeholder="End Date" />
+              </div>
+            </div>
+            <div class="buttons">
+              <button class="btn btn-search" @click="searchFactoryOrders">Search</button>
+              <button class="btn btn-clear" @click="clearFactoryOrderSearch">Clear</button>
+            </div>
+          </div>
+          <div class="separator"></div>
+          <div class="sort-container">
+            <h4>SORT FACTORY ORDERS</h4>
+            <select v-model="factoryOrderSortCriteria.sortBy" @change="sortFactoryOrders">
+              <option value="">Default Sorting</option>
+              <option value="price-asc">Sort by Price: Ascending</option>
+              <option value="price-desc">Sort by Price: Descending</option>
+              <option value="date-asc">Sort by Date: Ascending</option>
+              <option value="date-desc">Sort by Date: Descending</option>
+            </select>
+          </div>
+      </div>
       <div class="main-content">
         <div class="tabs">
           <button :class="{ active: currentTab === 'profile' }" @click="currentTab = 'profile'">MY PROFILE</button>
@@ -111,14 +141,15 @@
           </table>
         </div>
         <div class="tab-content" v-if="currentTab === 'factoryOrders'">
-          <h2>Factory Orders</h2>
+          
+
           <div v-if="factoryOrders.length === 0">No orders found for your factory.</div>
-          <div class="order" v-for="order in factoryOrders" :key="order.id">
+          <div class="order" v-for="order in sortedFactoryOrders" :key="order.id">
             <div class="order-details">
               <div><strong>Order ID:</strong> {{ order.id }}</div>
               <div><strong>Date & Time:</strong> {{ formatDateTime(order.date) }}</div>
               <div><strong>Status:</strong> {{ order.status }}</div>
-              <div><strong>Total:</strong> {{ order.price }}</div>
+              <div><strong>Total Price:</strong> {{ order.price }}</div>
             </div>
             <div class="order-items">
               <div class="order-item" v-for="item in order.items" :key="item.id">
@@ -217,25 +248,53 @@ const sortCriteria = ref({
   sortBy: '',
 });
 
+const factoryOrderSearchCriteria = ref({
+  minPrice: '',
+  maxPrice: '',
+  startDate: '',
+  endDate: ''
+});
+
+const factoryOrderSortCriteria = ref({
+  sortBy: '',
+});
+
 onMounted(() => {
   const storedUser = localStorage.getItem('loggedUser');
   if (storedUser) {
     loggedUser.value = JSON.parse(storedUser);
     console.log("Logged user:", loggedUser.value);
 
+    // Proverite da li je korisnik menadžer i da li `factoryId` postoji
+    if (loggedUser.value.role === 'MANAGER') {
+      loadFactoryOrders();
+      if (!loggedUser.value.factoryId) {
+        // Ako `factoryId` nije postavljen, učitajte ga sa servera
+        loadFactoryIdForManager(loggedUser.value.id);
+      }
+    }
+
     loadOrders(loggedUser.value.id);
 
     if (currentTab.value === 'profile') {
       loadProfileData();
     }
-
-    if (loggedUser.value.role === 'MANAGER') {
-      loadFactoryOrders();
-    }
   } else {
     console.error("No logged user found in localStorage.");
   }
 });
+
+const loadFactoryIdForManager = async (managerId) => {
+  try {
+    const response = await axios.get(`http://localhost:8080/chocolate-factory/rest/factories/byManager/${managerId}`);
+    loggedUser.value.factoryId = response.data.id;
+    console.log("Loaded factory ID:", response.data.id);
+  } catch (error) {
+    console.error("Failed to load factory ID for manager:", error);
+  }
+};
+
+
 
 const loadProfileData = async () => {
   if (!loggedUser.value) {
@@ -419,6 +478,39 @@ const clearSearch = () => {
   loadOrders(loggedUser.value.id);
 };
 
+const searchFactoryOrders = async () => {
+  if (!loggedUser.value.factoryId) {
+    console.error("Factory ID is not defined.");
+    return;
+  }
+
+  try {
+    const params = new URLSearchParams();
+    params.append('factoryId', loggedUser.value.factoryId);
+    if (factoryOrderSearchCriteria.value.minPrice) params.append('minPrice', factoryOrderSearchCriteria.value.minPrice);
+    if (factoryOrderSearchCriteria.value.maxPrice) params.append('maxPrice', factoryOrderSearchCriteria.value.maxPrice);
+    if (factoryOrderSearchCriteria.value.startDate) params.append('startDate', factoryOrderSearchCriteria.value.startDate);
+    if (factoryOrderSearchCriteria.value.endDate) params.append('endDate', factoryOrderSearchCriteria.value.endDate);
+
+    const response = await axios.get('http://localhost:8080/chocolate-factory/rest/orders/searchFactoryOrders', { params });
+    factoryOrders.value = response.data;
+  } catch (error) {
+    console.error("Failed to search factory orders:", error);
+  }
+};
+
+
+
+const clearFactoryOrderSearch = () => {
+  factoryOrderSearchCriteria.value = {
+    minPrice: '',
+    maxPrice: '',
+    startDate: '',
+    endDate: ''
+  };
+  loadFactoryOrders();
+};
+
 const formatDateTime = (dateString) => {
   const date = new Date(dateString);
   return date.toLocaleString();
@@ -443,6 +535,44 @@ const applySorting = async () => {
   }
 };
 
+const sortFactoryOrders = async () => {
+  if (!loggedUser.value.factoryId) {
+    console.error("Factory ID is not defined.");
+    return;
+  }
+
+  try {
+    const factoryId = loggedUser.value.factoryId;
+    const sortBy = factoryOrderSortCriteria.value.sortBy || '';
+    let order = 'asc';
+    if (sortBy.includes('-desc')) {
+      order = 'desc';
+    }
+
+    console.log("Sorting Parameters:", { factoryId, sortBy, order });
+
+    const response = await axios.get('http://localhost:8080/chocolate-factory/rest/orders/sortFactoryOrders', {
+      params: {
+        factoryId: factoryId,
+        sortBy: sortBy.replace('-asc', '').replace('-desc', ''),
+        order: order
+      }
+    });
+
+    console.log("Sorted Factory Orders:", response.data);
+    factoryOrders.value = response.data;
+  } catch (error) {
+    console.error("Failed to sort factory orders:", error);
+    factoryOrders.value = []; // Clear orders in case of error
+  }
+};
+
+
+
+
+
+
+
 const sortedOrders = computed(() => {
   if (!sortCriteria.value.sortBy) {
     return orders.value;
@@ -454,6 +584,26 @@ const sortedOrders = computed(() => {
       compareA = a.factory.name.toLowerCase();
       compareB = b.factory.name.toLowerCase();
     } else if (sortBy === 'price') {
+      compareA = a.price;
+      compareB = b.price;
+    } else if (sortBy === 'date') {
+      compareA = new Date(a.date);
+      compareB = new Date(b.date);
+    }
+    if (compareA < compareB) return order === 'asc' ? -1 : 1;
+    if (compareA > compareB) return order === 'asc' ? 1 : -1;
+    return 0;
+  });
+});
+
+const sortedFactoryOrders = computed(() => {
+  if (!factoryOrderSortCriteria.value.sortBy) {
+    return factoryOrders.value;
+  }
+  const [sortBy, order] = factoryOrderSortCriteria.value.sortBy.split('-');
+  return [...factoryOrders.value].sort((a, b) => {
+    let compareA, compareB;
+    if (sortBy === 'price') {
       compareA = a.price;
       compareB = b.price;
     } else if (sortBy === 'date') {
@@ -801,5 +951,4 @@ th, td {
   margin-bottom: 10px; 
   margin-left: -30px;
 }
-
 </style>

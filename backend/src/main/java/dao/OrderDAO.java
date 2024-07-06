@@ -294,7 +294,37 @@ public class OrderDAO {
 		return saveToFile(contextPath) ? order : null;
 	}
 	
-	
+	public Collection<Order> searchFactoryOrders(int factoryId, double minPrice, double maxPrice, LocalDate startDate, LocalDate endDate) {
+	    List<Order> result = new ArrayList<>();
+	    for (Order order : findAllByFactory(factoryId)) {
+	        boolean matchesPrice = (minPrice == 0 || order.getPrice() >= minPrice) && (maxPrice == 0 || order.getPrice() <= maxPrice);
+	        boolean matchesDate = (startDate == null || !order.getDate().toLocalDate().isBefore(startDate)) && (endDate == null || !order.getDate().toLocalDate().isAfter(endDate));
+	        if (matchesPrice && matchesDate) {
+	            result.add(order);
+	        }
+	    }
+	    return result;
+	}
+
+	public Collection<Order> sortFactoryOrders(int factoryId, String sortBy, String order) {
+	    ArrayList<Order> sortedOrders = new ArrayList<>(findAllByFactory(factoryId));
+	    
+	    sortedOrders.sort((a, b) -> {
+	        int comparison = 0;
+	        switch (sortBy.toLowerCase()) {
+	            case "price":
+	                comparison = Double.compare(a.getPrice(), b.getPrice());
+	                break;
+	            case "date":
+	                comparison = a.getDate().compareTo(b.getDate());
+	                break;
+	        }
+	        return "desc".equalsIgnoreCase(order) ? -comparison : comparison;
+	    });
+	    
+	    return sortedOrders;
+	}
+
 	
 	 
 }

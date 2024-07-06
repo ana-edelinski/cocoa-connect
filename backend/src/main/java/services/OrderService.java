@@ -154,6 +154,31 @@ public class OrderService {
 		return dao.sortOrders(sortBy, order);
 	}
 
+	@GET
+	@Path("/searchFactoryOrders")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Collection<Order> searchFactoryOrders(@QueryParam("factoryId") int factoryId, 
+	                                             @QueryParam("minPrice") double minPrice, 
+	                                             @QueryParam("maxPrice") double maxPrice, 
+	                                             @QueryParam("startDate") String startDateStr, 
+	                                             @QueryParam("endDate") String endDateStr) {
+	    LocalDate startDate = startDateStr != null ? LocalDate.parse(startDateStr) : null;
+	    LocalDate endDate = endDateStr != null ? LocalDate.parse(endDateStr) : null;
+	    OrderDAO dao = (OrderDAO) ctx.getAttribute("orderDao");
+	    return dao.searchFactoryOrders(factoryId, minPrice, maxPrice, startDate, endDate);
+	}
+
+	@GET
+	@Path("/sortFactoryOrders")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Collection<Order> sortFactoryOrders(@QueryParam("factoryId") int factoryId,
+	                                           @QueryParam("sortBy") String sortBy,
+	                                           @QueryParam("order") String order) {
+	    OrderDAO dao = (OrderDAO) ctx.getAttribute("orderDao");
+	    return dao.sortFactoryOrders(factoryId, sortBy, order);
+	}
+
+
 
 	
 	

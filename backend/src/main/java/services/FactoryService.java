@@ -18,9 +18,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import beans.Factory;
-import beans.User;
 import dao.FactoryDAO;
 import dao.UserDAO;
 import dto.FactoryWithChocolatesDto;
@@ -158,6 +158,20 @@ public class FactoryService {
         }
         return factoryDao.getFactoryForManager(managerId);
     }
+	
+	@GET
+    @Path("/byManager/{managerId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getFactoryByManager(@PathParam("managerId") Integer managerId) {
+        FactoryDAO factoryDAO = new FactoryDAO(ctx.getRealPath(""));
+        Factory factory = factoryDAO.findByManagerId(managerId);
+        if (factory != null) {
+            return Response.ok(factory).build();
+        } else {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+    }
+
 
 
 }
