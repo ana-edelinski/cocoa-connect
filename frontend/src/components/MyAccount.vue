@@ -72,8 +72,12 @@
           <button v-if="loggedUser && loggedUser.role === 'MANAGER'" :class="{ active: currentTab === 'factoryOrders' }" @click="currentTab = 'factoryOrders'">FACTORY ORDERS</button>
         </div>
         <div v-if="currentTab === 'profile'">
-          <h2>Profile Information</h2>
           <form @submit.prevent="saveProfile">
+            <label>
+              <br/>
+              Points: 
+              <input type="number" v-model="profile.points" readonly>
+            </label>
             <label>
               Username:
               <input type="text" v-model="profile.username" required>
@@ -174,8 +178,8 @@
       <h2>Reject Order</h2>
       <form @submit.prevent="rejectOrder(currentOrder, comment)">
         <label>
-          Reason for rejection:
-          <textarea v-model="comment" required></textarea>
+          Reason for Rejection:
+          <textarea v-model="comment" required class="reject-reason-textarea"></textarea>
         </label>
         <button type="submit">Done</button>
       </form>
@@ -218,7 +222,15 @@ import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const loggedUser = ref(null);
-const profile = ref({});
+const profile = ref({
+  username: '',
+  password: '',
+  firstName: '',
+  lastName: '',
+  gender: '',
+  birthday: '',
+  points: ''  // Dodali smo polje za poene
+});
 const orders = ref([]);
 const cancelRequests = ref([]);
 const factoryOrders = ref([]);
@@ -305,12 +317,14 @@ const loadProfileData = async () => {
       firstName: response.data.name,
       lastName: response.data.surname,
       gender: response.data.gender,
-      birthday: response.data.dateOfBirth
+      birthday: response.data.dateOfBirth,
+      points: response.data.points  
     };
   } catch (error) {
     console.error("Failed to load profile data:", error);
   }
 };
+
 
 const saveProfile = async () => {
   if (!loggedUser.value) {
@@ -720,10 +734,16 @@ form label {
 
 form label input,
 form label select {
-  display: block;
-  margin-top: 5px;
+  width: 100%;
   padding: 10px;
-  width: calc(100% - 22px);
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+input[type="number"] {
+  width: 100%;
+  text-align: center;
+  padding: 8px;
   border: 1px solid #ccc;
   border-radius: 5px;
 }
@@ -896,13 +916,18 @@ table th {
   margin-bottom: 15px;
 }
 
-.modal-content form label input {
+.modal-content form label input,
+.modal-content form label textarea {
   display: block;
   margin-top: 5px;
   padding: 8px; 
   width: calc(100% - 16px); 
   border: 1px solid #ccc;
   border-radius: 5px;
+}
+
+.modal-content form label textarea.reject-reason-textarea {
+  height: 100px; /* Visina textarea polja */
 }
 
 .modal-content form button[type="submit"] {

@@ -39,7 +39,11 @@
           <p>No available managers. Please <a href="#" @click.prevent="showRegisterManagerForm">register a new manager</a>.</p>
         </div>
       </div>
-      <div v-if="showManagerForm" class="register-manager-card">
+      <button type="submit">Create Factory</button>
+    </form>
+
+    <div v-if="showManagerForm" class="modal-overlay">
+      <div class="modal-content">
         <h2>Register New Manager</h2>
         <div class="form-group">
           <label for="username">Username:</label>
@@ -47,7 +51,7 @@
         </div>
         <div class="form-group">
           <label for="password">Password:</label>
-          <input type="text" :style="{ backgroundColor: passwordFill ? 'white' : 'red' }" v-model="newManager.password" id="password" />
+          <input type="password" :style="{ backgroundColor: passwordFill ? 'white' : 'red' }" v-model="newManager.password" id="password" />
         </div>
         <div class="form-group">
           <label for="managerName">Name:</label>
@@ -69,9 +73,9 @@
           <input type="date" v-model="newManager.dateOfBirth" id="dateOfBirth" />
         </div>
         <button @click.prevent="registerManager">Register Manager</button>
+        <button @click.prevent="hideRegisterManagerForm">Close</button>
       </div>
-      <button type="submit">Create Factory</button>
-    </form>
+    </div>
   </div>
 </template>
 
@@ -137,6 +141,9 @@ export default {
     showRegisterManagerForm() {
       this.showManagerForm = true;
     },
+    hideRegisterManagerForm() {
+      this.showManagerForm = false;
+    },
     registerManager() {
       this.checkManagerFields();
       if (!this.usernameFill || !this.managerNameFill || !this.surnameFill) return;
@@ -200,15 +207,6 @@ export default {
   border-radius: 10px;
   background-color: #f9f9f9;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.register-manager-card {
-  margin-top: 5px;
-  padding: 15px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
@@ -277,5 +275,40 @@ a {
 
 a:hover {
   text-decoration: underline;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  max-width: 400px;
+  width: 100%;
+}
+
+.modal-content h2 {
+  margin-top: 0;
+  color: #523F31;
+}
+
+.modal-content .form-group {
+  margin-bottom: 15px;
+}
+
+.modal-content button {
+  margin-top: 10px;
 }
 </style>

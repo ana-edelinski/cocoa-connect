@@ -19,6 +19,7 @@ public class UserDto {
 	private Date dateOfBirth;
 	private Role role;
 	private boolean isAssigned;
+	private int points;
 
 	public UserDto() {
 		super();
@@ -34,6 +35,7 @@ public class UserDto {
 		dateOfBirth = user.getDateOfBirth();
 		role = user.getRole();
 		isAssigned = user.getIsAssigned();
+		points = user.getPoints();
 	}
 
 	public int getId() {
@@ -46,6 +48,14 @@ public class UserDto {
 
 	public String getUsername() {
 		return username;
+	}
+
+	public int getPoints() {
+		return points;
+	}
+
+	public void setPoints(int points) {
+		this.points = points;
 	}
 
 	public void setUsername(String username) {
