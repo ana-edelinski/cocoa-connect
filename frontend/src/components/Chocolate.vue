@@ -71,6 +71,58 @@
         </div>
       </div>
     </section>
+
+    <section class="chocolates-section">
+      <h2 class="section-title">Factory comments</h2>
+      <div class="chocolates-grid">
+        
+        <div class="tab-content" v-if="loggedUser.role === 'MANAGER' || loggedUser.role === 'ADMINISTRATOR'">
+          <div class="comment-list">
+            <div class="comment" v-for="comment in managersComments" :key="comment.id">
+              <div class="comment-details">
+                <div><strong>User:</strong> {{ comment.user.name }} {{ comment.user.surname }}</div>
+                <div><strong>Comment:</strong> {{ comment.text }}</div>
+                <div><strong>Rate:</strong> {{ comment.grade }}</div>
+                <div><strong>Status:</strong> {{ comment.status }}</div>
+              </div>
+              <div class="button-column" v-if="comment.status === 'PROCESSING'">
+                <button @click="aproveComment(comment.id)" >
+                  Aprove
+                </button>
+                <button @click="declineComment(comment.id)">
+                  Reject
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+       
+        <div class="tab-content" v-if="loggedUser.role === 'CUSTOMER'">
+          <div class="comment-list">
+            <div class="comment" v-for="comment in usersComments" :key="comment.id">
+              <div class="comment-details">
+                <div><strong>User:</strong> {{ comment.user.name }} {{ comment.user.surname }}</div>
+                <div><strong>Comment:</strong> {{ comment.text }}</div>
+                <div><strong>Rate:</strong> {{ comment.grade }}</div>
+                <div><strong>Status:</strong> {{ comment.status }}</div>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+        
+
+      </div>
+
+
+
+
+    </section>
+
+
+
+
+
   </div>
 </template>
 
@@ -85,10 +137,13 @@ const router = useRouter();
 const route = useRoute();
 const factoryId = route.params.factoryId;
 
-const loggedUser = ref(null);
+const loggedUser = ref({});
 
 const factory = ref({});
 const chocolates = ref([]);
+const managersComments = ref([]);
+const usersComments = ref([]);
+
 
 onMounted(() => {
   const storedUser = localStorage.getItem('loggedUser');
@@ -98,12 +153,30 @@ onMounted(() => {
   }
   loadFactory();
   loadChocolates();
+  loadManagersComments();
+  loadUsersComments();
 });
 
 function loadFactory() {
   axios.get('http://localhost:8080/chocolate-factory/rest/factories/' + factoryId)
     .then(response => {
       factory.value = response.data;
+    })
+    .catch(error => console.error(error));
+}
+
+
+function loadManagersComments() {
+  axios.get('http://localhost:8080/chocolate-factory/rest/comments/getAllForFactory/' + factoryId)
+    .then(response => {
+      managersComments.value = response.data;
+    })
+    .catch(error => console.error(error));
+}
+function loadUsersComments() {
+  axios.get('http://localhost:8080/chocolate-factory/rest/comments/getAllApprovedForFactory/' + factoryId)
+    .then(response => {
+      usersComments.value = response.data;
     })
     .catch(error => console.error(error));
 }
@@ -207,6 +280,27 @@ function isFactoryEmployee(factoryId) {
   console.log("Checking factory employee:", factory.value, loggedUser.value);
   return factory.value && factory.value.id === loggedUser.value.factoryWorkingId;
 }
+
+
+
+function aproveComment(commentId) {
+  axios.put('http://localhost:8080/chocolate-factory/rest/comments/aprove/' + commentId)
+    .then(response => {
+      loadManagersComments();
+      alert("Comment is aproved");
+    })
+    .catch(error => alert("Comment is not aproved"));
+}
+
+function declineComment(commentId) {
+  axios.put('http://localhost:8080/chocolate-factory/rest/comments/reject/' + commentId)
+    .then(response => {
+      loadManagersComments();
+      alert("Comment is rejected");
+    })
+    .catch(error => alert("Comment is not rejected"));
+}
+
 </script>
 
 

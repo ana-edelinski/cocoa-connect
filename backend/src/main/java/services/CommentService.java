@@ -1,6 +1,7 @@
 package services;
 
 import java.util.Collection;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
@@ -14,67 +15,109 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import beans.Comment;
+import beans.Order;
 import dao.ChocolateDAO;
 import dao.CommentDAO;
+import dao.OrderDAO;
+import dto.CommentCreationDto;
+
 @Path("/comments")
 public class CommentService {
 	@Context
-    ServletContext ctx;
+	ServletContext ctx;
 
-    public CommentService() {}
+	public CommentService() {
+	}
 
-    @PostConstruct
-    public void init() {
-        if (ctx.getAttribute("commentDAO") == null) {
-            String contextPath = ctx.getRealPath("");
-            DaosStartUp.initDaos(contextPath);
-            ctx.setAttribute("commentDAO", CommentDAO.getInstance());
-        }
-    }
+	@PostConstruct
+	public void init() {
+		if (ctx.getAttribute("commentDAO") == null) {
+			String contextPath = ctx.getRealPath("");
+			DaosStartUp.initDaos(contextPath);
+			ctx.setAttribute("commentDAO", CommentDAO.getInstance());
+		}
+	}
 
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Collection<Comment> findAll() {
-    	CommentDAO dao = (CommentDAO) ctx.getAttribute("commentDAO");
-        return dao.findAll();
-    }
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Collection<Comment> findAll() {
+		CommentDAO dao = (CommentDAO) ctx.getAttribute("commentDAO");
+		return dao.findAll();
+	}
 
-    @GET
-    @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Comment findById(@PathParam("id") Integer id) {
-    	CommentDAO dao = (CommentDAO) ctx.getAttribute("commentDAO");
-        return dao.findById(id);
-    }
+	@GET
+	@Path("/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Comment findById(@PathParam("id") Integer id) {
+		CommentDAO dao = (CommentDAO) ctx.getAttribute("commentDAO");
+		return dao.findById(id);
+	}
+	
+	@GET
+	@Path("/getAllForFactory/{factoryId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Collection<Comment> getAllForFactory(@PathParam ("factoryId") int factoryId) {
+		CommentDAO dao = (CommentDAO) ctx.getAttribute("commentDAO");
+		return dao.getAllForFactory(factoryId);
+	}
+	
+	@GET
+	@Path("/getAllApprovedForFactory/{factoryId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Collection<Comment> getAllForFactory(@PathParam("factoryId") Integer factoryId) {
+		CommentDAO dao = (CommentDAO) ctx.getAttribute("commentDAO");
+		return dao.getAllApprovedForFactory(factoryId);
+	}
+	@PUT
+	@Path("/aprove/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Comment aprove(@PathParam("id") Integer id) {
+		CommentDAO dao = (CommentDAO) ctx.getAttribute("commentDAO");
+		Comment comment = dao.aprove(id);
+		return comment;
+	}
+	@PUT
+	@Path("/reject/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Comment reject(@PathParam("id") Integer id) {
+	    CommentDAO dao = (CommentDAO) ctx.getAttribute("commentDAO");
+	    Comment comment = dao.reject(id);
+	    return comment;
+	}
 
-    @PUT
-    @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Comment update(@PathParam("id") Integer id, Comment updatedComment) {
-    	CommentDAO dao = (CommentDAO) ctx.getAttribute("commentDAO");
-        return dao.update(id, updatedComment);
-    }
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response save(CommentCreationDto commentCreationDto) {
+		CommentDAO dao = (CommentDAO) ctx.getAttribute("commentDAO");
 
-    @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Comment save(Comment comment) {
-    	CommentDAO dao = (CommentDAO) ctx.getAttribute("commentDAO");
-        return dao.save(comment);
-    }
+		Comment comment = dao.getCommentForOrder(commentCreationDto.getOrderId());
+		if (comment != null) {
+			return Response.status(Response.Status.BAD_REQUEST).build();
+		}
+		Comment createdComment = dao.save(commentCreationDto);
+		if(createdComment == null) {
+			return Response.status(Response.Status.BAD_REQUEST).build();
+		}
+		return Response.status(Response.Status.CREATED).entity(createdComment).build();
 
-    @DELETE
-    @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    public void deleteComment(@PathParam("id") Integer id) {
-    	CommentDAO dao = (CommentDAO) ctx.getAttribute("commentDAO");
-        dao.deleteComment(id);
-    }
+	}
 
-  
+	@DELETE
+	@Path("/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public void deleteComment(@PathParam("id") Integer id) {
+		CommentDAO dao = (CommentDAO) ctx.getAttribute("commentDAO");
+		dao.deleteComment(id);
+	}
+
 }

@@ -14,6 +14,18 @@
         </div>
       </div>
     </div>
+    <div class="feedback-section" v-if="order.status === 'APPROVED'">
+      <h3>Leave Your Feedback</h3>
+      <div class="rating">
+        <label for="rating">Rating:</label>
+        <input type="number" v-model="rating" min="1" max="5">
+      </div>
+      <div class="comment">
+        <label for="comment">Comment:</label>
+        <textarea v-model="comment" rows="3"></textarea>
+      </div>
+      <button @click="submitFeedback">Submit</button>
+    </div>
   </div>
 </template>
 
@@ -25,6 +37,9 @@ import { useRoute } from 'vue-router';
 const route = useRoute();
 const orderId = route.params.orderId;
 const orderItems = ref([]);
+const rating = ref(null);
+const comment = ref('');
+const order = ref({});
 
 onMounted(() => {
   loadOrderItems();
@@ -36,6 +51,27 @@ function loadOrderItems() {
       orderItems.value = response.data;
     })
     .catch(error => console.error('err ' + error));
+  axios.get(`http://localhost:8080/chocolate-factory/rest/orders/${orderId}`)
+    .then(response => {
+      order.value = response.data;
+    })
+    .catch(error => console.error('err ' + error));
+}
+
+function submitFeedback() {
+  const feedback = {
+    orderId: orderId,
+    rating: rating.value,
+    comment: comment.value
+  };
+  
+  axios.post('http://localhost:8080/chocolate-factory/rest/comments', feedback)
+    .then(response => {
+      console.log('Feedback submitted', response.data);
+      rating.value = null;
+      comment.value = '';
+    })
+    .catch(error => alert('You have already commented this order: '));
 }
 </script>
 
@@ -112,4 +148,51 @@ function loadOrderItems() {
   z-index: 1;
 }
 
+.feedback-section {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.feedback-section h3 {
+  margin-bottom: 20px;
+}
+
+.rating, .comment {
+  margin-top: 10px;
+  text-align: left;
+}
+
+.rating label, .comment label {
+  display: block;
+  font-weight: bold;
+}
+
+.rating input {
+  width: 100%;
+  padding: 5px;
+  margin-top: 5px;
+}
+
+.comment textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #523F31;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+button:hover {
+  background-color: #735B4F;
+}
 </style>

@@ -1,6 +1,6 @@
 1;jdoe;123;John;Doe;MALE;1990-05-15;ADMINISTRATOR;1;1;false;
 2;asmith;123;Alice;Smith;FEMALE;1985-07-20;MANAGER;5;2;true;
-3;rgreen;123;Rachel;Green;FEMALE;1010-10-10;CUSTOMER;0;-830;true;
+3;rgreen;123;Rachel;Green;FEMALE;1985-08-13;CUSTOMER;0;472;true;
 4;mgeller;123;Monica;Geller;FEMALE;1985-09-14;MANAGER;1;10;true;
 5;ttrubisky;123;Tom;Trubisky;MALE;1982-02-21;MANAGER;6;12;true;
 6;bwilliams;123;Bruce;Williams;MALE;1978-11-30;MANAGER;7;16;true;

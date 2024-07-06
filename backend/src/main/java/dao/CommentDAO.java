@@ -18,83 +18,112 @@ import beans.Comment;
 import beans.Factory;
 import beans.Order;
 import beans.User;
+import dto.CommentCreationDto;
 import enums.CommentStatus;
+import enums.OrderStatus;
 import enums.Role;
 
 public class CommentDAO {
 	private HashMap<Integer, Comment> comments = new HashMap<Integer, Comment>();
 	public static String contextPath;
-    
-    private static CommentDAO instance;
-    
-    private CommentDAO(String contextPath) {
+
+	private static CommentDAO instance;
+
+	private CommentDAO(String contextPath) {
 		loadComments(contextPath);
-    }
-    
-    public static CommentDAO getInstance() {
-    	if(instance == null) {
-    		instance = new CommentDAO(contextPath);
-    	}
-    	return instance;
-    }
-    
-    public Collection<Comment> findAll() {
-    	Collection<Comment> result = new ArrayList();
-        
-        for(var c : comments.values()) { 		
-        		result.add(c);
-        }
-        
-        return result;
-    }
-    
-    public Comment findById(int id) {
+	}
+
+	public static CommentDAO getInstance() {
+		if (instance == null) {
+			instance = new CommentDAO(contextPath);
+		}
+		return instance;
+	}
+
+	public Collection<Comment> findAll() {
+		Collection<Comment> result = new ArrayList();
+
+		for (var c : comments.values()) {
+			result.add(c);
+		}
+
+		return result;
+	}
+
+	public Comment findById(int id) {
 		return comments.containsKey(id) ? comments.get(id) : null;
 	}
-    
-    public Comment update(int id, Comment comment) {
-		Comment c = comments.containsKey(id) ? comments.get(id) : null;
-		if (c == null) {
-			return save(comment);
-		} else {
-			c.setUser(comment.getUser());
-			c.setFactory(comment.getFactory());
-			c.setOrder(comment.getOrder());
-			c.setText(comment.getText());
-			c.setGrade(comment.getGrade());
-			c.setStatus(comment.getStatus());
-			saveToFile(contextPath);
+
+	public Comment getCommentForOrder(int orderId) {
+		for (Comment comment : comments.values()) {
+			if (comment.getOrder().getId() == orderId) {
+				return comment;
+			}
 		}
-		
-		return c;
+		return null;
 	}
-    
-    public Comment save(Comment comment) {
+
+	public Collection<Comment> getAllForFactory(int factoryId) {
+		List<Comment> factoryComments = new ArrayList<>();
+		for (Comment comment : comments.values()) {
+			if (comment.getFactory().getId() == factoryId) {
+				factoryComments.add(comment);
+			}
+		}
+		return factoryComments;
+	}
+
+	public Collection<Comment> getAllApprovedForFactory(int factoryId) {
+		List<Comment> approvedComments = new ArrayList<>();
+		for (Comment comment : comments.values()) {
+			if (comment.getFactory().getId() == factoryId && comment.getStatus() == CommentStatus.APPROVED) {
+				approvedComments.add(comment);
+			}
+		}
+		return approvedComments;
+	}
+
+	private int generateId() {
 		Integer maxId = -1;
 		for (Integer id : comments.keySet()) {
-			int idNum =id;
+			int idNum = id;
 			if (idNum > maxId) {
 				maxId = idNum;
 			}
 		}
 		maxId++;
-		comment.setId(maxId);
-		//chocolate.setImage("../resources/" + chocolate.getImage());
+		return maxId;
+	}
+
+	public Comment save(CommentCreationDto commentDto) {
+		OrderDAO orderDAO = OrderDAO.getInstance();
+		Order order = orderDAO.findById(commentDto.getOrderId());
+		if (order.getStatus() != OrderStatus.APPROVED) {
+			return null;
+		}
+
+		Comment comment = new Comment();
+		comment.setText(commentDto.getComment());
+		comment.setGrade(commentDto.getRating());
+		comment.setStatus(CommentStatus.PROCESSING);
+		comment.setOrder(order);
+		comment.setUser(order.getUser());
+		comment.setFactory(order.getFactory());
+
+		comment.setId(generateId());
 		comments.put(comment.getId(), comment);
 		saveToFile(contextPath);
 		return comment;
 	}
-    
-    
-    
-    private void loadComments(String contextPath) {
+
+	private void loadComments(String contextPath) {
 		BufferedReader in = null;
-		
+
 		UserDAO userDAO = UserDAO.getInstance();
 		FactoryDAO factoryDAO = FactoryDAO.getInstance();
 		OrderDAO orderDao = OrderDAO.getInstance();
 		try {
-			File file = new File(contextPath + "/chocolates.csv");
+			File file = new File(contextPath + "/comments.csv");
 			System.out.println(file.getCanonicalPath());
 			in = new BufferedReader(new FileReader(file));
 			String line, id = "", userId = "", factoryId = "", orderId = "", text = "", grade = "", status = "";
@@ -113,7 +142,7 @@ public class CommentDAO {
 					grade = st.nextToken().trim();
 					status = st.nextToken().trim();
 				}
-				
+
 				int idC = Integer.parseInt(id);
 				int userIdInt = Integer.parseInt(userId);
 				int factoryIdInt = Integer.parseInt(factoryId);
@@ -122,60 +151,75 @@ public class CommentDAO {
 				Factory factory = factoryDAO.findById(factoryIdInt);
 				Order order = orderDao.findById(orderIdInt);
 				int gradeI = Integer.parseInt(grade);
-				CommentStatus statusP = CommentStatus.valueOf(st.nextToken().trim());
-				comments.put(Integer.parseInt(id), new Comment(idC, user,factory, order, text, gradeI,statusP ));
+				CommentStatus statusP = CommentStatus.valueOf(status);
+				comments.put(Integer.parseInt(id), new Comment(idC, user, factory, order, text, gradeI, statusP));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			if ( in != null ) {
+			if (in != null) {
 				try {
 					in.close();
+				} catch (Exception e) {
 				}
-				catch (Exception e) { }
 			}
 		}
 	}
 
-    public boolean deleteComment(int id) {
+	public boolean deleteComment(int id) {
 		Comment c = findById(id);
-		if(c == null) return false;
-	
-		return saveToFile(contextPath);
-    }  
-    
-    
-    private boolean saveToFile(String path) {
-        BufferedWriter out = null;
-        try {
-            File file = new File(path + "chocolates.csv");
-            out = new BufferedWriter(new FileWriter(file));
+		if (c == null)
+			return false;
 
-            for (Comment comment : comments.values()) {
-                StringBuilder line = new StringBuilder();
-                line.append(comment.getId()).append(";");
-                line.append(comment.getUser()).append(";");
-                line.append(comment.getFactory()).append(";");
-                line.append(comment.getOrder()).append(";");
-                line.append(comment.getText()).append(";");
-                line.append(comment.getGrade()).append(";");
-                line.append(comment.getStatus());
-                
-                out.write(line.toString());
-                out.newLine();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (out != null) {
-                try {
-                    out.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return false;
-                }
-            }
-        }
+		return saveToFile(contextPath);
+	}
+
+	public Comment aprove(int id) {
+		Comment comment = findById(id);
+		comment.setStatus(CommentStatus.APPROVED);
+		saveToFile(contextPath);
+		return comment;
+	}	
+	public Comment reject(int id) {
+		Comment comment = findById(id);
+	    if (comment != null) {
+	    	comment.setStatus(CommentStatus.REJECTED);
+	        saveToFile(contextPath);
+	    }
+	    return comment;
+	}
+	
+	private boolean saveToFile(String path) {
+		BufferedWriter out = null;
+		try {
+			File file = new File(path + "comments.csv");
+			out = new BufferedWriter(new FileWriter(file));
+
+			for (Comment comment : comments.values()) {
+				StringBuilder line = new StringBuilder();
+				line.append(comment.getId()).append(";");
+				line.append(comment.getUser().getId()).append(";");
+				line.append(comment.getFactory().getId()).append(";");
+				line.append(comment.getOrder().getId()).append(";");
+				line.append(comment.getText()).append(";");
+				line.append(comment.getGrade()).append(";");
+				line.append(comment.getStatus());
+
+				out.write(line.toString());
+				out.newLine();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (out != null) {
+				try {
+					out.close();
+				} catch (Exception e) {
+					e.printStackTrace();
+					return false;
+				}
+			}
+		}
 		return true;
-    }
+	}
 }

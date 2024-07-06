@@ -426,7 +426,7 @@ const loadFactoryCustomers = async () => {
 };
 
 const approveOrder = (orderId) => {
-  axios.put(`http://localhost:8080/chocolate-factory/rest/orders/approve/${orderId}`)
+  axios.put(`http://localhost:8080/chocolate-factory/rest/orders/aprove/${orderId}`)
     .then(response => {
       console.log("Order approved successfully:", response.data);
       loadFactoryOrders();

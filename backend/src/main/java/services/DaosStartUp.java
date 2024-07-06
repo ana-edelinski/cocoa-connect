@@ -23,7 +23,7 @@ public class DaosStartUp {
 		//za ostale
 		UserDAO.getInstance();
 		ChocolateDAO.getInstance();
-		//CommentDAO.getInstance();
+		CommentDAO.getInstance();
 		FactoryDAO.getInstance();
 		OrderDAO.getInstance();
 		OrderItemDAO.getInstance();
