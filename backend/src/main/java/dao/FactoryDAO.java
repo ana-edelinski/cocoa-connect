@@ -299,14 +299,14 @@ public class FactoryDAO {
 	        int numberOfRatings = 0;
 	        CommentDAO commentDAO = CommentDAO.getInstance();
 	        for (Comment comment : commentDAO.getAllApprovedForFactory(factoryId)) {
-	            System.out.println("Rating: " + comment.getGrade());  // Log each rating
+	            System.out.println("Rating: " + comment.getGrade());  
 	            totalRating += comment.getGrade();
 	            numberOfRatings++;
 	        }
 	        double averageRating = numberOfRatings == 0 ? 0 : totalRating / numberOfRatings;
-	        System.out.println("New Average Rating: " + averageRating);  // Log the new average rating
+	        System.out.println("New Average Rating: " + averageRating);  
 	        factory.setAverageRating(averageRating);
-	        saveToFile(contextPath);  // Ensure this method persists changes
+	        saveToFile(contextPath); 
 	    }
 	}
 

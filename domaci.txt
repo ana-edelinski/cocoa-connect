@@ -1,1 +1,0 @@
-Da dodam + i - i dugme "Dodaj", da se sacuva taj broj i onda korpa i da se u korpu prikaze tabela sa svim narudzbinama sa cijenama

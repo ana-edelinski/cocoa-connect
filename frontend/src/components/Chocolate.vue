@@ -75,40 +75,43 @@
     </section>
 
     <section class="chocolates-section">
-      <div class="comments-grid">
-        
-        <div class="tab-content" v-if="loggedUser.role === 'MANAGER' || loggedUser.role === 'ADMINISTRATOR'">
-          <div class="comment-list">
-            <div class="comment-header"> Comments:</div>
-            <div class="comment" v-for="comment in managersComments" :key="comment.id">
-              <div class="comment-details">
-                <div class="comment-author"><strong> {{ comment.user.name }} {{ comment.user.surname }} </strong> </div>
-                <div class="comment-text"> {{ comment.grade }} ⭐ {{ comment.text }}</div>
-                <div class="comment-status"><strong>Status:</strong> {{ comment.status }}</div>
-              </div>
-              <div class="button-column" v-if="comment.status === 'PROCESSING'">
-                <button @click="aproveComment(comment.id)" class="btn-approve">Approve</button>
-                <button @click="declineComment(comment.id)" class="btn-reject">Reject</button>
-              </div>
+  <div class="comments-grid">
+    <div class="tab-content" v-if="loggedUser.role === 'MANAGER' || loggedUser.role === 'ADMINISTRATOR'">
+      <div class="comment-list">
+        <div class="comment-header">Comments:</div>
+        <div class="comment" v-for="comment in managersComments" :key="comment.id">
+          <div class="comment-details">
+            <div class="comment-author" v-if="comment.user && comment.user.name">
+              <strong>{{ comment.user.name }} {{ comment.user.surname }}</strong>
             </div>
+            <div class="comment-text">{{ comment.grade }} ⭐ {{ comment.text }}</div>
+            <div class="comment-status"><strong>Status:</strong> {{ comment.status }}</div>
+          </div>
+          <div class="button-column" v-if="comment.status === 'PROCESSING'">
+            <button @click="aproveComment(comment.id)" class="btn-approve">Approve</button>
+            <button @click="declineComment(comment.id)" class="btn-reject">Reject</button>
           </div>
         </div>
-       
-        <div class="tab-content" v-if="loggedUser.role === 'CUSTOMER'">
-          <div class="comment-list">
-            <div class="comment-header"> Comments:</div>
-            <div class="comment" v-for="comment in usersComments" :key="comment.id">
-              <div class="comment-details">
-                <div class="comment-author"><strong> {{ comment.user.name }} {{ comment.user.surname }} </strong> </div>
-                <div class="comment-text"> {{ comment.grade }} ⭐ {{ comment.text }}</div>
-                <div class="comment-status"><strong>Status:</strong> {{ comment.status }}</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
       </div>
-    </section>
+    </div>
+
+    <div class="tab-content" v-if="loggedUser.role === 'CUSTOMER'">
+      <div class="comment-list">
+        <div class="comment-header">Comments:</div>
+        <div class="comment" v-for="comment in usersComments" :key="comment.id">
+          <div class="comment-details">
+            <div class="comment-author" v-if="comment.user && comment.user.name">
+              <strong>{{ comment.user.name }} {{ comment.user.surname }}</strong>
+            </div>
+            <div class="comment-text">{{ comment.grade }} ⭐ {{ comment.text }}</div>
+            <div class="comment-status"><strong>Status:</strong> {{ comment.status }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
   </div>
 </template>
 
@@ -529,6 +532,7 @@ input[type="number"] {
   margin-left: -10px;
   margin-right: -10px;
   height: 27px;
+  margin-top:20px;
 }
 
 .btn-quantity {
