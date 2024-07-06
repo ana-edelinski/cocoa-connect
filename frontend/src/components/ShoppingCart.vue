@@ -21,7 +21,7 @@
       <div class="cart-total">
         <h2>Total Price: {{ totalPrice }} RSD</h2>
         <div v-if="loggedUser.type !== 'NONE'">
-          <h2>Discount: {{ percentage }} % RSD</h2>
+          <h2>Discount: {{ percentage }}% </h2>
            <h2>Discount Price: {{ salePrice }} RSD</h2>
         </div>
         <button class="buy-now-button" @click="buyNow">Buy Now</button>

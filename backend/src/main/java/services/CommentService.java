@@ -1,7 +1,6 @@
 package services;
 
 import java.util.Collection;
-import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
@@ -18,10 +17,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import beans.Comment;
-import beans.Order;
-import dao.ChocolateDAO;
 import dao.CommentDAO;
-import dao.OrderDAO;
+import dao.FactoryDAO;
 import dto.CommentCreationDto;
 
 @Path("/comments")
@@ -119,5 +116,23 @@ public class CommentService {
 		CommentDAO dao = (CommentDAO) ctx.getAttribute("commentDAO");
 		dao.deleteComment(id);
 	}
+	
+	@POST
+    @Path("/submitFeedback")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response submitFeedback(CommentCreationDto commentCreationDto) {
+        CommentDAO commentDAO = CommentDAO.getInstance();
+        FactoryDAO factoryDAO = FactoryDAO.getInstance();
+
+        Comment comment = commentDAO.save(commentCreationDto);
+        if (comment != null) {
+            factoryDAO.updateAverageRating(comment.getFactory().getId());
+            return Response.ok(comment).build();
+        } else {
+            return Response.status(Response.Status.BAD_REQUEST).entity("You have already commented on this order.").build();
+        }
+    }
+
 
 }

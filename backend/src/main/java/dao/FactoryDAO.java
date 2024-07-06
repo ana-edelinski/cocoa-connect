@@ -8,11 +8,11 @@ import java.io.FileWriter;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 
 import beans.Chocolate;
+import beans.Comment;
 import beans.Factory;
 import beans.WorkingHours;
 import dto.FactoryWithChocolatesDto;
@@ -294,5 +294,24 @@ public class FactoryDAO {
 
 		return sortedFactories;
 	}
+	
+	public void updateAverageRating(int factoryId) {
+	    Factory factory = factories.get(factoryId);
+	    if (factory != null) {
+	        double totalRating = 0;
+	        int numberOfRatings = 0;
+	        CommentDAO commentDAO = CommentDAO.getInstance();
+	        for (Comment comment : commentDAO.getAllApprovedForFactory(factoryId)) {
+	            System.out.println("Rating: " + comment.getGrade());  // Log each rating
+	            totalRating += comment.getGrade();
+	            numberOfRatings++;
+	        }
+	        double averageRating = numberOfRatings == 0 ? 0 : totalRating / numberOfRatings;
+	        System.out.println("New Average Rating: " + averageRating);  // Log the new average rating
+	        factory.setAverageRating(averageRating);
+	        saveToFile(contextPath);  // Ensure this method persists changes
+	    }
+	}
+
 
 }

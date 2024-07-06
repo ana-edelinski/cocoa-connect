@@ -68,15 +68,16 @@ function submitFeedback() {
     rating: rating.value,
     comment: comment.value
   };
-  
-  axios.post('http://localhost:8080/chocolate-factory/rest/comments', feedback)
+
+  axios.post('http://localhost:8080/chocolate-factory/rest/comments/submitFeedback', feedback)
     .then(response => {
       console.log('Feedback submitted', response.data);
       rating.value = null;
       comment.value = '';
     })
-    .catch(error => alert('You have already commented this order: '));
+    .catch(error => alert('You have already commented on this order: ' + error));
 }
+
 </script>
 
 <style>
