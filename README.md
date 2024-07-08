@@ -4,7 +4,7 @@ Academic project made for Faculty of Technical Sciences' course Web Programming.
 
 ## About Project
 
-Cocoa Connect is a web application developed using JAX-RS REST(Jersey) for the backend and Vue.js for the frontend. It supports 4 different user roles: Administrator, Customer, Factory Manager and Factory Employee, each with specific funcionalities and permissions. 
+Cocoa Connect is a web application developed using JAX-RS REST(Jersey) for the backend and Vue.js for the frontend. It supports 4 different user roles: Administrator, Customer, Factory Manager and Factory Employee, each with specific funcionalities and permissions including user, factory and chocolate management, purchase handling, commenting system, and advanced search, sorting, and filtering options.
 
 ## Used Tools
 ► Visual Studio Code<br>
@@ -21,3 +21,10 @@ Cocoa Connect is a web application developed using JAX-RS REST(Jersey) for the b
 ► Anja Vujacic
 
 ## Screenshots
+![HomePage](screenshots/home.png)
+![Login](screenshots/login.png)
+![Factory](screenshots/factory.png)
+![ShoppingCart1](screenshots/shopping-cart1.png)
+![ShoppingCart2](screenshots/shopping-cart2.png)
+![OrderInfo1](screenshots/order-info1.png)
+![OrderInfo2](screenshots/order-info2.png)
