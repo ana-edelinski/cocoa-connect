@@ -16,10 +16,6 @@ Cocoa Connect is a web application developed using JAX-RS REST(Jersey) for the b
 ► Adobe Illustrator<br>
 ► Canva<br>
 
-## Resources
-► Google Fonts<br>
-► Freepik<br>
-
 ### Authors
 ► Ana Edelinski<br>
 ► Anja Vujacic
