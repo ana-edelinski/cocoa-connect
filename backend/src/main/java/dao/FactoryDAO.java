@@ -306,9 +306,11 @@ public class FactoryDAO {
 	        double averageRating = numberOfRatings == 0 ? 0 : totalRating / numberOfRatings;
 	        System.out.println("New Average Rating: " + averageRating);  
 	        factory.setAverageRating(averageRating);
-	        saveToFile(contextPath); 
+	        update(factory.getId(), factory);
+	        //saveToFile(contextPath);
 	    }
 	}
+
 
 
 }

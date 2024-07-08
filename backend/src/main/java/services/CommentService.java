@@ -36,6 +36,11 @@ public class CommentService {
 			DaosStartUp.initDaos(contextPath);
 			ctx.setAttribute("commentDAO", CommentDAO.getInstance());
 		}
+		if (ctx.getAttribute("factoryDAO") == null) {
+            String contextPath = ctx.getRealPath("");
+            DaosStartUp.initDaos(contextPath);
+            ctx.setAttribute("factoryDAO", FactoryDAO.getInstance());
+        }
 	}
 
 	@GET
@@ -77,7 +82,9 @@ public class CommentService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Comment aprove(@PathParam("id") Integer id) {
 		CommentDAO dao = (CommentDAO) ctx.getAttribute("commentDAO");
+	    FactoryDAO factoryDao = (FactoryDAO) ctx.getAttribute("factoryDAO");
 		Comment comment = dao.aprove(id);
+	    factoryDao.updateAverageRating(comment.getFactory().getId());
 		return comment;
 	}
 	@PUT

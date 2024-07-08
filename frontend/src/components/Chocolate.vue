@@ -38,7 +38,7 @@
             <p class="chocolate-detail" v-if="loggedUser && loggedUser.role !== 'EMPLOYEE'">
               <strong>Quantity:</strong> {{ chocolate.quantity }}
             </p>
-            <template v-if="loggedUser && loggedUser.role === 'EMPLOYEE' && loggedUser.factoryWorkingId === factory.id"> <!-- && isFactoryEmployee(chocolate.factoryId) -->
+            <template v-if="loggedUser && loggedUser.role === 'EMPLOYEE' && loggedUser.factoryWorkingId === factory.id">
               <div class="quantity-input">
                 <p class="chocolate-detail"><strong>Quantity:</strong></p>
                 <input v-model="chocolate.newQuantity" type="number" />
@@ -61,15 +61,15 @@
           <div v-if="loggedUser && loggedUser.role === 'CUSTOMER' && isFactoryOpen()" class="purchase-section">
             <p><strong>Desired Quantity:</strong></p>
             <div class="quantity-controls">
-              <button class="btn btn-quantity" @click="decreaseDesiredQuantity(chocolate)">-</button>
-              <input v-model.number="chocolate.purchaseQuantity" type="number" @change="validateQuantity(chocolate)" />
-              <button class="btn btn-quantity" @click="increaseDesiredQuantity(chocolate)">+</button>
+                <button class="btn btn-quantity" @click="decreaseDesiredQuantity(chocolate)">-</button>
+                <input v-model.number="chocolate.purchaseQuantity" type="number" @change="validateQuantity(chocolate)" />
+                <button class="btn btn-quantity" @click="increaseDesiredQuantity(chocolate)">+</button>
             </div>
-            <button class="btn btn-done" @click="confirmPurchase(chocolate)">Add to Cart</button>
-          </div>
-          <p v-if="loggedUser && loggedUser.role === 'CUSTOMER' && !isFactoryOpen()" style="color: red;">
+            <button class="btn btn-done" @click="confirmPurchase(chocolate)" :disabled="chocolate.quantity === 0">Add to Cart</button>
+        </div>
+        <p v-if="loggedUser && loggedUser.role === 'CUSTOMER' && !isFactoryOpen()" style="color: red;">
             Factory is closed. Orders cannot be placed at this time.
-          </p>
+        </p>
         </div>
       </div>
     </section>
@@ -222,15 +222,22 @@ function decreaseDesiredQuantity(chocolate) {
 }
 
 function confirmPurchase(chocolate) {
+  console.log("Confirming purchase for chocolate:", chocolate);
+
+    if (chocolate.quantity === 0) {
+        alert('This product is out of stock and cannot be ordered.');
+        return;
+    }
+
     const cartItem = {'chocolate': chocolate, 'quantity': chocolate.purchaseQuantity};
 
     let cartStr = localStorage.getItem('cart');
     let cart = JSON.parse(cartStr);
 
     if (cart) {
-        if(cart.factoryId !== factoryId){
-          alert('cant order from different factories');
-          return;
+        if (cart.factoryId !== factoryId) {
+            alert('Cannot order from different factories');
+            return;
         }
 
         const existingItemIndex = cart.items.findIndex(item => item.chocolate.id === chocolate.id);
@@ -245,7 +252,9 @@ function confirmPurchase(chocolate) {
 
     const cartForSave = JSON.stringify(cart);
     localStorage.setItem('cart', cartForSave);
+    alert('✔Added to cart.');
 }
+
 
 
 
@@ -635,5 +644,11 @@ input[type="number"] {
 
 .btn-reject:hover {
   background-color: #c82333;
+}
+
+.btn:disabled {
+  background-color: #d3d3d3; 
+  cursor: not-allowed; 
+  color: #888888; 
 }
 </style>

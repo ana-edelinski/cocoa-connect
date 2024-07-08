@@ -117,7 +117,7 @@
                 <div><strong>Total Price:</strong> {{ order.price }} RSD</div>
               </div>
               <div class="button-column">
-                <button @click="cancelOrder(order.id)" :disabled="order.status === 'CANCELLED'">
+                <button @click="cancelOrder(order.id)" :disabled="order.status !== 'PROCESSING'">
                   Cancel
                 </button>
                 <button @click="goToOrderInfo(order.id)">
@@ -162,8 +162,8 @@
               </div>
             </div>
             <div class="order-actions">
-              <button @click="approveOrder(order.id)" :disabled="order.status === 'APPROVED' || order.status === 'REJECTED'">Approve</button>
-              <button @click="openRejectModal(order)" :disabled="order.status === 'REJECTED' || order.status === 'APPROVED'">Reject</button>
+              <button @click="approveOrder(order.id)" :disabled="order.status === 'APPROVED' || order.status === 'REJECTED' || order.status === 'CANCELED'">Approve</button>
+              <button @click="openRejectModal(order)" :disabled="order.status === 'REJECTED' || order.status === 'APPROVED' || order.status === 'CANCELED'">Reject</button>
             </div>
           </div>
         </div>
@@ -985,4 +985,11 @@ table th {
   margin-bottom: 10px; 
   margin-left: -30px;
 }
+
+.button-column button:disabled {
+  background-color: lightgray;
+  cursor: not-allowed;
+  color: #888888; 
+}
+
 </style>

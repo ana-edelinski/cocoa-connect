@@ -86,49 +86,54 @@ public class OrderItemDAO {
 	}
 
 	private void loadOrderItems(String contextPath) {
-		BufferedReader in = null;
+	    BufferedReader in = null;
 
-		ChocolateDAO chocolateDAO = ChocolateDAO.getInstance();
-		OrderDAO orderDAO =  OrderDAO.getInstance();
+	    ChocolateDAO chocolateDAO = ChocolateDAO.getInstance();
+	    OrderDAO orderDAO = OrderDAO.getInstance();
 
-		try {
-			File file = new File(contextPath + "/items.csv");
-			System.out.println(file.getCanonicalPath());
-			in = new BufferedReader(new FileReader(file));
-			String line, id = "", chocolateId = "", quantity = "", orderId = "";
-			StringTokenizer st;
-			while ((line = in.readLine()) != null) {
-				line = line.trim();
-				if (line.equals("") || line.indexOf('#') == 0)
-					continue;
-				st = new StringTokenizer(line, ";");
-				while (st.hasMoreTokens()) {
-					id = st.nextToken().trim();
-					chocolateId = st.nextToken().trim();
-					quantity = st.nextToken().trim();
-					orderId = st.nextToken().trim();
-				}
-				int idInt = Integer.parseInt(id);
-				int chocolateIdInt = Integer.parseInt(chocolateId);
-				int orderIdInt = Integer.parseInt(orderId);
+	    try {
+	        File file = new File(contextPath + "/items.csv");
+	        System.out.println(file.getCanonicalPath());
+	        in = new BufferedReader(new FileReader(file));
+	        String line, id = "", chocolateId = "", quantity = "", orderId = "";
+	        StringTokenizer st;
+	        while ((line = in.readLine()) != null) {
+	            line = line.trim();
+	            if (line.equals("") || line.indexOf('#') == 0)
+	                continue;
+	            st = new StringTokenizer(line, ";");
+	            while (st.hasMoreTokens()) {
+	                id = st.nextToken().trim();
+	                chocolateId = st.nextToken().trim();
+	                quantity = st.nextToken().trim();
+	                orderId = st.nextToken().trim();
+	            }
+	            int idInt = Integer.parseInt(id);
+	            int chocolateIdInt = Integer.parseInt(chocolateId);
+	            int orderIdInt = Integer.parseInt(orderId);
 
-				Chocolate chocolate = chocolateDAO.findById(chocolateIdInt);
-				Order order = orderDAO.findById(orderIdInt);
+	            Chocolate chocolate = chocolateDAO.findById(chocolateIdInt);
+	            Order order = orderDAO.findById(orderIdInt);
 
-				items.put(Integer.parseInt(id), new OrderItem(idInt, chocolate, Integer.parseInt(quantity), order));
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (in != null) {
-				try {
-					in.close();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}
+	            if (order != null) {
+	                items.put(Integer.parseInt(id), new OrderItem(idInt, chocolate, Integer.parseInt(quantity), order));
+	            } else {
+	                System.err.println("Order with ID " + orderIdInt + " not found for OrderItem with ID " + idInt);
+	            }
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        if (in != null) {
+	            try {
+	                in.close();
+	            } catch (Exception e) {
+	                e.printStackTrace();
+	            }
+	        }
+	    }
 	}
+
 
 	private boolean saveToFile(String path) {
 		BufferedWriter out = null;

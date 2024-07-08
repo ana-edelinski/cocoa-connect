@@ -19,7 +19,6 @@ import javax.ws.rs.core.Response;
 import beans.Factory;
 import beans.User;
 import dao.FactoryDAO;
-import dao.OrderDAO;
 import dao.UserDAO;
 import dto.ChangePasswordDto;
 import dto.EmployeeCreationDto;
@@ -124,7 +123,7 @@ public class UserService {
 			User user = userDto.convertToUser();
 			user.setRole(Role.MANAGER);
 			user.setIsAssigned(false);
-			//
+			user.setType(UserType.NONE);
 			user.setPoints(0);
 			user = dao.save(user);
 
@@ -209,7 +208,6 @@ public class UserService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public User update(@PathParam("id") Integer id, UserUpdateDto updatedUser) {
 		UserDAO dao = (UserDAO) ctx.getAttribute("userDao");
-		// todo: Validacija
 		User user = updatedUser.convertToUser();
 		return dao.updateUserInfo(id, user);
 	}

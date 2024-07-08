@@ -70,7 +70,9 @@
         <div class="factories-grid">
           <div v-for="factory in sortedFactories" :key="factory.id" class="factory-card">
             <img :src="factory.logo" alt="Logo" class="factory-logo" />
-            <div class="rating-badge">{{ factory.averageRating }} ★</div>
+            <div class="rating-badge">
+              {{ factory.averageRating === 0 ? 'NOT RATED' : `${factory.averageRating} ★` }}
+            </div>
             <h3>{{ factory.name }}</h3>
             <p>📍 {{ factory.city }}, {{ factory.country }}</p>
             <p class="status" :class="{'open': factory.factoryStatus === 'OPENED', 'closed': factory.factoryStatus === 'CLOSED'}">{{ formatStatus(factory.factoryStatus) }}</p>
