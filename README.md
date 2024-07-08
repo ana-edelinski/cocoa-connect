@@ -1,6 +1,6 @@
 # Cocoa Connect
 
-Academic project made for Faculty of Technical Sciences' course Web Programming.
+Academic project made for course Web Programming at Faculty of Technical Sciences, University of Novi Sad
 
 ## About Project
 
